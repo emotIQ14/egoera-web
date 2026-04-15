@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-// Social icons are inline SVGs
 
 const categories = [
   { label: "Regulacion Emocional", href: "/blog?cat=regulacion-emocional" },
@@ -42,11 +41,11 @@ export function Footer() {
   if (pathname.startsWith("/diario")) return null;
 
   return (
-    <footer className="bg-dark-text text-white/80">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+    <footer className="footer-watercolor">
+      <div className="w-full px-6 sm:px-8 lg:px-12 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Brand */}
-          <div>
+          <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <Image
                 src="/egoera-logo.png"
@@ -55,11 +54,11 @@ export function Footer() {
                 height={40}
                 className="rounded-full"
               />
-              <span className="text-xl font-semibold text-white font-[family-name:var(--font-heading)]">
+              <span className="text-xl font-semibold text-dark-text font-[family-name:var(--font-heading)]">
                 Egoera Psikologia
               </span>
             </div>
-            <p className="text-sm leading-relaxed text-white/60 max-w-xs">
+            <p className="text-sm leading-relaxed text-grey-text max-w-xs">
               Tu estado importa. Blog de psicologia con contenidos para entenderte mejor,
               gestionar tus emociones y mejorar tus relaciones.
             </p>
@@ -72,7 +71,7 @@ export function Footer() {
                     href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-white/50 hover:text-teal transition-colors"
+                    className="text-grey-text hover:text-teal transition-colors"
                     aria-label={s.label}
                   >
                     <Icon />
@@ -84,7 +83,7 @@ export function Footer() {
 
           {/* Categories */}
           <div>
-            <h3 className="text-white font-semibold mb-4 font-[family-name:var(--font-heading)] text-lg">
+            <h3 className="text-dark-text font-semibold mb-4 font-[family-name:var(--font-heading)] text-lg">
               Tematicas
             </h3>
             <ul className="space-y-2">
@@ -92,7 +91,7 @@ export function Footer() {
                 <li key={c.label}>
                   <Link
                     href={c.href}
-                    className="text-sm text-white/60 hover:text-teal transition-colors"
+                    className="text-sm text-grey-text hover:text-teal transition-colors"
                   >
                     {c.label}
                   </Link>
@@ -101,38 +100,71 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Newsletter */}
+          {/* Links */}
           <div>
-            <h3 className="text-white font-semibold mb-4 font-[family-name:var(--font-heading)] text-lg">
-              Newsletter
+            <h3 className="text-dark-text font-semibold mb-4 font-[family-name:var(--font-heading)] text-lg">
+              Enlaces
             </h3>
-            <p className="text-sm text-white/60 mb-4">
-              Recibe contenido semanal de psicologia directamente en tu correo.
+            <ul className="space-y-2">
+              <li>
+                <Link href="/blog" className="text-sm text-grey-text hover:text-teal transition-colors">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link href="/diario" className="text-sm text-grey-text hover:text-teal transition-colors">
+                  Diario Emocional
+                </Link>
+              </li>
+              <li>
+                <Link href="/recursos" className="text-sm text-grey-text hover:text-teal transition-colors">
+                  Recursos
+                </Link>
+              </li>
+              <li>
+                <Link href="/contacto" className="text-sm text-grey-text hover:text-teal transition-colors">
+                  Contacto
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="https://anderbilbao.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-grey-text hover:text-teal transition-colors"
+                >
+                  Ander Bilbao
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* About */}
+          <div>
+            <h3 className="text-dark-text font-semibold mb-4 font-[family-name:var(--font-heading)] text-lg">
+              Sobre Egoera
+            </h3>
+            <p className="text-sm text-grey-text leading-relaxed mb-4">
+              Psicologia accesible para el dia a dia. Contenidos basados en evidencia
+              para cuidar tu salud mental.
             </p>
-            <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
-              <input
-                type="email"
-                placeholder="tu@email.com"
-                className="flex-1 px-4 py-2.5 rounded-lg bg-white/10 border border-white/20 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-teal"
-              />
-              <button
-                type="submit"
-                className="px-4 py-2.5 bg-teal text-white rounded-lg text-sm font-medium hover:bg-teal/90 transition-colors"
-              >
-                Suscribirme
-              </button>
-            </form>
+            <Link
+              href="/contacto"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-teal/10 text-teal rounded-full text-sm font-medium hover:bg-teal/20 transition-colors"
+            >
+              Contactar
+            </Link>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-white/40">
+        <div className="mt-12 pt-8 border-t border-teal/10 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-grey-text/60">
             &copy; {new Date().getFullYear()} Egoera Psikologia. Todos los derechos reservados.
           </p>
-          <div className="flex gap-6 text-xs text-white/40">
-            <Link href="/privacidad" className="hover:text-white/60">Privacidad</Link>
-            <Link href="/cookies" className="hover:text-white/60">Cookies</Link>
-            <Link href="/aviso-legal" className="hover:text-white/60">Aviso Legal</Link>
+          <div className="flex gap-6 text-xs text-grey-text/60">
+            <Link href="/privacidad" className="hover:text-teal transition-colors">Privacidad</Link>
+            <Link href="/cookies" className="hover:text-teal transition-colors">Cookies</Link>
+            <Link href="/aviso-legal" className="hover:text-teal transition-colors">Aviso Legal</Link>
           </div>
         </div>
       </div>

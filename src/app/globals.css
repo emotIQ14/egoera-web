@@ -103,7 +103,329 @@
   }
 }
 
-/* Scroll reveal animations */
+/* =============================================
+   WATERCOLOR AESTHETIC — Global Effects
+   ============================================= */
+
+/* Watercolor paint blob backgrounds via pseudo-elements */
+.watercolor-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.watercolor-section::before,
+.watercolor-section::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: multiply;
+}
+
+.watercolor-section::before {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(
+    ellipse at 30% 40%,
+    rgba(107, 163, 190, 0.12) 0%,
+    rgba(107, 163, 190, 0.06) 40%,
+    transparent 70%
+  );
+  top: -100px;
+  right: -150px;
+  filter: blur(40px);
+  animation: watercolor-drift 20s ease-in-out infinite;
+}
+
+.watercolor-section::after {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(
+    ellipse at 60% 50%,
+    rgba(168, 213, 200, 0.15) 0%,
+    rgba(127, 181, 160, 0.08) 40%,
+    transparent 70%
+  );
+  bottom: -80px;
+  left: -120px;
+  filter: blur(35px);
+  animation: watercolor-drift-reverse 18s ease-in-out infinite;
+}
+
+/* Deeper color blobs for scroll-depth intensity */
+.watercolor-deep::before {
+  background: radial-gradient(
+    ellipse at 40% 30%,
+    rgba(107, 163, 190, 0.22) 0%,
+    rgba(127, 181, 160, 0.12) 40%,
+    transparent 65%
+  );
+}
+
+.watercolor-deep::after {
+  background: radial-gradient(
+    ellipse at 50% 60%,
+    rgba(127, 181, 160, 0.2) 0%,
+    rgba(168, 213, 200, 0.12) 40%,
+    transparent 65%
+  );
+}
+
+/* Even deeper intensity for bottom sections */
+.watercolor-intense::before {
+  background: radial-gradient(
+    ellipse at 35% 45%,
+    rgba(107, 163, 190, 0.3) 0%,
+    rgba(127, 181, 160, 0.18) 35%,
+    transparent 60%
+  );
+  width: 600px;
+  height: 600px;
+}
+
+.watercolor-intense::after {
+  background: radial-gradient(
+    ellipse at 65% 40%,
+    rgba(168, 213, 200, 0.28) 0%,
+    rgba(107, 163, 190, 0.15) 35%,
+    transparent 60%
+  );
+  width: 550px;
+  height: 550px;
+}
+
+/* Paint splatter divider between sections */
+.watercolor-divider {
+  position: relative;
+  height: 60px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.watercolor-divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse 80px 30px at 15% 50%, rgba(107, 163, 190, 0.2) 0%, transparent 100%),
+    radial-gradient(ellipse 60px 25px at 35% 40%, rgba(127, 181, 160, 0.18) 0%, transparent 100%),
+    radial-gradient(ellipse 90px 20px at 55% 55%, rgba(168, 213, 200, 0.22) 0%, transparent 100%),
+    radial-gradient(ellipse 50px 35px at 75% 45%, rgba(107, 163, 190, 0.15) 0%, transparent 100%),
+    radial-gradient(ellipse 70px 28px at 90% 50%, rgba(127, 181, 160, 0.2) 0%, transparent 100%);
+  filter: blur(8px);
+}
+
+/* Watercolor drift animations */
+@keyframes watercolor-drift {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate(30px, -20px) rotate(5deg) scale(1.05);
+  }
+  50% {
+    transform: translate(-10px, 15px) rotate(-3deg) scale(0.98);
+  }
+  75% {
+    transform: translate(20px, 10px) rotate(4deg) scale(1.03);
+  }
+}
+
+@keyframes watercolor-drift-reverse {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate(-25px, 15px) rotate(-4deg) scale(1.03);
+  }
+  50% {
+    transform: translate(15px, -10px) rotate(5deg) scale(1.06);
+  }
+  75% {
+    transform: translate(-15px, -20px) rotate(-2deg) scale(0.97);
+  }
+}
+
+/* Floating blob animation */
+@keyframes blob-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.15;
+  }
+  33% {
+    transform: translateY(-15px) rotate(3deg);
+    opacity: 0.25;
+  }
+  66% {
+    transform: translateY(10px) rotate(-2deg);
+    opacity: 0.18;
+  }
+}
+
+@keyframes blob-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.3;
+  }
+}
+
+/* Paint stroke highlight behind text */
+.paint-stroke-highlight {
+  position: relative;
+  display: inline-block;
+}
+
+.paint-stroke-highlight::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -8px;
+  right: -8px;
+  height: 40%;
+  background: linear-gradient(
+    90deg,
+    rgba(107, 163, 190, 0.15) 0%,
+    rgba(107, 163, 190, 0.3) 20%,
+    rgba(168, 213, 200, 0.25) 50%,
+    rgba(127, 181, 160, 0.3) 80%,
+    rgba(127, 181, 160, 0.1) 100%
+  );
+  border-radius: 4px 8px 6px 10px;
+  z-index: -1;
+  filter: blur(1px);
+  transform: rotate(-0.5deg) skewX(-2deg);
+}
+
+/* =============================================
+   BLOG CARD — Glassmorphism + 3D Tilt
+   ============================================= */
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 4px 24px rgba(107, 163, 190, 0.08),
+    0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.glass-card:hover {
+  box-shadow:
+    0 20px 60px rgba(107, 163, 190, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* 3D tilt on hover — applied via JS in the component, but base transition here */
+.tilt-card {
+  transition: transform 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+/* Color bar on cards */
+.card-color-bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-color-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--bar-color, #6BA3BE);
+  border-radius: 4px 4px 0 0;
+  opacity: 0.8;
+  transition: height 0.3s ease, opacity 0.3s ease;
+}
+
+.card-color-bar:hover::before {
+  height: 6px;
+  opacity: 1;
+}
+
+/* =============================================
+   HERO — Watercolor Stroke Animation
+   ============================================= */
+
+@keyframes paint-reveal {
+  0% {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.6;
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+.paint-stroke-animated {
+  animation: paint-reveal 1.2s ease-out forwards;
+  animation-delay: 0.8s;
+  clip-path: inset(0 100% 0 0);
+}
+
+/* Hero floating blobs */
+@keyframes hero-blob-1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translate(40px, -30px) scale(1.1) rotate(10deg);
+  }
+  50% {
+    transform: translate(-20px, 20px) scale(0.95) rotate(-5deg);
+  }
+  75% {
+    transform: translate(30px, 10px) scale(1.05) rotate(8deg);
+  }
+}
+
+@keyframes hero-blob-2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate(-30px, 25px) scale(1.08) rotate(-8deg);
+  }
+  66% {
+    transform: translate(25px, -15px) scale(0.97) rotate(6deg);
+  }
+}
+
+.hero-blob-1 {
+  animation: hero-blob-1 16s ease-in-out infinite;
+}
+
+.hero-blob-2 {
+  animation: hero-blob-2 20s ease-in-out infinite;
+}
+
+.hero-blob-3 {
+  animation: hero-blob-1 14s ease-in-out infinite reverse;
+}
+
+/* =============================================
+   SCROLL REVEAL
+   ============================================= */
+
 .reveal {
   opacity: 0;
   transform: translateY(24px);
@@ -118,14 +440,10 @@
 .reveal-delay-3 { transition-delay: 0.3s; }
 .reveal-delay-4 { transition-delay: 0.4s; }
 
-/* Parallax hero */
-.parallax-hero {
-  background-attachment: fixed;
-  background-position: center;
-  background-size: cover;
-}
+/* =============================================
+   BRAIN INTERACTIVE
+   ============================================= */
 
-/* Brain interactive glow */
 .brain-region {
   transition: all 0.3s ease;
   cursor: pointer;
@@ -138,7 +456,18 @@
   filter: drop-shadow(0 0 20px rgba(107, 163, 190, 0.8));
 }
 
-/* Blog article prose */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* =============================================
+   BLOG ARTICLE PROSE
+   ============================================= */
+
 .prose-egoera h2 {
   font-family: var(--font-heading);
   color: #2D373C;
@@ -178,7 +507,10 @@
   line-height: 1.7;
 }
 
-/* Diary emoji picker */
+/* =============================================
+   DIARY EMOJI PICKER
+   ============================================= */
+
 .emoji-btn {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -190,27 +522,211 @@
   box-shadow: 0 0 0 3px rgba(107, 163, 190, 0.4);
 }
 
-/* Navbar blur on scroll */
+/* =============================================
+   NAVBAR
+   ============================================= */
+
 .nav-scrolled {
-  backdrop-filter: blur(12px);
-  background-color: rgba(247, 249, 248, 0.9);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background-color: rgba(247, 249, 248, 0.85);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
-/* Pulse animation for brain */
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
-}
-.pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
+/* =============================================
+   CARD HOVER
+   ============================================= */
 
-/* Card hover lift */
 .card-hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .card-hover:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(107, 163, 190, 0.15);
+}
+
+/* =============================================
+   NEWSLETTER — Watercolor Style
+   ============================================= */
+
+.newsletter-watercolor {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(107, 163, 190, 0.06) 0%,
+    rgba(168, 213, 200, 0.08) 50%,
+    rgba(127, 181, 160, 0.06) 100%
+  );
+}
+
+.newsletter-watercolor::before {
+  content: "";
+  position: absolute;
+  top: -30px;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background:
+    radial-gradient(ellipse 100px 30px at 20% 50%, rgba(107, 163, 190, 0.15) 0%, transparent 100%),
+    radial-gradient(ellipse 80px 25px at 50% 50%, rgba(168, 213, 200, 0.12) 0%, transparent 100%),
+    radial-gradient(ellipse 120px 35px at 80% 50%, rgba(127, 181, 160, 0.15) 0%, transparent 100%);
+  filter: blur(10px);
+}
+
+/* =============================================
+   FOOTER — Light watercolor aesthetic
+   ============================================= */
+
+.footer-watercolor {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    #F7F9F8 0%,
+    rgba(168, 213, 200, 0.12) 30%,
+    rgba(107, 163, 190, 0.1) 70%,
+    rgba(127, 181, 160, 0.08) 100%
+  );
+}
+
+.footer-watercolor::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(107, 163, 190, 0.3) 20%,
+    rgba(168, 213, 200, 0.4) 50%,
+    rgba(127, 181, 160, 0.3) 80%,
+    transparent 100%
+  );
+}
+
+/* =============================================
+   RESPONSIVE — Full-width vs mobile
+   ============================================= */
+
+@media (min-width: 1024px) {
+  .watercolor-section::before {
+    width: 700px;
+    height: 700px;
+  }
+  .watercolor-section::after {
+    width: 600px;
+    height: 600px;
+  }
+}
+
+@media (max-width: 768px) {
+  .watercolor-section::before {
+    width: 300px;
+    height: 300px;
+    top: -60px;
+    right: -80px;
+  }
+  .watercolor-section::after {
+    width: 250px;
+    height: 250px;
+    bottom: -50px;
+    left: -60px;
+  }
+
+  .watercolor-divider {
+    height: 40px;
+  }
+
+  .paint-stroke-highlight::before {
+    height: 35%;
+  }
+}
+
+/* =============================================
+   PARALLAX HERO
+   ============================================= */
+
+.parallax-hero {
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+}
+
+/* =============================================
+   PAINT SPLATTER EFFECT — between sections
+   ============================================= */
+
+.paint-splatter {
+  position: relative;
+}
+
+.paint-splatter::after {
+  content: "";
+  position: absolute;
+  bottom: -30px;
+  left: 0;
+  right: 0;
+  height: 60px;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 40px 15px at 10% 50%, rgba(107, 163, 190, 0.2) 0%, transparent 100%),
+    radial-gradient(ellipse 25px 20px at 25% 30%, rgba(168, 213, 200, 0.18) 0%, transparent 100%),
+    radial-gradient(ellipse 35px 12px at 40% 70%, rgba(127, 181, 160, 0.15) 0%, transparent 100%),
+    radial-gradient(ellipse 50px 18px at 60% 40%, rgba(107, 163, 190, 0.12) 0%, transparent 100%),
+    radial-gradient(ellipse 30px 22px at 78% 55%, rgba(168, 213, 200, 0.2) 0%, transparent 100%),
+    radial-gradient(ellipse 45px 14px at 92% 35%, rgba(127, 181, 160, 0.16) 0%, transparent 100%);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+/* =============================================
+   DIARY CTA — Watercolor integrated
+   ============================================= */
+
+.diary-cta-watercolor {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(107, 163, 190, 0.04) 0%,
+    rgba(168, 213, 200, 0.08) 40%,
+    rgba(127, 181, 160, 0.06) 70%,
+    rgba(107, 163, 190, 0.04) 100%
+  );
+}
+
+.diary-cta-watercolor::before {
+  content: "";
+  position: absolute;
+  top: 20%;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(107, 163, 190, 0.12) 0%,
+    transparent 70%
+  );
+  filter: blur(40px);
+  pointer-events: none;
+  animation: watercolor-drift 15s ease-in-out infinite;
+}
+
+.diary-cta-watercolor::after {
+  content: "";
+  position: absolute;
+  bottom: 10%;
+  left: -80px;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(127, 181, 160, 0.1) 0%,
+    transparent 70%
+  );
+  filter: blur(35px);
+  pointer-events: none;
+  animation: watercolor-drift-reverse 18s ease-in-out infinite;
 }

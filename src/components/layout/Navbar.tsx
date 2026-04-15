@@ -5,14 +5,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Brain, BookOpen, PenLine, ExternalLink, GraduationCap, Download, Stethoscope, Mail } from "lucide-react";
+import { Menu, X, BookOpen, PenLine, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/blog", label: "Blog", icon: BookOpen },
-  { href: "/servicios", label: "Servicios", icon: Stethoscope },
   { href: "/recursos", label: "Recursos", icon: Download },
-  { href: "/contacto", label: "Contacto", icon: Mail },
 ];
 
 export function Navbar() {
@@ -40,7 +38,7 @@ export function Navbar() {
         scrolled ? "nav-scrolled py-3" : "bg-transparent py-5"
       )}
     >
-      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <nav className="w-full px-6 sm:px-8 lg:px-12 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
           <Image
@@ -79,14 +77,13 @@ export function Navbar() {
             );
           })}
 
-          {/* Diario CTA */}
+          {/* Diario Emocional — Prominent CTA */}
           <Link
             href="/diario"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-teal text-white rounded-full text-sm font-medium hover:bg-teal/90 transition-all hover:shadow-lg hover:shadow-teal/20"
+            className="inline-flex items-center gap-2 px-6 py-2.5 bg-teal text-white rounded-full text-sm font-medium hover:bg-teal/90 transition-all hover:shadow-lg hover:shadow-teal/20"
           >
             <PenLine className="w-4 h-4" />
             Diario Emocional
-            <ExternalLink className="w-3 h-3 opacity-60" />
           </Link>
         </div>
 
@@ -109,7 +106,7 @@ export function Navbar() {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-white/95 backdrop-blur-xl border-t border-border"
           >
-            <div className="px-4 py-6 space-y-4">
+            <div className="px-6 py-6 space-y-4">
               {navLinks.map((link) => {
                 const Icon = link.icon;
                 const isActive = pathname === link.href;
