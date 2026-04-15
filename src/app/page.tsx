@@ -1,65 +1,111 @@
-import Image from "next/image";
+import { InteractiveBrain } from "@/components/brain/InteractiveBrain";
+import { ScrollReveal } from "@/components/animations/ScrollReveal";
+import { HeroSection } from "@/components/layout/HeroSection";
+import { FeaturedPosts } from "@/components/blog/FeaturedPosts";
+import { NewsletterCTA } from "@/components/layout/NewsletterCTA";
+import { CategoryGrid } from "@/components/blog/CategoryGrid";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <HeroSection />
+
+      {/* Interactive Brain Section */}
+      <section id="explora" className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-warm-bg">
+        <div className="max-w-7xl mx-auto">
+          <ScrollReveal>
+            <div className="text-center mb-12">
+              <span className="text-teal text-sm font-semibold uppercase tracking-widest">
+                Explora por temas
+              </span>
+              <h2 className="text-4xl sm:text-5xl font-bold font-[family-name:var(--font-heading)] text-dark-text mt-3">
+                Tu cerebro, tus temas
+              </h2>
+              <p className="text-grey-text mt-4 max-w-2xl mx-auto text-lg">
+                Cada zona del cerebro conecta con un area de la psicologia.
+                Haz clic y descubre contenido relevante para ti.
+              </p>
+            </div>
+          </ScrollReveal>
+          <ScrollReveal delay={0.2}>
+            <InteractiveBrain />
+          </ScrollReveal>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Categories Grid */}
+      <section className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <ScrollReveal>
+            <div className="text-center mb-12">
+              <span className="text-sage text-sm font-semibold uppercase tracking-widest">
+                Nuestras tematicas
+              </span>
+              <h2 className="text-4xl sm:text-5xl font-bold font-[family-name:var(--font-heading)] text-dark-text mt-3">
+                6 pilares para tu bienestar
+              </h2>
+            </div>
+          </ScrollReveal>
+          <CategoryGrid />
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* Featured Articles */}
+      <section className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <ScrollReveal>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12 gap-4">
+              <div>
+                <span className="text-teal text-sm font-semibold uppercase tracking-widest">
+                  Ultimos articulos
+                </span>
+                <h2 className="text-4xl font-bold font-[family-name:var(--font-heading)] text-dark-text mt-3">
+                  Lee lo mas reciente
+                </h2>
+              </div>
+              <a
+                href="/blog"
+                className="text-teal text-sm font-medium hover:underline"
+              >
+                Ver todos los articulos →
+              </a>
+            </div>
+          </ScrollReveal>
+          <FeaturedPosts />
+        </div>
+      </section>
+
+      {/* Diario Emocional Promo */}
+      <section className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-teal/5 via-mint/10 to-sage/5">
+        <div className="max-w-5xl mx-auto">
+          <ScrollReveal>
+            <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-teal/10 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-teal/10 flex items-center justify-center mx-auto mb-6">
+                <span className="text-3xl">📝</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold font-[family-name:var(--font-heading)] text-dark-text mb-4">
+                Diario Emocional Egoera
+              </h2>
+              <p className="text-grey-text text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+                Registra tu estado de animo diario, detecta patrones emocionales
+                y entiende mejor como te sientes. Tu herramienta personal de bienestar,
+                directamente desde el navegador.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  href="/diario"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-teal text-white rounded-full text-lg font-medium hover:bg-teal/90 transition-all hover:shadow-lg hover:shadow-teal/20"
+                >
+                  Abrir Diario Emocional
+                </a>
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* Newsletter */}
+      <NewsletterCTA />
+    </>
   );
 }

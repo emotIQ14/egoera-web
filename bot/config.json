@@ -1,0 +1,19 @@
+{
+  "telegram": {
+    "chat_id": 8201259371,
+    "username": "@txanduke",
+    "bots": {
+      "macbook": "8781890350:AAHGuGoP2EsY9P1O5p08_3BU2cbB21DltAU",
+      "asus": "8752111954:AAH5S9rzpcP_V8LMs3GBs2op3xdWi80i8A8"
+    }
+  },
+  "wordpress": {
+    "url": "https://egoera.es",
+    "ip": "217.160.0.3",
+    "username": "user13182230948955"
+  },
+  "affiliate": {
+    "amazon_tag": "abc01f7-21"
+  },
+  "email": "hola@egoera.es"
+}
