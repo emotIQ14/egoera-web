@@ -25,23 +25,23 @@ const BRAIN_REGIONS: BrainRegionData[] = [
     category: "regulacion-emocional",
     color: "#6BA3BE",
     theta: 0.3,
-    phi: 0.7,
+    phi: 0.5,
   },
   {
     id: "temporal",
     label: "Lobulo Temporal",
     category: "relaciones-apego",
     color: "#7FB5A0",
-    theta: -Math.PI / 2 + 0.3,
-    phi: Math.PI / 2 + 0.15,
+    theta: -1.2,
+    phi: Math.PI / 2 + 0.1,
   },
   {
     id: "parietal",
     label: "Lobulo Parietal",
     category: "autoconocimiento",
     color: "#A8D5C8",
-    theta: Math.PI - 0.5,
-    phi: 0.6,
+    theta: Math.PI - 0.4,
+    phi: 0.5,
   },
   {
     id: "amigdala",
@@ -49,14 +49,14 @@ const BRAIN_REGIONS: BrainRegionData[] = [
     category: "desmitificacion",
     color: "#E8A87C",
     theta: 0.0,
-    phi: Math.PI / 2 + 0.3,
+    phi: Math.PI / 2 + 0.25,
   },
   {
     id: "broca",
     label: "Area de Broca",
     category: "limites-asertividad",
     color: "#B8A9C9",
-    theta: -Math.PI / 4,
+    theta: -0.7,
     phi: Math.PI / 3,
   },
   {
@@ -65,7 +65,7 @@ const BRAIN_REGIONS: BrainRegionData[] = [
     category: "psicologia-cotidiana",
     color: "#F4B8C1",
     theta: Math.PI,
-    phi: Math.PI / 2 + 0.5,
+    phi: Math.PI / 2 + 0.4,
   },
 ];
 
@@ -129,10 +129,10 @@ const watercolorVertexShader = /* glsl */ `
     vNormal = normalize(normalMatrix * normal);
     vUv = uv;
 
-    // organic deformation — brain-like bumps
-    float displacement = snoise(position * 2.5) * 0.08
-                       + snoise(position * 5.0) * 0.04
-                       + snoise(position * 10.0) * 0.015;
+    // organic deformation — brain-like bumps (high amplitude for visible sulci)
+    float displacement = snoise(position * 2.5) * 0.15
+                       + snoise(position * 5.0) * 0.07
+                       + snoise(position * 10.0) * 0.03;
 
     vec3 newPosition = position + normal * displacement;
     vPosition = newPosition;
@@ -348,17 +348,16 @@ function RegionHotspot({
   );
 }
 
-// --- Brain Mesh (ellipsoid with watercolor shader) ---
+// --- Brain Mesh (two hemispheres + cerebellum + brain stem with watercolor shader) ---
 
 function BrainMesh({
   hoveredRegion,
 }: {
   hoveredRegion: string | null;
 }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const materialRefs = useRef<(THREE.ShaderMaterial | null)[]>([]);
 
-  const uniforms = useMemo(
+  const makeUniforms = useCallback(
     () => ({
       uTime: { value: 0 },
       uColor1: { value: new THREE.Color("#6BA3BE") },
@@ -368,39 +367,86 @@ function BrainMesh({
     [],
   );
 
-  useFrame((state) => {
-    if (materialRef.current) {
-      materialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
-    }
+  const uniformSets = useMemo(
+    () => [makeUniforms(), makeUniforms(), makeUniforms(), makeUniforms()],
+    [makeUniforms],
+  );
 
-    // When a region is hovered, shift the brain color slightly toward it
-    if (hoveredRegion) {
-      const region = BRAIN_REGIONS.find((r) => r.id === hoveredRegion);
-      if (region && materialRef.current) {
-        const hoverColor = new THREE.Color(region.color);
-        materialRef.current.uniforms.uColor1.value.lerp(hoverColor, 0.02);
+  useFrame((state) => {
+    for (const mat of materialRefs.current) {
+      if (!mat) continue;
+      mat.uniforms.uTime.value = state.clock.elapsedTime;
+
+      if (hoveredRegion) {
+        const region = BRAIN_REGIONS.find((r) => r.id === hoveredRegion);
+        if (region) {
+          const hoverColor = new THREE.Color(region.color);
+          mat.uniforms.uColor1.value.lerp(hoverColor, 0.02);
+        }
+      } else {
+        mat.uniforms.uColor1.value.lerp(new THREE.Color("#6BA3BE"), 0.01);
       }
-    } else if (materialRef.current) {
-      // Drift back to base palette
-      materialRef.current.uniforms.uColor1.value.lerp(
-        new THREE.Color("#6BA3BE"),
-        0.01,
-      );
     }
   });
 
+  const setRef = (idx: number) => (el: THREE.ShaderMaterial | null) => {
+    materialRefs.current[idx] = el;
+  };
+
   return (
-    <mesh ref={meshRef} scale={[1.15, 0.9, 1.0]}>
-      <sphereGeometry args={[1, 128, 128]} />
-      <shaderMaterial
-        ref={materialRef}
-        vertexShader={watercolorVertexShader}
-        fragmentShader={watercolorFragmentShader}
-        uniforms={uniforms}
-        transparent
-        side={THREE.DoubleSide}
-      />
-    </mesh>
+    <group>
+      {/* Left hemisphere */}
+      <mesh position={[-0.28, 0.05, 0]} scale={[0.55, 0.75, 0.65]}>
+        <sphereGeometry args={[1, 96, 96]} />
+        <shaderMaterial
+          ref={setRef(0)}
+          vertexShader={watercolorVertexShader}
+          fragmentShader={watercolorFragmentShader}
+          uniforms={uniformSets[0]}
+          transparent
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+
+      {/* Right hemisphere */}
+      <mesh position={[0.28, 0.05, 0]} scale={[0.55, 0.75, 0.65]}>
+        <sphereGeometry args={[1, 96, 96]} />
+        <shaderMaterial
+          ref={setRef(1)}
+          vertexShader={watercolorVertexShader}
+          fragmentShader={watercolorFragmentShader}
+          uniforms={uniformSets[1]}
+          transparent
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+
+      {/* Cerebellum — smaller sphere at back-bottom */}
+      <mesh position={[0, -0.45, -0.35]} scale={[0.38, 0.28, 0.32]}>
+        <sphereGeometry args={[1, 64, 64]} />
+        <shaderMaterial
+          ref={setRef(2)}
+          vertexShader={watercolorVertexShader}
+          fragmentShader={watercolorFragmentShader}
+          uniforms={uniformSets[2]}
+          transparent
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+
+      {/* Brain stem — cylinder at the bottom */}
+      <mesh position={[0, -0.72, -0.18]} rotation={[0.3, 0, 0]} scale={[1, 1, 1]}>
+        <cylinderGeometry args={[0.08, 0.06, 0.35, 24]} />
+        <shaderMaterial
+          ref={setRef(3)}
+          vertexShader={watercolorVertexShader}
+          fragmentShader={watercolorFragmentShader}
+          uniforms={uniformSets[3]}
+          transparent
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+    </group>
   );
 }
 
@@ -411,55 +457,63 @@ function BrainFissures() {
 
   const curves = useMemo(() => {
     const result: THREE.CatmullRomCurve3[] = [];
-    // Central fissure (longitudinal)
+    // Central longitudinal fissure (between hemispheres)
     result.push(
       new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0, 0.85, 0.15),
-        new THREE.Vector3(0.05, 0.5, 0.35),
-        new THREE.Vector3(-0.03, 0.0, 0.45),
-        new THREE.Vector3(0.02, -0.5, 0.35),
-        new THREE.Vector3(0, -0.8, 0.15),
+        new THREE.Vector3(0, 0.7, 0.15),
+        new THREE.Vector3(0, 0.45, 0.35),
+        new THREE.Vector3(0, 0.1, 0.42),
+        new THREE.Vector3(0, -0.25, 0.35),
+        new THREE.Vector3(0, -0.55, 0.15),
       ]),
     );
-    // Lateral fissure
+    // Left lateral fissure (Sylvian)
     result.push(
       new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.4, 0.2, 0.8),
-        new THREE.Vector3(-0.15, 0.15, 0.9),
-        new THREE.Vector3(0.2, 0.05, 0.85),
-        new THREE.Vector3(0.5, -0.1, 0.65),
+        new THREE.Vector3(-0.5, 0.15, 0.45),
+        new THREE.Vector3(-0.35, 0.1, 0.55),
+        new THREE.Vector3(-0.2, 0.0, 0.52),
       ]),
     );
-    // Parieto-occipital
+    // Right lateral fissure
     result.push(
       new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0.1, 0.7, -0.3),
-        new THREE.Vector3(0.05, 0.3, -0.6),
-        new THREE.Vector3(0.0, -0.1, -0.75),
+        new THREE.Vector3(0.5, 0.15, 0.45),
+        new THREE.Vector3(0.35, 0.1, 0.55),
+        new THREE.Vector3(0.2, 0.0, 0.52),
       ]),
     );
-    // Additional curved lines for organic wrinkled look
+    // Left parietal sulcus
     result.push(
       new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.6, 0.5, 0.4),
-        new THREE.Vector3(-0.5, 0.2, 0.65),
-        new THREE.Vector3(-0.3, -0.1, 0.75),
-        new THREE.Vector3(-0.1, -0.4, 0.65),
+        new THREE.Vector3(-0.45, 0.5, 0.2),
+        new THREE.Vector3(-0.4, 0.2, 0.4),
+        new THREE.Vector3(-0.3, -0.1, 0.48),
+        new THREE.Vector3(-0.15, -0.35, 0.4),
       ]),
     );
+    // Right parietal sulcus
     result.push(
       new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0.3, 0.65, 0.45),
-        new THREE.Vector3(0.45, 0.35, 0.6),
-        new THREE.Vector3(0.5, 0.0, 0.55),
-        new THREE.Vector3(0.35, -0.3, 0.65),
+        new THREE.Vector3(0.45, 0.5, 0.2),
+        new THREE.Vector3(0.4, 0.2, 0.4),
+        new THREE.Vector3(0.3, -0.1, 0.48),
+        new THREE.Vector3(0.15, -0.35, 0.4),
+      ]),
+    );
+    // Parieto-occipital (back)
+    result.push(
+      new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0.08, 0.55, -0.25),
+        new THREE.Vector3(0.04, 0.25, -0.45),
+        new THREE.Vector3(0.0, -0.05, -0.5),
       ]),
     );
     return result;
   }, []);
 
   return (
-    <group ref={groupRef} scale={[1.15, 0.9, 1.0]}>
+    <group ref={groupRef}>
       {curves.map((curve, i) => (
         <mesh key={i}>
           <tubeGeometry args={[curve, 32, 0.008, 6, false]} />
@@ -492,9 +546,9 @@ function PaintSplatters() {
       const phi = Math.random() * Math.PI;
       const r = 1.05 + Math.random() * 0.3;
       dummy.position.set(
-        r * Math.sin(phi) * Math.cos(theta) * 1.15,
-        r * Math.cos(phi) * 0.9,
-        r * Math.sin(phi) * Math.sin(theta),
+        r * Math.sin(phi) * Math.cos(theta) * 0.85,
+        r * Math.cos(phi) * 0.78,
+        r * Math.sin(phi) * Math.sin(theta) * 0.7,
       );
       const scale = 0.01 + Math.random() * 0.025;
       dummy.scale.setScalar(scale);
@@ -562,7 +616,7 @@ function ResponsiveCamera() {
 function BrainScene() {
   const [hoveredRegion, setHoveredRegion] = useState<string | null>(null);
   const router = useRouter();
-  const brainRadius = 1.0;
+  const brainRadius = 0.78;
 
   const handleRegionClick = useCallback(
     (category: string) => {

@@ -6,6 +6,7 @@ import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { HeroSection } from "@/components/layout/HeroSection";
 import { NewsletterCTA } from "@/components/layout/NewsletterCTA";
 import { WatercolorBlob } from "@/components/animations/WatercolorBlob";
+import { PaintSplashes } from "@/components/animations/PaintSplashes";
 import { BrainCanvas } from "@/components/brain/BrainCanvas";
 import { Clock, ArrowRight, PenLine } from "lucide-react";
 
@@ -166,6 +167,8 @@ function WatercolorStrokeDivider() {
 export default function HomePage() {
   return (
     <>
+      <PaintSplashes />
+      <div className="floating-particles" aria-hidden="true" />
       <HeroSection />
 
       <WatercolorStrokeDivider />

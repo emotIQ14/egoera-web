@@ -69,9 +69,9 @@ export default function RootLayout({
         <meta name="theme-color" content="#6BA3BE" />
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className="min-h-full flex flex-col antialiased">
+      <body className="min-h-full flex flex-col antialiased overflow-x-hidden">
         <Navbar />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 overflow-x-hidden">{children}</main>
         <Footer />
       </body>
     </html>
