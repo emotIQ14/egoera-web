@@ -5,7 +5,7 @@ import { CheckCircle, Loader2, Mail, X } from "lucide-react";
 import { track } from "@/lib/analytics";
 
 const STORAGE_KEY = "egoera:newsletter-popup-shown";
-const DELAY_MS = 60_000;
+const DELAY_MS = 120_000; // 2 min en desktop, 4 min en movil (ver abajo)
 
 type State = "idle" | "loading" | "success" | "error";
 
@@ -40,6 +40,9 @@ export function ExitIntentPopup() {
     }
     if (alreadyShown) return;
 
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const delay = isMobile ? 240_000 : DELAY_MS; // 4 min movil, 2 min desktop
+
     const show = () => {
       if (alreadyShown) return;
       alreadyShown = true;
@@ -48,16 +51,19 @@ export function ExitIntentPopup() {
       track("exit_intent_shown", {});
     };
 
-    const timer = window.setTimeout(show, DELAY_MS);
+    const timer = window.setTimeout(show, delay);
 
+    // Solo detectar exit intent por mouse en desktop (mouseleave no tiene sentido en movil)
     const handleMouseLeave = (e: MouseEvent) => {
       if (e.clientY <= 0) show();
     };
-    document.addEventListener("mouseleave", handleMouseLeave);
+    if (!isMobile) {
+      document.addEventListener("mouseleave", handleMouseLeave);
+    }
 
     return () => {
       window.clearTimeout(timer);
-      document.removeEventListener("mouseleave", handleMouseLeave);
+      if (!isMobile) document.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, [markShown]);
 

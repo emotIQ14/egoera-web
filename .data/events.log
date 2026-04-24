@@ -1,0 +1,2 @@
+{"event":"exit_intent_shown","payload":{},"url":"/","referrer":null,"ts":1777052343721,"ip":"::1","ua":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Claude/1.3883.0 Chrome/146.0.7680.179 Electron/41.2.0 Safari/537.36"}
+{"event":"exit_intent_dismissed","payload":{},"url":"/","referrer":null,"ts":1777052364109,"ip":"::1","ua":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Claude/1.3883.0 Chrome/146.0.7680.179 Electron/41.2.0 Safari/537.36"}

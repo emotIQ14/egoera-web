@@ -217,23 +217,23 @@ export function GameBoySelector() {
       </div>
 
       {/* Controls */}
-      <div className="flex items-center justify-between px-2 pb-3 pt-12">
+      <div className="flex items-center justify-between gap-2 px-2 pb-3 pt-8 sm:pt-12">
         {/* DPad */}
         <div
-          className="relative h-[120px] w-[120px] rounded-full p-2.5"
+          className="relative h-[92px] w-[92px] shrink-0 rounded-full p-2 sm:h-[120px] sm:w-[120px] sm:p-2.5"
           style={{
             background:
               "radial-gradient(circle at center, rgba(59,111,212,0.18) 0%, transparent 62%)",
           }}
         >
-          <DPadBtn dir="up" onClick={() => move(-1)} className="top-2 left-[41px] rounded-t-lg" />
+          <DPadBtn dir="up" onClick={() => move(-1)} className="top-[4px] left-[31px] sm:top-2 sm:left-[41px] rounded-t-lg" />
           <DPadBtn
             dir="left"
             onClick={() => move(-1)}
-            className="top-[41px] left-2 rounded-l-lg"
+            className="top-[31px] left-[4px] sm:top-[41px] sm:left-2 rounded-l-lg"
           />
           <div
-            className="absolute top-[41px] left-[41px] h-[38px] w-[38px]"
+            className="absolute top-[31px] left-[31px] h-[28px] w-[28px] sm:top-[41px] sm:left-[41px] sm:h-[38px] sm:w-[38px]"
             style={{
               background: "#1a2a5a",
               border: "2px solid rgba(0,0,0,0.7)",
@@ -242,18 +242,18 @@ export function GameBoySelector() {
           <DPadBtn
             dir="right"
             onClick={() => move(1)}
-            className="top-[41px] right-2 rounded-r-lg"
+            className="top-[31px] right-[4px] sm:top-[41px] sm:right-2 rounded-r-lg"
           />
-          <DPadBtn dir="down" onClick={() => move(1)} className="bottom-2 left-[41px] rounded-b-lg" />
+          <DPadBtn dir="down" onClick={() => move(1)} className="bottom-[4px] left-[31px] sm:bottom-2 sm:left-[41px] rounded-b-lg" />
         </div>
 
         {/* Action buttons */}
-        <div className="flex items-center gap-4 -rotate-[20deg]">
+        <div className="flex items-center gap-2.5 -rotate-[20deg] sm:gap-4 shrink-0">
           <button
             type="button"
             onClick={() => move(-1)}
             aria-label="B — atras"
-            className="relative flex h-[58px] w-[58px] items-center justify-center rounded-full border-2 text-[22px]"
+            className="relative flex h-[44px] w-[44px] items-center justify-center rounded-full border-2 text-[16px] sm:h-[58px] sm:w-[58px] sm:text-[22px]"
             style={{
               borderColor: "rgba(0,0,0,0.7)",
               background:
@@ -272,7 +272,7 @@ export function GameBoySelector() {
             type="button"
             onClick={open}
             aria-label="A — abrir sentimiento"
-            className="relative flex h-[68px] w-[68px] items-center justify-center rounded-full border-2 text-[22px]"
+            className="relative flex h-[52px] w-[52px] items-center justify-center rounded-full border-2 text-[18px] sm:h-[68px] sm:w-[68px] sm:text-[22px]"
             style={{
               borderColor: "rgba(0,0,0,0.7)",
               background:
