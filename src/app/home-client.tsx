@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { GameBoySelector } from "@/components/gameboy/GameBoySelector";
-import { BrainMap } from "@/components/brain/BrainMap";
 import { BRAIN_REGIONS, WP_TO_REGION } from "@/lib/egoera-data";
 import type { BlogPost } from "@/lib/blog";
 
@@ -215,46 +214,6 @@ export default function HomeClient({ posts }: Props) {
 
         <div className="relative z-10">
           <GameBoySelector />
-        </div>
-      </section>
-
-      {/* ───────── BRAIN MAP ───────── */}
-      <section id="cerebro" className="px-5 py-28 md:px-12 md:py-32">
-        <div className="mx-auto max-w-[1400px]">
-          <div className="mb-14 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-end">
-            <div>
-              <div className="kicker mb-4">Cerebro · Regiones</div>
-              <h2
-                className="leading-none tracking-[-0.03em]"
-                style={{
-                  fontFamily: "var(--font-serif)",
-                  fontWeight: 300,
-                  fontSize: "clamp(40px, 5vw, 72px)",
-                }}
-              >
-                Seis regiones,
-                <br />
-                <em className="italic" style={{ color: "var(--accent)" }}>
-                  una misma cabeza.
-                </em>
-              </h2>
-            </div>
-            <p
-              className="max-w-md leading-[1.6]"
-              style={{
-                fontFamily: "var(--font-serif)",
-                fontStyle: "italic",
-                fontSize: "18px",
-                color: "var(--ink-dim)",
-              }}
-            >
-              Cada area del cerebro concentra un tipo de experiencia emocional.
-              Pasa el cursor sobre el mapa para saber mas, o entra directamente
-              en la que te llame.
-            </p>
-          </div>
-
-          <BrainMap />
         </div>
       </section>
 

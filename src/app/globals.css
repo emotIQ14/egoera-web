@@ -45,9 +45,9 @@
   --color-sage: #7FB5A0;
   --color-mint: #A8D5C8;
   --color-mint-light: #d4ece5;
-  --color-warm-bg: #0f1311;
-  --color-dark-text: #f4efe6;
-  --color-grey-text: rgba(244, 239, 230, 0.6);
+  --color-warm-bg: #141815;
+  --color-dark-text: #e8e3d6;
+  --color-grey-text: rgba(232, 227, 214, 0.6);
 
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -59,12 +59,13 @@
 }
 
 :root {
-  /* Core palette */
-  --bg: #0f1311;
-  --bg-2: #0b0e0d;
-  --ink: #f4efe6;
-  --ink-dim: rgba(244, 239, 230, 0.72);
-  --ink-faint: rgba(244, 239, 230, 0.42);
+  /* Core palette — warmer, lower-contrast editorial dark */
+  --bg: #141815;
+  --bg-2: #0f1311;
+  --ink: #e8e3d6;
+  --ink-soft: #c7c1b2;
+  --ink-dim: rgba(232, 227, 214, 0.7);
+  --ink-faint: rgba(232, 227, 214, 0.42);
   --accent: #a8c2b6;
   --accent-glow: #b8d4c6;
   --accent-dim: #6f8478;
@@ -110,6 +111,14 @@
   --sidebar-ring: var(--accent);
 }
 
+/* Force dark background before CSS vars resolve (prevents white flash / iOS safe area) */
+html {
+  background-color: #141815;
+}
+body {
+  background-color: #141815;
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -119,6 +128,8 @@
     color: var(--ink);
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+    /* Cover iOS status-bar / notch area with the app bg */
+    background-color: var(--bg);
   }
   body {
     background: var(--bg);
@@ -127,6 +138,10 @@
     font-weight: 300;
     line-height: 1.5;
     overflow-x: hidden;
+    /* Respect iOS safe area so no pale band shows through at the top */
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
   ::selection {
     background: var(--accent);
@@ -202,96 +217,129 @@ body::before {
 .prose-egoera {
   font-family: var(--font-serif, "Fraunces", serif);
   font-size: 20px;
-  line-height: 1.7;
+  line-height: 1.78;
   color: var(--ink-dim);
   font-weight: 300;
 }
 .prose-egoera p {
-  margin-bottom: 1.6rem;
+  margin-bottom: 1.9rem;
   color: var(--ink-dim);
 }
 .prose-egoera p:first-of-type::first-letter {
   font-family: var(--font-serif, "Fraunces", serif);
   font-style: italic;
-  font-weight: 300;
-  font-size: 5.2em;
-  line-height: 0.85;
+  font-weight: 400;
+  font-size: 7.2em;
+  line-height: 0.82;
   float: left;
-  padding-right: 14px;
-  padding-top: 6px;
-  color: var(--accent);
+  padding-right: 18px;
+  padding-top: 10px;
+  padding-bottom: 2px;
+  color: var(--region-c, var(--accent));
+  text-shadow: 0 0 30px rgba(168, 194, 182, 0.12);
 }
 .prose-egoera h1,
 .prose-egoera h2 {
   font-family: var(--font-serif, "Fraunces", serif);
-  font-size: 36px;
+  font-size: clamp(32px, 3.6vw, 44px);
   font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  margin: 3.5rem 0 1.25rem;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  margin: 4rem 0 1.5rem;
   color: var(--ink);
+  position: relative;
+  padding-top: 1.5rem;
+}
+.prose-egoera h2::before {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 2px;
+  background: var(--region-c, var(--accent));
+  margin-bottom: 1.5rem;
+  border-radius: 2px;
 }
 .prose-egoera h2 em {
   font-style: italic;
-  color: var(--accent);
+  color: var(--region-c, var(--accent));
 }
 .prose-egoera h3 {
   font-family: var(--font-serif, "Fraunces", serif);
-  font-size: 24px;
-  font-weight: 500;
+  font-size: 26px;
+  font-weight: 400;
   font-style: italic;
-  margin: 2.5rem 0 1rem;
-  color: var(--ink);
+  margin: 2.8rem 0 1rem;
+  color: var(--region-c, var(--accent));
+  letter-spacing: -0.015em;
 }
 .prose-egoera em {
-  color: var(--accent);
+  color: var(--region-c, var(--accent));
 }
 .prose-egoera strong {
   color: var(--ink);
   font-weight: 500;
 }
 .prose-egoera a {
-  color: var(--accent);
+  color: var(--region-c, var(--accent));
   text-decoration: underline;
   text-decoration-color: rgba(168, 194, 182, 0.35);
   text-underline-offset: 3px;
 }
 .prose-egoera a:hover {
-  text-decoration-color: var(--accent);
+  text-decoration-color: var(--region-c, var(--accent));
 }
 .prose-egoera blockquote {
-  margin: 3rem 0;
-  padding: 0 2rem;
-  border-left: 2px solid var(--accent);
+  margin: 3.5rem 0;
+  padding: 0.5rem 0 0.5rem 2.5rem;
+  border-left: 3px solid var(--region-c, var(--accent));
   font-family: var(--font-serif, "Fraunces", serif);
-  font-size: 28px;
+  font-size: clamp(24px, 2.6vw, 32px);
   font-style: italic;
   font-weight: 300;
-  line-height: 1.35;
+  line-height: 1.28;
   color: var(--ink);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
+  position: relative;
+}
+.prose-egoera blockquote::before {
+  content: "\201C";
+  position: absolute;
+  top: -0.4rem;
+  left: 2rem;
+  font-family: var(--font-serif, "Fraunces", serif);
+  font-size: 5rem;
+  line-height: 1;
+  color: var(--region-c, var(--accent));
+  opacity: 0.35;
+}
+.prose-egoera blockquote p {
+  margin: 0;
+  color: inherit;
 }
 .prose-egoera ul,
 .prose-egoera ol {
   list-style: none;
   padding: 0;
-  margin: 1.75rem 0;
+  margin: 2rem 0;
 }
 .prose-egoera ul li,
 .prose-egoera ol li {
   font-family: var(--font-serif, "Fraunces", serif);
   font-size: 19px;
-  line-height: 1.65;
+  line-height: 1.7;
   color: var(--ink-dim);
-  padding: 0.75rem 0 0.75rem 2rem;
+  padding: 0.85rem 0 0.85rem 2.25rem;
   border-bottom: 1px solid var(--rule);
   position: relative;
 }
 .prose-egoera ul li::before {
-  content: "—";
+  content: "\2014";
   position: absolute;
   left: 0;
-  color: var(--accent);
+  top: 0.9rem;
+  color: var(--region-c, var(--accent));
+  font-weight: 400;
+  font-size: 1.1em;
 }
 .prose-egoera ol {
   counter-reset: li;
@@ -301,11 +349,14 @@ body::before {
   content: counter(li, decimal-leading-zero);
   position: absolute;
   left: 0;
-  font-family: var(--font-mono, "JetBrains Mono", monospace);
-  font-size: 12px;
-  color: var(--accent);
-  letter-spacing: 0.1em;
-  top: 0.95rem;
+  font-family: var(--font-serif, "Fraunces", serif);
+  font-style: italic;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--region-c, var(--accent));
+  letter-spacing: -0.01em;
+  top: 0.85rem;
+  line-height: 1;
 }
 .prose-egoera ul li:last-child,
 .prose-egoera ol li:last-child {
@@ -314,14 +365,16 @@ body::before {
 .prose-egoera img,
 .prose-egoera figure img,
 .prose-egoera .wp-block-image img {
-  border-radius: 2px;
-  margin: 2rem 0;
+  border-radius: 3px;
+  margin: 2.5rem 0;
   max-width: 100%;
   height: auto;
-  filter: brightness(0.9);
+  filter: brightness(0.92);
+  border: 1px solid var(--rule);
+  box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.7);
 }
 .prose-egoera figure {
-  margin: 2rem 0;
+  margin: 2.5rem 0;
 }
 .prose-egoera figcaption,
 .prose-egoera .wp-element-caption {
@@ -329,8 +382,8 @@ body::before {
   font-size: 11px;
   color: var(--ink-faint);
   text-align: center;
-  margin-top: 0.75rem;
-  letter-spacing: 0.08em;
+  margin-top: 0.85rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 .prose-egoera pre {
@@ -547,6 +600,7 @@ body::before {
     border-radius: 16px 16px 22px 22px;
     margin-left: auto;
     margin-right: auto;
+    max-width: calc(100vw - 16px);
   }
   .gb-device::before,
   .gb-device::after {
@@ -557,6 +611,26 @@ body::before {
     min-height: 380px;
     font-size: 11.5px;
     border-width: 6px;
+  }
+}
+
+@media (max-width: 400px) {
+  .gb-device {
+    /* Simpler card layout for very small screens — drop the angular gameboy gradient */
+    background: linear-gradient(
+      160deg,
+      var(--gb-cream) 0%,
+      #ede7d5 100%
+    );
+    padding: 16px 12px 16px;
+    border-radius: 18px;
+    max-width: calc(100vw - 12px);
+  }
+  .gb-screen {
+    padding: 10px 8px;
+    min-height: 360px;
+    border-width: 5px;
+    font-size: 11px;
   }
 }
 

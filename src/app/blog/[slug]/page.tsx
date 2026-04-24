@@ -64,12 +64,18 @@ export default async function PostPage({ params }: Props) {
   const allRelated = post.categorySlug
     ? await getPostsByCategory(post.categorySlug)
     : [];
-  const related = allRelated.filter((p) => p.slug !== post.slug).slice(0, 2);
+  const related = allRelated.filter((p) => p.slug !== post.slug).slice(0, 3);
 
   const { intro, middle, end } = splitContentForAds(post.content);
 
   const glyph = "◌";
   const archiveNum = "N\u00BA " + post.slug.length.toString().padStart(3, "0");
+  const year = new Date(post.dateISO).getFullYear();
+  const wordCount = post.content.replace(/<[^>]+>/g, " ").trim().split(/\s+/).filter(Boolean).length;
+  const formattedWords = wordCount.toLocaleString("es-ES");
+
+  const shareUrl = `https://egoera.es/blog/${post.slug}`;
+  const shareText = encodeURIComponent(`${post.title} — Egoera`);
 
   return (
     <>
@@ -85,6 +91,24 @@ export default async function PostPage({ params }: Props) {
       >
         {/* Header */}
         <header className="relative mx-auto max-w-[880px] px-5 pt-16 pb-8 md:px-12">
+          {/* Archive stamp */}
+          <div
+            className="mb-8 flex items-center justify-between gap-4 text-[10px] uppercase tracking-[0.28em]"
+            style={{
+              color: accent,
+              fontFamily: "var(--font-mono)",
+            }}
+          >
+            <div className="flex items-center gap-3">
+              <span
+                className="inline-block h-[7px] w-[7px] rounded-full"
+                style={{ background: accent, boxShadow: `0 0 10px ${accent}` }}
+              />
+              <span>Egoera {archiveNum} / {year}</span>
+            </div>
+            <span style={{ color: "var(--ink-faint)" }}>{region?.name ?? "Archivo"}</span>
+          </div>
+
           <div
             className="mb-10 flex flex-wrap gap-2.5 text-[11px] uppercase tracking-[0.18em]"
             style={{
@@ -95,7 +119,7 @@ export default async function PostPage({ params }: Props) {
             <Link
               href="/"
               className="hover:text-[color:var(--accent)]"
-              style={{ color: "var(--ink-dim)" }}
+              style={{ color: "var(--ink-soft)" }}
             >
               vlog
             </Link>
@@ -104,7 +128,7 @@ export default async function PostPage({ params }: Props) {
               <Link
                 href={`/categoria/${region.id}`}
                 className="hover:text-[color:var(--accent)]"
-                style={{ color: "var(--ink-dim)" }}
+                style={{ color: "var(--ink-soft)" }}
               >
                 {region.name.toLowerCase()}
               </Link>
@@ -112,7 +136,7 @@ export default async function PostPage({ params }: Props) {
               <Link
                 href="/blog"
                 className="hover:text-[color:var(--accent)]"
-                style={{ color: "var(--ink-dim)" }}
+                style={{ color: "var(--ink-soft)" }}
               >
                 archivo
               </Link>
@@ -168,6 +192,13 @@ export default async function PostPage({ params }: Props) {
             </p>
           )}
 
+          {/* Meta badges */}
+          <div className="mb-7 flex flex-wrap gap-2.5">
+            <MetaBadge label="Lectura" value={post.readTime} accent={accent} />
+            <MetaBadge label="Palabras" value={formattedWords} accent={accent} />
+            <MetaBadge label="Publicado" value={post.date} accent={accent} />
+          </div>
+
           <div
             className="flex flex-wrap items-center gap-8 border-y py-7"
             style={{ borderColor: "var(--rule)" }}
@@ -176,7 +207,7 @@ export default async function PostPage({ params }: Props) {
               <div
                 className="flex h-12 w-12 items-center justify-center rounded-full"
                 style={{
-                  background: `radial-gradient(circle at 35% 30%, #d6e4dc, var(--accent-dim))`,
+                  background: `radial-gradient(circle at 35% 30%, #d6e4dc, ${accent})`,
                   color: "var(--bg)",
                   fontFamily: "var(--font-serif)",
                   fontStyle: "italic",
@@ -302,7 +333,7 @@ export default async function PostPage({ params }: Props) {
               style={{
                 fontFamily: "var(--font-serif)",
                 fontSize: 32,
-                color: "var(--accent)",
+                color: accent,
               }}
             >
               ◎
@@ -317,6 +348,95 @@ export default async function PostPage({ params }: Props) {
             >
               Texto publicado en Egoera, el vlog personal de Ander Bilbao desde
               Donostia. Psicologia, despacio.
+            </div>
+          </div>
+
+          {/* Share row */}
+          <div
+            className="mt-10 flex flex-wrap items-center justify-between gap-4 rounded-sm border px-6 py-5"
+            style={{
+              borderColor: "var(--rule)",
+              background: "rgba(12,16,14,0.5)",
+            }}
+          >
+            <div
+              className="text-[11px] uppercase tracking-[0.22em]"
+              style={{
+                color: accent,
+                fontFamily: "var(--font-mono)",
+              }}
+            >
+              Compartir este articulo
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <ShareLink
+                label="Twitter"
+                href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${shareText}`}
+              />
+              <ShareLink
+                label="LinkedIn"
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
+              />
+              <ShareLink
+                label="WhatsApp"
+                href={`https://wa.me/?text=${shareText}%20${encodeURIComponent(shareUrl)}`}
+              />
+              <ShareLink
+                label="Copiar URL"
+                href={shareUrl}
+                copy
+              />
+            </div>
+          </div>
+
+          {/* Author footer */}
+          <div
+            className="mt-12 flex flex-wrap items-center gap-6 rounded-sm border p-7"
+            style={{
+              borderColor: "var(--rule)",
+              background: "rgba(12,16,14,0.5)",
+            }}
+          >
+            <div
+              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full"
+              style={{
+                background: `radial-gradient(circle at 35% 30%, #d6e4dc, ${accent})`,
+                color: "var(--bg)",
+                fontFamily: "var(--font-serif)",
+                fontStyle: "italic",
+                fontSize: 28,
+                fontWeight: 400,
+              }}
+            >
+              A
+            </div>
+            <div className="flex-1 min-w-[220px]">
+              <div
+                className="text-[10px] uppercase tracking-[0.22em]"
+                style={{
+                  color: accent,
+                  fontFamily: "var(--font-mono)",
+                }}
+              >
+                Escrito por
+              </div>
+              <div
+                className="mt-1.5 text-[22px] leading-tight"
+                style={{ fontFamily: "var(--font-serif)" }}
+              >
+                Ander Bilbao Castejon
+              </div>
+              <div
+                className="mt-1 text-[13px]"
+                style={{
+                  color: "var(--ink-soft)",
+                  fontFamily: "var(--font-serif)",
+                  fontStyle: "italic",
+                }}
+              >
+                Psicologo desde Donostia. Escribe sobre regulacion emocional,
+                apego y autoconocimiento en Egoera.
+              </div>
             </div>
           </div>
         </div>
@@ -338,58 +458,104 @@ export default async function PostPage({ params }: Props) {
             className="mx-auto mt-20 max-w-[1200px] border-t px-5 pb-20 pt-16 md:px-12"
             style={{ borderColor: "var(--rule)" }}
           >
-            <div
-              className="mb-6 text-[11px] uppercase tracking-[0.22em]"
-              style={{
-                color: accent,
-                fontFamily: "var(--font-mono)",
-              }}
-            >
-              Seguir leyendo sobre {region?.name ?? "este tema"}
+            <div className="mb-8 flex flex-wrap items-end justify-between gap-6">
+              <div>
+                <div
+                  className="mb-3 text-[11px] uppercase tracking-[0.22em]"
+                  style={{
+                    color: accent,
+                    fontFamily: "var(--font-mono)",
+                  }}
+                >
+                  Seguir leyendo
+                </div>
+                <h3
+                  className="leading-none tracking-[-0.03em]"
+                  style={{
+                    fontFamily: "var(--font-serif)",
+                    fontSize: "clamp(32px, 4vw, 48px)",
+                    fontWeight: 300,
+                  }}
+                >
+                  Sobre{" "}
+                  <em className="italic" style={{ color: accent }}>
+                    {region?.name?.toLowerCase() ?? "este tema"}
+                  </em>
+                </h3>
+              </div>
             </div>
-            <div className="grid gap-8 md:grid-cols-2">
-              {related.map((n) => (
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {related.map((n, i) => (
                 <Link
                   key={n.slug}
                   href={`/blog/${n.slug}`}
-                  className="relative flex flex-col gap-4 rounded-sm border p-8 transition-all hover:-translate-y-0.5"
+                  className="group relative flex flex-col overflow-hidden rounded-sm border transition-all hover:-translate-y-1 hover:border-[color:var(--region-c,var(--accent))]"
                   style={{
                     borderColor: "var(--rule)",
-                    background: "rgba(12,16,14,0.4)",
+                    background: "rgba(12,16,14,0.5)",
                   }}
                 >
                   <div
-                    className="text-[10px] uppercase tracking-[0.2em]"
+                    className="relative aspect-[16/10] overflow-hidden"
                     style={{
-                      color: accent,
-                      fontFamily: "var(--font-mono)",
+                      background: `linear-gradient(135deg, ${c1}, ${c2})`,
                     }}
                   >
-                    {n.category} · {n.readTime}
-                  </div>
-                  <h4
-                    className="leading-[1.2] tracking-[-0.01em]"
-                    style={{
-                      fontFamily: "var(--font-serif)",
-                      fontSize: 28,
-                      fontWeight: 400,
-                    }}
-                  >
-                    {n.title}
-                  </h4>
-                  {n.excerpt && (
-                    <p
-                      className="line-clamp-2"
+                    <div
+                      className="absolute inset-0 flex items-center justify-center transition-transform duration-700 group-hover:scale-105"
                       style={{
                         fontFamily: "var(--font-serif)",
                         fontStyle: "italic",
-                        fontSize: 15,
-                        color: "var(--ink-faint)",
+                        fontSize: 140,
+                        color: "rgba(244,239,230,0.12)",
+                        lineHeight: 0.7,
                       }}
                     >
-                      {n.excerpt}
-                    </p>
-                  )}
+                      {["◌", "◐", "✦"][i % 3]}
+                    </div>
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background:
+                          "linear-gradient(to bottom, transparent 50%, rgba(15,19,17,0.5))",
+                      }}
+                    />
+                  </div>
+                  <div className="flex flex-1 flex-col gap-4 p-7">
+                    <div
+                      className="text-[10px] uppercase tracking-[0.2em]"
+                      style={{
+                        color: accent,
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      {n.category} · {n.readTime}
+                    </div>
+                    <h4
+                      className="leading-[1.15] tracking-[-0.015em] transition-colors group-hover:text-[color:var(--region-c,var(--accent))]"
+                      style={{
+                        fontFamily: "var(--font-serif)",
+                        fontSize: 24,
+                        fontWeight: 400,
+                      }}
+                    >
+                      {n.title}
+                    </h4>
+                    {n.excerpt && (
+                      <p
+                        className="line-clamp-3"
+                        style={{
+                          fontFamily: "var(--font-serif)",
+                          fontStyle: "italic",
+                          fontSize: 15,
+                          color: "var(--ink-faint)",
+                          lineHeight: 1.55,
+                        }}
+                      >
+                        {n.excerpt}
+                      </p>
+                    )}
+                  </div>
                 </Link>
               ))}
             </div>
@@ -453,5 +619,68 @@ function MetaCol({ label, value }: { label: string; value: string }) {
         {value}
       </span>
     </div>
+  );
+}
+
+function MetaBadge({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: string;
+  accent: string;
+}) {
+  return (
+    <span
+      className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px]"
+      style={{
+        borderColor: `${accent}40`,
+        background: `${accent}0c`,
+        fontFamily: "var(--font-mono)",
+        letterSpacing: "0.12em",
+      }}
+    >
+      <span
+        className="uppercase"
+        style={{ color: accent }}
+      >
+        {label}
+      </span>
+      <span style={{ color: "var(--ink-soft)" }}>·</span>
+      <span style={{ color: "var(--ink)", fontFamily: "var(--font-sans)", letterSpacing: 0 }}>
+        {value}
+      </span>
+    </span>
+  );
+}
+
+function ShareLink({
+  label,
+  href,
+  copy,
+}: {
+  label: string;
+  href: string;
+  copy?: boolean;
+}) {
+  return (
+    <a
+      href={href}
+      target={copy ? undefined : "_blank"}
+      rel={copy ? undefined : "noopener noreferrer"}
+      className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[12px] transition-colors hover:border-[color:var(--region-c,var(--accent))] hover:text-[color:var(--region-c,var(--accent))]"
+      style={{
+        borderColor: "var(--rule)",
+        color: "var(--ink-soft)",
+        fontFamily: "var(--font-sans)",
+      }}
+    >
+      <span
+        className="inline-block h-1.5 w-1.5 rounded-full"
+        style={{ background: "var(--region-c, var(--accent))" }}
+      />
+      {label}
+    </a>
   );
 }

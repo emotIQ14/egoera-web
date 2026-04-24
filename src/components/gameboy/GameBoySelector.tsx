@@ -218,22 +218,27 @@ export function GameBoySelector() {
 
       {/* Controls */}
       <div className="flex items-center justify-between gap-2 px-2 pb-3 pt-8 sm:pt-12">
-        {/* DPad */}
+        {/* DPad — cruz de 3x3 celdas de 28px (mobile) / 38px (desktop).
+            Container: 92px = 4 + 28 + 28 + 28 + 4. Desktop 120 = 4 + 38 + 38 + 38 + 4. */}
         <div
-          className="relative h-[92px] w-[92px] shrink-0 rounded-full p-2 sm:h-[120px] sm:w-[120px] sm:p-2.5"
+          className="relative h-[92px] w-[92px] shrink-0 rounded-full sm:h-[120px] sm:w-[120px]"
           style={{
             background:
               "radial-gradient(circle at center, rgba(59,111,212,0.18) 0%, transparent 62%)",
           }}
         >
-          <DPadBtn dir="up" onClick={() => move(-1)} className="top-[4px] left-[31px] sm:top-2 sm:left-[41px] rounded-t-lg" />
+          <DPadBtn
+            dir="up"
+            onClick={() => move(-1)}
+            className="top-[4px] left-[32px] sm:top-[4px] sm:left-[41px] rounded-t-lg"
+          />
           <DPadBtn
             dir="left"
             onClick={() => move(-1)}
-            className="top-[31px] left-[4px] sm:top-[41px] sm:left-2 rounded-l-lg"
+            className="top-[32px] left-[4px] sm:top-[41px] sm:left-[4px] rounded-l-lg"
           />
           <div
-            className="absolute top-[31px] left-[31px] h-[28px] w-[28px] sm:top-[41px] sm:left-[41px] sm:h-[38px] sm:w-[38px]"
+            className="absolute top-[32px] left-[32px] h-[28px] w-[28px] sm:top-[41px] sm:left-[41px] sm:h-[38px] sm:w-[38px]"
             style={{
               background: "#1a2a5a",
               border: "2px solid rgba(0,0,0,0.7)",
@@ -242,9 +247,13 @@ export function GameBoySelector() {
           <DPadBtn
             dir="right"
             onClick={() => move(1)}
-            className="top-[31px] right-[4px] sm:top-[41px] sm:right-2 rounded-r-lg"
+            className="top-[32px] right-[4px] sm:top-[41px] sm:right-[4px] rounded-r-lg"
           />
-          <DPadBtn dir="down" onClick={() => move(1)} className="bottom-[4px] left-[31px] sm:bottom-2 sm:left-[41px] rounded-b-lg" />
+          <DPadBtn
+            dir="down"
+            onClick={() => move(1)}
+            className="bottom-[4px] left-[32px] sm:bottom-[4px] sm:left-[41px] rounded-b-lg"
+          />
         </div>
 
         {/* Action buttons */}
@@ -337,7 +346,7 @@ function DPadBtn({
       type="button"
       onClick={onClick}
       aria-label={`Mover ${dir}`}
-      className={`absolute flex h-[38px] w-[38px] items-center justify-center border-2 text-[11px] font-bold text-white/90 transition-[filter] active:scale-95 active:brightness-75 ${className}`}
+      className={`absolute flex h-[28px] w-[28px] items-center justify-center border-2 text-[10px] font-bold text-white/90 transition-[filter] active:scale-95 active:brightness-75 sm:h-[38px] sm:w-[38px] sm:text-[11px] ${className}`}
       style={{
         background: "linear-gradient(145deg, var(--gb-blue), #2a4fa0)",
         borderColor: "rgba(0,0,0,0.7)",

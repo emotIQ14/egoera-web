@@ -85,9 +85,9 @@ export function DarkNav() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative text-[13.5px] transition-colors"
+                className="relative text-[13.5px] transition-colors hover:text-[color:var(--accent)]"
                 style={{
-                  color: active ? "var(--ink)" : "var(--ink-dim)",
+                  color: active ? "var(--ink)" : "var(--ink-soft)",
                   fontFamily: "var(--font-sans)",
                 }}
               >
@@ -149,7 +149,7 @@ export function DarkNav() {
                 href={link.href}
                 className="py-3 text-base"
                 style={{
-                  color: "var(--ink-dim)",
+                  color: "var(--ink-soft)",
                   fontFamily: "var(--font-sans)",
                 }}
               >

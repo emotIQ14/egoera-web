@@ -77,7 +77,7 @@ export function DarkFooter() {
                     href={`/categoria/${r.id}`}
                     className="text-sm transition-colors hover:text-[color:var(--accent)]"
                     style={{
-                      color: "var(--ink-dim)",
+                      color: "var(--ink-soft)",
                       fontFamily: "var(--font-sans)",
                     }}
                   >
@@ -112,7 +112,7 @@ export function DarkFooter() {
                     href={link.href}
                     className="text-sm transition-colors hover:text-[color:var(--accent)]"
                     style={{
-                      color: "var(--ink-dim)",
+                      color: "var(--ink-soft)",
                       fontFamily: "var(--font-sans)",
                     }}
                   >

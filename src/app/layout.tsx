@@ -86,13 +86,21 @@ export default function RootLayout({
     <html
       lang="es"
       className={`${fraunces.variable} ${inter.variable} ${jetbrainsMono.variable} h-full`}
+      style={{ backgroundColor: "#141815" }}
     >
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#0f1311" />
+        <meta name="theme-color" content="#141815" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
         <link rel="icon" type="image/png" href="/egoera-logo.png" />
       </head>
-      <body className="min-h-full flex flex-col antialiased overflow-x-hidden">
+      <body
+        className="min-h-full flex flex-col antialiased overflow-x-hidden"
+        style={{ backgroundColor: "#141815" }}
+      >
         <DarkNav />
         <main className="flex-1 overflow-x-hidden">{children}</main>
         <DarkFooter />
