@@ -1,13 +1,15 @@
 import { getAllPosts, CATEGORIES } from "@/lib/blog";
 import type { MetadataRoute } from "next";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 3600;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://egoera.es";
-  const posts = getAllPosts();
+  const posts = await getAllPosts();
 
   const blogPosts = posts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: new Date(post.date),
+    lastModified: post.dateISO ? new Date(post.dateISO) : new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));

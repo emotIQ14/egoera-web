@@ -506,6 +506,55 @@
   margin-bottom: 0.5rem;
   line-height: 1.7;
 }
+.prose-egoera img,
+.prose-egoera figure img,
+.prose-egoera .wp-block-image img {
+  border-radius: 0.75rem;
+  margin: 1.5rem 0;
+  max-width: 100%;
+  height: auto;
+}
+.prose-egoera figure {
+  margin: 1.5rem 0;
+}
+.prose-egoera figcaption,
+.prose-egoera .wp-element-caption {
+  font-size: 0.85rem;
+  color: #78878C;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+.prose-egoera pre {
+  background: #2D373C;
+  color: #F7F9F8;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  margin: 1.25rem 0;
+  font-size: 0.85rem;
+}
+.prose-egoera code {
+  background: rgba(107, 163, 190, 0.1);
+  color: #2D373C;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+}
+.prose-egoera pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+.prose-egoera hr {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 2rem 0;
+}
+.prose-egoera iframe {
+  max-width: 100%;
+  border-radius: 0.75rem;
+  margin: 1.5rem 0;
+}
 
 /* =============================================
    DIARY EMOJI PICKER

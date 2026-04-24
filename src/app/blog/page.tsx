@@ -14,8 +14,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogPage() {
-  const posts = getAllPosts();
+// Revalidate the blog index hourly so new WordPress posts appear.
+export const revalidate = 3600;
+
+export default async function BlogPage() {
+  const posts = await getAllPosts();
 
   return (
     <div className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">

@@ -1,24 +1,35 @@
 import { notFound } from "next/navigation";
-import { getAllPosts, getPostBySlug, CATEGORIES } from "@/lib/blog";
-import { MDXRemote } from "next-mdx-remote/rsc";
+import {
+  getAllPosts,
+  getPostBySlug,
+  getPostsByCategory,
+  CATEGORIES,
+} from "@/lib/blog";
 import Link from "next/link";
 import { Clock, ArrowLeft, Share2 } from "lucide-react";
 import { AdSlot } from "@/components/blog/AdSlot";
 import { BuyMeCoffee } from "@/components/blog/BuyMeCoffee";
 import { AffiliateBooks } from "@/components/blog/AffiliateBooks";
+import { PremiumCTA } from "@/components/monetization/PremiumCTA";
+import { SponsoredSlot } from "@/components/monetization/SponsoredSlot";
+import { splitContentForAds } from "@/lib/content-inject";
 import type { Metadata } from "next";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
+// Regenerate post pages hourly.
+export const revalidate = 3600;
+
 export async function generateStaticParams() {
-  return getAllPosts().map((post) => ({ slug: post.slug }));
+  const posts = await getAllPosts();
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post) return {};
 
   return {
@@ -28,27 +39,33 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: post.title,
       description: post.excerpt,
       type: "article",
-      publishedTime: post.date,
+      publishedTime: post.dateISO,
       authors: [post.author],
       tags: post.tags,
+      images: post.coverImage ? [{ url: post.coverImage }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.excerpt,
+      images: post.coverImage ? [post.coverImage] : undefined,
     },
   };
 }
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post) notFound();
 
   const catInfo = CATEGORIES[post.categorySlug];
-  const relatedPosts = getAllPosts()
-    .filter((p) => p.categorySlug === post.categorySlug && p.slug !== post.slug)
-    .slice(0, 3);
+  const allRelated = post.categorySlug
+    ? await getPostsByCategory(post.categorySlug)
+    : [];
+  const relatedPosts = allRelated.filter((p) => p.slug !== post.slug).slice(0, 3);
+
+  // Divide el HTML del articulo para intercalar slots
+  const { intro, middle, end } = splitContentForAds(post.content);
 
   return (
     <article className="pt-24 pb-20">
@@ -63,12 +80,14 @@ export default async function BlogPostPage({ params }: Props) {
         </Link>
 
         <div className="flex items-center gap-3 mb-4">
-          <span
-            className="px-3 py-1 rounded-full text-xs font-medium text-white"
-            style={{ backgroundColor: catInfo?.color ?? "#6BA3BE" }}
-          >
-            {post.category}
-          </span>
+          {post.category && (
+            <span
+              className="px-3 py-1 rounded-full text-xs font-medium text-white"
+              style={{ backgroundColor: catInfo?.color ?? "#6BA3BE" }}
+            >
+              {post.category}
+            </span>
+          )}
           <span className="text-sm text-grey-text">{post.date}</span>
           <span className="flex items-center gap-1 text-sm text-grey-text">
             <Clock className="w-3.5 h-3.5" />
@@ -80,9 +99,11 @@ export default async function BlogPostPage({ params }: Props) {
           {post.title}
         </h1>
 
-        <p className="text-lg text-grey-text mt-4 leading-relaxed">
-          {post.excerpt}
-        </p>
+        {post.excerpt && (
+          <p className="text-lg text-grey-text mt-4 leading-relaxed">
+            {post.excerpt}
+          </p>
+        )}
 
         <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
           <div className="flex items-center gap-3">
@@ -103,16 +124,56 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
       </header>
 
-      {/* Content */}
-      <div className="px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto prose-egoera">
-        <MDXRemote source={post.content} />
+      {/* Content with interleaved monetization slots */}
+      <div className="px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
+        {intro && (
+          <div
+            className="prose-egoera"
+            dangerouslySetInnerHTML={{ __html: intro }}
+          />
+        )}
+
+        {/* After intro: in-article ad + native affiliate */}
+        {intro && middle && (
+          <>
+            <AdSlot slot="1111111111" display="in-article" />
+            <AffiliateBooks
+              categorySlug={post.categorySlug}
+              source={`post:${post.slug}`}
+              variant="native"
+            />
+          </>
+        )}
+
+        {middle && (
+          <div
+            className="prose-egoera"
+            dangerouslySetInnerHTML={{ __html: middle }}
+          />
+        )}
+
+        {/* Mid-article: premium CTA between h2s */}
+        {middle && end && (
+          <PremiumCTA source={`post:${post.slug}`} />
+        )}
+
+        {end && (
+          <div
+            className="prose-egoera"
+            dangerouslySetInnerHTML={{ __html: end }}
+          />
+        )}
       </div>
 
-      {/* Monetization: Ad + Affiliate + Coffee */}
+      {/* End-of-article monetization stack */}
       <div className="px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
-        <AdSlot slot="post-bottom" />
-        <AffiliateBooks categorySlug={post.categorySlug} />
-        <BuyMeCoffee />
+        <AdSlot slot="2222222222" display="native" />
+        <AffiliateBooks
+          categorySlug={post.categorySlug}
+          source={`post:${post.slug}`}
+        />
+        <SponsoredSlot source={`post:${post.slug}`} />
+        <BuyMeCoffee countRead source={`post:${post.slug}`} />
       </div>
 
       {/* Tags */}
@@ -184,6 +245,7 @@ export default async function BlogPostPage({ params }: Props) {
             "@type": "Article",
             headline: post.title,
             description: post.excerpt,
+            image: post.coverImage ? [post.coverImage] : undefined,
             author: {
               "@type": "Organization",
               name: "Egoera Psikologia",
@@ -193,7 +255,7 @@ export default async function BlogPostPage({ params }: Props) {
               "@type": "Organization",
               name: "Egoera Psikologia",
             },
-            datePublished: post.date,
+            datePublished: post.dateISO,
             mainEntityOfPage: `https://egoera.es/blog/${post.slug}`,
             keywords: post.tags.join(", "),
           }),
