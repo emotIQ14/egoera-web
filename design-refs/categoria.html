@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Egoera — Vlog por emoción</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d0c;
+    --bg-2: #0f1412;
+    --ink: #f4efe6;
+    --ink-dim: #b8b0a2;
+    --ink-faint: #6d665c;
+    --accent: #a8c2b6;
+    --rule: rgba(244,239,230,0.12);
+    --serif: 'Fraunces', serif;
+    --sans: 'Inter', system-ui, sans-serif;
+    --c: #a8c2b6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg); color: var(--ink);
+    font-family: var(--sans); -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+  ::selection { background: var(--c); color: #0a0d0c; }
+  a { color: inherit; text-decoration: none; }
+
+  /* Nav */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 48px;
+    backdrop-filter: blur(8px);
+    background: rgba(10,13,12,0.75);
+    border-bottom: 1px solid var(--rule);
+  }
+  .brand {
+    font-family: var(--serif); font-weight: 400; font-size: 22px;
+    letter-spacing: 0.02em; display: flex; align-items: center; gap: 10px;
+  }
+  .brand-mark {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--c) 0%, #8fa8bf 55%, #3d5560 100%);
+    box-shadow: 0 0 24px rgba(168,194,182,.35);
+    transition: background .4s ease;
+  }
+  .brand em { font-style: italic; font-weight: 300; color: var(--ink-dim); }
+  .nav-links { display: flex; gap: 36px; align-items: center; font-size: 13.5px; }
+  .nav-links a { color: var(--ink-dim); letter-spacing: 0.02em; transition: color .2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--ink); }
+  .nav-cta {
+    font-size: 13px; letter-spacing: 0.04em; color: #0a0d0c;
+    background: var(--ink); padding: 10px 18px; border-radius: 999px;
+    border: none; cursor: pointer; font-weight: 500;
+  }
+
+  /* Category hero */
+  .cat-hero {
+    padding: 180px 48px 100px;
+    max-width: 1400px; margin: 0 auto;
+    position: relative;
+  }
+  .cat-back {
+    display: inline-flex; align-items: center; gap: 10px;
+    color: var(--ink-faint); font-size: 13px; letter-spacing: 0.04em;
+    margin-bottom: 48px; transition: color .2s;
+  }
+  .cat-back:hover { color: var(--ink); }
+  .cat-back svg { transition: transform .2s; }
+  .cat-back:hover svg { transform: translateX(-3px); }
+
+  .cat-header {
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 80px;
+    align-items: end;
+    padding-bottom: 64px; border-bottom: 1px solid var(--rule);
+  }
+  .cat-kicker {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--c); margin-bottom: 28px;
+  }
+  .cat-kicker::before { content: ''; width: 36px; height: 1px; background: var(--c); }
+  .cat-title {
+    font-family: var(--serif); font-weight: 300;
+    font-size: clamp(56px, 7.5vw, 112px);
+    line-height: 0.95; letter-spacing: -0.025em;
+  }
+  .cat-title em { font-style: italic; color: var(--c); }
+  .cat-meta {
+    display: flex; flex-direction: column; gap: 18px;
+    font-size: 14px; color: var(--ink-dim); line-height: 1.6;
+  }
+  .cat-meta .desc {
+    font-family: var(--serif); font-style: italic; font-size: 18px;
+    line-height: 1.5; color: var(--ink-dim); margin-bottom: 12px;
+  }
+  .cat-stats {
+    display: flex; gap: 32px;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-faint); padding-top: 18px; border-top: 1px solid var(--rule);
+  }
+  .cat-stats span strong {
+    display: block; font-family: var(--serif); font-size: 28px;
+    color: var(--ink); font-weight: 300; margin-bottom: 4px;
+    font-style: italic;
+  }
+
+  /* Filters */
+  .filters {
+    max-width: 1400px; margin: 0 auto; padding: 48px;
+    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+  }
+  .filter-pill {
+    padding: 10px 18px; border: 1px solid var(--rule);
+    border-radius: 999px; font-size: 13px; color: var(--ink-dim);
+    cursor: pointer; transition: all .2s ease;
+    background: transparent;
+  }
+  .filter-pill:hover { color: var(--ink); border-color: var(--ink-dim); }
+  .filter-pill.active {
+    background: var(--c); color: #0a0d0c; border-color: var(--c);
+  }
+  .filter-sep { flex: 1; }
+  .filter-sort {
+    color: var(--ink-faint); font-size: 12px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .filter-sort select {
+    background: transparent; color: var(--ink);
+    border: none; font-family: var(--sans); font-size: 12px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    cursor: pointer; outline: none;
+  }
+
+  /* Featured */
+  .cat-featured {
+    max-width: 1400px; margin: 0 auto; padding: 24px 48px 80px;
+  }
+  .cat-featured-card {
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 56px;
+    padding: 48px; border-radius: 4px;
+    background: linear-gradient(135deg, rgba(168,194,182,0.04) 0%, transparent 60%);
+    border: 1px solid var(--rule);
+    position: relative; overflow: hidden;
+  }
+  .cat-featured-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+    background: var(--c);
+  }
+  .cf-media {
+    aspect-ratio: 16/10; border-radius: 3px; overflow: hidden;
+    position: relative; background: #111;
+  }
+  .cf-media img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform .8s ease; filter: brightness(.9);
+  }
+  .cat-featured-card:hover .cf-media img { transform: scale(1.04); filter: brightness(1); }
+  .cf-play {
+    position: absolute; bottom: 16px; left: 16px;
+    width: 48px; height: 48px; border-radius: 50%;
+    background: rgba(244,239,230,.95); color: #0a0d0c;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cf-info .cf-kicker {
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--c); margin-bottom: 16px;
+  }
+  .cf-info h3 {
+    font-family: var(--serif); font-weight: 300;
+    font-size: clamp(28px, 2.5vw, 40px); line-height: 1.15;
+    letter-spacing: -0.015em; margin-bottom: 20px;
+  }
+  .cf-info h3 em { font-style: italic; color: var(--c); }
+  .cf-info p {
+    color: var(--ink-dim); font-size: 15px; line-height: 1.7;
+    margin-bottom: 24px;
+  }
+  .cf-meta {
+    display: flex; gap: 16px; font-size: 12px;
+    color: var(--ink-faint); letter-spacing: 0.06em;
+    padding-top: 20px; border-top: 1px solid var(--rule);
+  }
+
+  /* Article grid */
+  .cat-grid-wrap {
+    max-width: 1400px; margin: 0 auto; padding: 40px 48px 120px;
+  }
+  .section-title-sm {
+    font-family: var(--serif); font-weight: 300;
+    font-size: 32px; margin-bottom: 48px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-bottom: 20px; border-bottom: 1px solid var(--rule);
+  }
+  .section-title-sm em { font-style: italic; color: var(--c); }
+  .section-title-sm .count {
+    font-family: var(--sans); font-size: 12px;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-faint);
+  }
+  .cat-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px 32px;
+  }
+  .art-card { cursor: pointer; transition: transform .3s ease; }
+  .art-card:hover { transform: translateY(-4px); }
+  .art-thumb {
+    aspect-ratio: 4/3; border-radius: 3px; overflow: hidden;
+    margin-bottom: 18px; background: #151a18; position: relative;
+  }
+  .art-thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: brightness(.85); transition: filter .3s ease, transform .8s ease;
+  }
+  .art-card:hover .art-thumb img { filter: brightness(1); transform: scale(1.05); }
+  .art-type {
+    position: absolute; top: 14px; left: 14px; z-index: 2;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    background: rgba(10,13,12,.85); color: var(--ink);
+    padding: 5px 10px; border-radius: 2px;
+    backdrop-filter: blur(6px);
+  }
+  .art-type.video { color: var(--c); }
+  .art-dur {
+    position: absolute; bottom: 14px; right: 14px; z-index: 2;
+    font-size: 11px; color: var(--ink); letter-spacing: 0.05em;
+    background: rgba(10,13,12,.8); padding: 4px 9px; border-radius: 2px;
+    backdrop-filter: blur(6px);
+  }
+  .art-category {
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--c); margin-bottom: 10px;
+  }
+  .art-title {
+    font-family: var(--serif); font-weight: 400;
+    font-size: 22px; line-height: 1.25; letter-spacing: -0.005em;
+    margin-bottom: 10px;
+  }
+  .art-excerpt {
+    font-size: 13.5px; color: var(--ink-dim); line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .art-meta {
+    display: flex; gap: 14px; font-size: 11px; color: var(--ink-faint);
+    letter-spacing: 0.06em;
+  }
+
+  /* Related regions */
+  .related {
+    border-top: 1px solid var(--rule);
+    padding: 100px 48px;
+    background: var(--bg-2);
+  }
+  .related-wrap { max-width: 1400px; margin: 0 auto; }
+  .related h4 {
+    font-family: var(--serif); font-weight: 300; font-size: 32px;
+    margin-bottom: 40px;
+  }
+  .related h4 em { font-style: italic; }
+  .related-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;
+  }
+  .related-card {
+    padding: 24px; border: 1px solid var(--rule); border-radius: 3px;
+    background: rgba(244,239,230,.02); cursor: pointer;
+    transition: all .3s ease;
+  }
+  .related-card:hover {
+    border-color: var(--rc);
+    background: rgba(244,239,230,.04);
+    transform: translateY(-3px);
+  }
+  .related-card .dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--rc);
+    box-shadow: 0 0 14px var(--rc); margin-bottom: 16px;
+  }
+  .related-card .r-name {
+    font-family: var(--serif); font-size: 17px; line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .related-card .r-count {
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* Footer */
+  .footer {
+    padding: 60px 48px 40px;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-faint); font-size: 13px;
+  }
+  .footer-wrap {
+    max-width: 1400px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 24px;
+  }
+  .footer-links { display: flex; gap: 32px; }
+  .footer-links a { color: var(--ink-faint); }
+  .footer-links a:hover { color: var(--ink); }
+
+  @media (max-width: 900px) {
+    .nav, .cat-hero, .filters, .cat-featured, .cat-grid-wrap, .related, .footer { padding-left: 20px; padding-right: 20px; }
+    .nav-links { display: none; }
+    .cat-header { grid-template-columns: 1fr; gap: 40px; padding-bottom: 40px; }
+    .cat-hero { padding-top: 120px; padding-bottom: 40px; }
+    .cat-featured-card { grid-template-columns: 1fr; padding: 24px; gap: 28px; }
+    .cat-grid { grid-template-columns: 1fr; gap: 40px; }
+    .related-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="Egoera Vlog.html" class="brand">
+    <div class="brand-mark" id="brandMark"></div>
+    egoera<em>.</em>
+  </a>
+  <div class="nav-links">
+    <a href="Egoera Vlog.html">Vlog</a>
+    <a href="Egoera Vlog.html#episodios">Episodios</a>
+    <a href="Egoera Vlog.html#cerebro" class="active">Categorías</a>
+    <a href="#">Sobre Ander</a>
+    <a href="#">Contacto</a>
+  </div>
+  <button class="nav-cta">Suscribirme</button>
+</nav>
+
+<section class="cat-hero">
+  <a href="Egoera Vlog.html#cerebro" class="cat-back">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L3 7l5 5"/></svg>
+    Volver al mapa emocional
+  </a>
+  <div class="cat-header">
+    <div>
+      <div class="cat-kicker" id="catKicker">Región cerebral</div>
+      <h1 class="cat-title" id="catTitle">Título</h1>
+    </div>
+    <div class="cat-meta">
+      <div class="desc" id="catDesc">Descripción</div>
+      <div class="cat-stats">
+        <span><strong id="stat1">12</strong>Artículos</span>
+        <span><strong id="stat2">5</strong>Episodios</span>
+        <span><strong id="stat3">3</strong>Invitados</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="filters">
+  <button class="filter-pill active" data-type="all">Todo</button>
+  <button class="filter-pill" data-type="video">Vídeo</button>
+  <button class="filter-pill" data-type="article">Artículo</button>
+  <button class="filter-pill" data-type="podcast">Podcast</button>
+  <div class="filter-sep"></div>
+  <div class="filter-sort">
+    Orden
+    <select>
+      <option>Más reciente</option>
+      <option>Más leído</option>
+      <option>Más antiguo</option>
+    </select>
+  </div>
+</div>
+
+<section class="cat-featured">
+  <div class="cat-featured-card">
+    <div class="cf-media">
+      <img id="featImg" src="" alt="" />
+      <div class="cf-play">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4v16l14-8z"/></svg>
+      </div>
+    </div>
+    <div class="cf-info">
+      <div class="cf-kicker">Destacado en esta categoría</div>
+      <h3 id="featTitle"></h3>
+      <p id="featDesc"></p>
+      <div class="cf-meta">
+        <span id="featMeta"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-grid-wrap">
+  <div class="section-title-sm">
+    <span>Todos los <em id="gridCatName">contenidos</em></span>
+    <span class="count" id="gridCount"></span>
+  </div>
+  <div class="cat-grid" id="grid"></div>
+</section>
+
+<section class="related">
+  <div class="related-wrap">
+    <h4>Explora otras <em>regiones</em> del mapa</h4>
+    <div class="related-grid" id="relatedGrid"></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-wrap">
+    <a href="Egoera Vlog.html" class="brand">
+      <div class="brand-mark"></div>
+      egoera<em>.</em>
+    </a>
+    <div class="footer-links">
+      <a href="#">Instagram</a>
+      <a href="#">YouTube</a>
+      <a href="#">Spotify</a>
+      <a href="#">Contacto</a>
+    </div>
+    <div>© 2026 Egoera · Donostia</div>
+  </div>
+</footer>
+
+<script>
+const REGIONS = {
+  amygdala: {
+    name: 'Miedo & Ansiedad', cat: 'Amígdala',
+    desc: 'El radar interno del peligro. Aquí viven las emociones de alerta, la ansiedad y el miedo que nos mantiene a salvo pero también nos paraliza.',
+    color: '#e89b7a',
+    stats: [8, 4, 2],
+    featured: {
+      title: 'Cuando <em>pensar</em> demasiado es una forma de huir.',
+      desc: 'La rumiación mental como estrategia de evitación: por qué nuestra cabeza se adelanta al cuerpo para no tener que sentir lo que está pasando.',
+      img: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=1200&q=80',
+      meta: '41 min · Ep. 21 · 3.200 reproducciones'
+    }
+  },
+  prefrontal: {
+    name: 'Autoconocimiento', cat: 'Corteza prefrontal',
+    desc: 'Pensar sobre pensar. El lugar donde se observa el observador, donde aprendemos quiénes somos cuando nadie está mirando.',
+    color: '#a8c2b6',
+    stats: [12, 5, 3],
+    featured: {
+      title: 'Los <em>personajes</em> que fuimos para sobrevivir.',
+      desc: 'Hablamos de los roles que adoptamos de niños para conseguir amor, atención o seguridad, y de cómo seguimos habitándolos de adultos sin darnos cuenta.',
+      img: 'https://images.unsplash.com/photo-1502139214982-d0ad755818d8?w=1200&q=80',
+      meta: '45 min · Ep. 22 · 4.100 reproducciones'
+    }
+  },
+  hippocampus: {
+    name: 'Memoria & Duelo', cat: 'Hipocampo',
+    desc: 'Lo que recordamos nos habita. La memoria no es un archivo, es un lugar al que volvemos para seguir entendiéndonos.',
+    color: '#c9a8b8',
+    stats: [6, 3, 1],
+    featured: {
+      title: 'Despedirse <em>en voz alta</em> de lo que ya no es.',
+      desc: 'El duelo no termina, se reorganiza. Un episodio sobre los rituales necesarios para cerrar etapas, personas y versiones de nosotros mismos.',
+      img: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=1200&q=80',
+      meta: '36 min · Ep. 20 · 2.800 reproducciones'
+    }
+  },
+  insula: {
+    name: 'Cuerpo & Emoción', cat: 'Ínsula',
+    desc: 'El cuerpo que avisa antes que la mente. Interocepción, sensaciones físicas y la forma en que la emoción habla en forma de síntoma.',
+    color: '#8fa8bf',
+    stats: [9, 4, 2],
+    featured: {
+      title: 'El <em>cuerpo</em> que avisa antes que la mente.',
+      desc: 'Por qué notamos las cosas en el estómago antes que en la cabeza. Una conversación sobre cómo leer el cuerpo como primer lenguaje emocional.',
+      img: 'https://images.unsplash.com/photo-1518081461904-9d8f136351c2?w=1200&q=80',
+      meta: '38 min · Ep. 23 · 3.600 reproducciones'
+    }
+  },
+  accumbens: {
+    name: 'Vínculos & Apego', cat: 'Núcleo accumbens',
+    desc: 'La química del vínculo. Amor, apego, deseo y todo lo que nos hace volver a donde tal vez no deberíamos quedarnos.',
+    color: '#d4b896',
+    stats: [11, 6, 4],
+    featured: {
+      title: 'Sobre <em>quedarse</em>, aunque duela.',
+      desc: 'El apego y sus disfraces: por qué nos cuesta tanto soltar lo que ya no nos sostiene, y cómo empezar a reconocer los patrones que repetimos.',
+      img: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=1200&q=80',
+      meta: '42 min · Ep. 24 · 5.200 reproducciones'
+    }
+  },
+  cerebellum: {
+    name: 'Hábitos & Ritmo', cat: 'Cerebelo',
+    desc: 'Lo que repetimos nos forma. Rutinas, cuerpo en movimiento y el papel de la regulación diaria en la salud emocional.',
+    color: '#b8a8c9',
+    stats: [5, 2, 1],
+    featured: {
+      title: 'La <em>rutina</em> como acto de cuidado radical.',
+      desc: 'Cómo los pequeños rituales cotidianos —una ducha, un paseo, una hora de sueño— son a veces la única terapia disponible y suficiente.',
+      img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80',
+      meta: '33 min · Ep. 18 · 1.900 reproducciones'
+    }
+  },
+};
+
+// sample articles (shared pool)
+const ARTICLES = {
+  amygdala: [
+    { type: 'video', dur: '12 min', title: 'Cómo respirar cuando el pecho se cierra.', excerpt: 'Una técnica sencilla para regular el sistema nervioso en momentos de pánico.', img: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80', date: 'Abr 2026' },
+    { type: 'article', dur: '6 min', title: 'La ansiedad no es el problema. Es el aviso.', excerpt: 'Por qué intentar eliminar la ansiedad suele hacerla más grande.', img: 'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=800&q=80', date: 'Mar 2026' },
+    { type: 'podcast', dur: '44 min', title: 'Entrevista: miedo y creación, con Jone Etxebarria.', excerpt: 'Qué hace una ilustradora con el miedo a la página en blanco.', img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80', date: 'Mar 2026' },
+    { type: 'video', dur: '18 min', title: 'Ataques de pánico, explicados despacio.', excerpt: 'Qué ocurre en el cuerpo y por qué sentir que te mueres no significa estarlo.', img: 'https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=800&q=80', date: 'Feb 2026' },
+    { type: 'article', dur: '8 min', title: 'El miedo heredado: lo que nos contaron sin palabras.', excerpt: 'Cómo las emociones viajan entre generaciones sin necesidad de lenguaje.', img: 'https://images.unsplash.com/photo-1513279014890-1c9e47bb89cd?w=800&q=80', date: 'Feb 2026' },
+    { type: 'article', dur: '5 min', title: 'Dormir con ansiedad: la noche también es territorio.', excerpt: 'Pequeñas ideas para acompañar los pensamientos que aparecen sin aviso.', img: 'https://images.unsplash.com/photo-1455642305367-68834a9c4cc3?w=800&q=80', date: 'Ene 2026' },
+  ],
+  prefrontal: [
+    { type: 'video', dur: '22 min', title: 'Las preguntas que nadie nos enseñó a hacernos.', excerpt: 'Un ejercicio de escritura para mirar hacia dentro sin huir.', img: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80', date: 'Abr 2026' },
+    { type: 'article', dur: '10 min', title: 'El yo observador: quién te mira cuando te miras.', excerpt: 'La instancia silenciosa desde la que se piensa todo lo demás.', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80', date: 'Abr 2026' },
+    { type: 'podcast', dur: '48 min', title: 'Pensar despacio en un mundo acelerado.', excerpt: 'Una conversación sobre filosofía contemplativa y salud mental.', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80', date: 'Mar 2026' },
+    { type: 'video', dur: '14 min', title: 'Valores: la brújula que se olvida a los 30.', excerpt: 'Cómo distinguir lo que quieres de lo que aprendiste a querer.', img: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800&q=80', date: 'Mar 2026' },
+    { type: 'article', dur: '7 min', title: 'Diario: escribir como forma de regularse.', excerpt: 'El papel como espacio seguro para pensar sin audiencia.', img: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=800&q=80', date: 'Feb 2026' },
+    { type: 'article', dur: '9 min', title: 'Identidad: quiénes somos cuando todo cambia.', excerpt: 'Sobre permanecer siendo uno mismo entre versiones que mueren.', img: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80', date: 'Feb 2026' },
+  ],
+  hippocampus: [
+    { type: 'video', dur: '19 min', title: 'El duelo no se cura, se reorganiza.', excerpt: 'Sobre perder a alguien y aprender a seguir siendo nosotros.', img: 'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=800&q=80', date: 'Abr 2026' },
+    { type: 'article', dur: '8 min', title: 'Duelos invisibles: perder lo que nunca se tuvo.', excerpt: 'Amores posibles, relaciones con el padre, la versión que no fuimos.', img: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80', date: 'Mar 2026' },
+    { type: 'podcast', dur: '52 min', title: 'Rituales para despedidas que no existieron.', excerpt: 'Cómo cerrar lo que no tuvo la oportunidad de terminarse bien.', img: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800&q=80', date: 'Feb 2026' },
+    { type: 'article', dur: '6 min', title: 'Las fotos y la memoria: editar lo que recordamos.', excerpt: 'Por qué lo que guardamos moldea lo que fuimos.', img: 'https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?w=800&q=80', date: 'Feb 2026' },
+  ],
+  insula: [
+    { type: 'video', dur: '11 min', title: 'Nota corporal: escuchar antes que pensar.', excerpt: 'Un ejercicio de dos minutos para volver al cuerpo.', img: 'https://images.unsplash.com/photo-1518081461904-9d8f136351c2?w=800&q=80', date: 'Abr 2026' },
+    { type: 'article', dur: '7 min', title: 'El estómago como termómetro emocional.', excerpt: 'Por qué sentimos las cosas ahí antes que en ningún otro lugar.', img: 'https://images.unsplash.com/photo-1490818387583-1baba5e638af?w=800&q=80', date: 'Abr 2026' },
+    { type: 'podcast', dur: '40 min', title: 'Somatic experiencing: cuando el trauma es cuerpo.', excerpt: 'Conversación sobre cómo el cuerpo guarda lo que la mente olvida.', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80', date: 'Mar 2026' },
+    { type: 'video', dur: '15 min', title: 'Movimiento lento como forma de regularse.', excerpt: 'Tai chi, yoga, caminar despacio: el cuerpo habla si lo dejamos.', img: 'https://images.unsplash.com/photo-1552693673-1bf958298935?w=800&q=80', date: 'Feb 2026' },
+    { type: 'article', dur: '9 min', title: 'Síntomas sin nombre: el cuerpo habla raro.', excerpt: 'Cuando la mente no puede, el cuerpo toma el relevo.', img: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80', date: 'Ene 2026' },
+  ],
+  accumbens: [
+    { type: 'video', dur: '17 min', title: 'Apego ansioso: la espera como identidad.', excerpt: 'Por qué revisar el móvil 40 veces se siente como amor.', img: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=800&q=80', date: 'Abr 2026' },
+    { type: 'article', dur: '10 min', title: 'Relaciones kármicas o sólo patrones no resueltos.', excerpt: 'La explicación psicológica detrás de los vínculos "inevitables".', img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=80', date: 'Mar 2026' },
+    { type: 'podcast', dur: '55 min', title: 'Amar con historia: sanar en relación.', excerpt: 'Se puede sanar solo, pero también hay que practicarlo con otros.', img: 'https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=800&q=80', date: 'Mar 2026' },
+    { type: 'video', dur: '13 min', title: 'Dejar de rescatar: el rol del cuidador.', excerpt: 'Cuando cuidar al otro es una forma de no mirarse.', img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80', date: 'Feb 2026' },
+    { type: 'article', dur: '6 min', title: 'Soledad elegida vs soledad que duele.', excerpt: 'La diferencia entre estar solo y sentirse solo.', img: 'https://images.unsplash.com/photo-1476900966873-ab290e38e3f7?w=800&q=80', date: 'Feb 2026' },
+    { type: 'article', dur: '11 min', title: 'Los límites como acto de amor, no de castigo.', excerpt: 'Decir que no también es una forma de decir te quiero.', img: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800&q=80', date: 'Ene 2026' },
+  ],
+  cerebellum: [
+    { type: 'video', dur: '14 min', title: 'Rutina: cuidado radical disfrazado de aburrimiento.', excerpt: 'Por qué dormir bien puede ser el acto más terapéutico del año.', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80', date: 'Abr 2026' },
+    { type: 'article', dur: '7 min', title: 'La mañana como primer acto político del día.', excerpt: 'Cómo empezamos el día suele marcar cómo lo atravesamos.', img: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=800&q=80', date: 'Mar 2026' },
+    { type: 'podcast', dur: '38 min', title: 'Movimiento y mente: por qué caminar regula.', excerpt: 'Una conversación sobre el cerebro en movimiento.', img: 'https://images.unsplash.com/photo-1500673922987-e212871fec22?w=800&q=80', date: 'Feb 2026' },
+  ],
+};
+
+const params = new URLSearchParams(location.search);
+const regionId = params.get('c') || 'accumbens';
+const region = REGIONS[regionId];
+
+// Apply region theme
+document.documentElement.style.setProperty('--c', region.color);
+document.documentElement.style.setProperty('--accent', region.color);
+document.getElementById('brandMark').style.background = `radial-gradient(circle at 35% 35%, ${region.color} 0%, ${region.color}aa 55%, #3d5560 100%)`;
+
+// Header
+document.getElementById('catKicker').textContent = region.cat;
+document.getElementById('catTitle').innerHTML = region.name.replace('&', '<em>&</em>');
+document.getElementById('catDesc').textContent = region.desc;
+document.getElementById('stat1').textContent = region.stats[0];
+document.getElementById('stat2').textContent = region.stats[1];
+document.getElementById('stat3').textContent = region.stats[2];
+document.title = `Egoera — ${region.name}`;
+
+// Featured
+document.getElementById('featImg').src = region.featured.img;
+document.getElementById('featTitle').innerHTML = region.featured.title;
+document.getElementById('featDesc').textContent = region.featured.desc;
+document.getElementById('featMeta').textContent = region.featured.meta;
+
+// Grid
+const grid = document.getElementById('grid');
+const articles = ARTICLES[regionId] || [];
+document.getElementById('gridCatName').textContent = region.name.toLowerCase();
+document.getElementById('gridCount').textContent = articles.length + ' contenidos';
+
+function render(filter = 'all') {
+  grid.innerHTML = '';
+  articles.filter(a => filter === 'all' || a.type === filter).forEach(a => {
+    const card = document.createElement('article');
+    card.className = 'art-card';
+    const typeLabel = { video: 'Vídeo', article: 'Artículo', podcast: 'Podcast' }[a.type];
+    card.innerHTML = `
+      <div class="art-thumb">
+        <span class="art-type ${a.type}">${typeLabel}</span>
+        <img src="${a.img}" alt="" loading="lazy" />
+        <span class="art-dur">${a.dur}</span>
+      </div>
+      <div class="art-category">${region.cat}</div>
+      <h3 class="art-title">${a.title}</h3>
+      <p class="art-excerpt">${a.excerpt}</p>
+      <div class="art-meta"><span>${a.date}</span><span>·</span><span>${a.dur}</span></div>
+    `;
+    grid.appendChild(card);
+  });
+}
+render();
+
+// Filters
+document.querySelectorAll('.filter-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('.filter-pill').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    render(p.dataset.type);
+  });
+});
+
+// Related regions
+const relGrid = document.getElementById('relatedGrid');
+Object.entries(REGIONS).filter(([id]) => id !== regionId).forEach(([id, r]) => {
+  const card = document.createElement('a');
+  card.href = `categoria.html?c=${id}`;
+  card.className = 'related-card';
+  card.style.setProperty('--rc', r.color);
+  card.innerHTML = `
+    <div class="dot"></div>
+    <div class="r-name">${r.name}</div>
+    <div class="r-count">${r.stats[0]} artículos</div>
+  `;
+  relGrid.appendChild(card);
+});
+</script>
+</body>
+</html>

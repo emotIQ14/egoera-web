@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Egoera — Sentimiento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1311;
+    --bg-2: #0b0e0d;
+    --ink: #f4efe6;
+    --ink-dim: rgba(244,239,230,.72);
+    --ink-faint: rgba(244,239,230,.42);
+    --accent: #a8c2b6;
+    --accent-glow: #b8d4c6;
+    --accent-dim: #6f8478;
+    --rule: rgba(244,239,230,.1);
+    --serif: "Fraunces", serif;
+    --sans: "Inter", sans-serif;
+    --mono: "JetBrains Mono", monospace;
+    /* feeling colors, injected by JS */
+    --c1: #3a4a5c;
+    --c2: #6b7a8c;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--accent); color: var(--bg); }
+
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 9999;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.94 0 0 0 0 0.9 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: .4;
+    mix-blend-mode: overlay;
+  }
+
+  /* NAV */
+  .nav {
+    position: sticky; top: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    z-index: 100;
+    background: rgba(15,19,17,.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--serif); font-size: 22px;
+    letter-spacing: -0.02em;
+    text-decoration: none; color: var(--ink);
+  }
+  .brand em { color: var(--accent); font-style: normal; }
+  .brand-mark {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #d6e4dc, #6f8478 65%, #2a3833);
+  }
+  .nav-back {
+    display: inline-flex; align-items: center; gap: 10px;
+    color: var(--ink-dim); text-decoration: none;
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .nav-meta {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.18em;
+    color: var(--ink-faint);
+  }
+
+  /* HEADER DEL SENTIMIENTO */
+  .feel-header {
+    position: relative;
+    padding: 80px 48px 60px;
+    border-bottom: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .feel-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 70% 30%, var(--c2), transparent 55%),
+                radial-gradient(ellipse at 20% 80%, var(--c1), transparent 60%);
+    opacity: .35;
+    z-index: 0;
+  }
+  .feel-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("assets/watercolor.png") center/cover no-repeat;
+    opacity: .2;
+    mix-blend-mode: overlay;
+  }
+  .feel-head-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 48px;
+    position: relative;
+    z-index: 1;
+    align-items: end;
+  }
+  .feel-crumbs {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .feel-crumbs a { color: var(--ink-dim); text-decoration: none; }
+  .feel-crumbs a:hover { color: var(--accent); }
+  .feel-crumbs .sep { margin: 0 10px; color: var(--accent-dim); }
+
+  .feel-label {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+  .feel-label::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+  .feel-title {
+    font-family: var(--serif);
+    font-size: clamp(80px, 14vw, 220px);
+    font-weight: 300;
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    margin-bottom: 16px;
+  }
+  .feel-title em {
+    font-style: italic; color: var(--accent);
+  }
+  .feel-desc {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 20px;
+    color: var(--ink-dim);
+    line-height: 1.5;
+    max-width: 520px;
+  }
+
+  .feel-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    padding: 24px;
+    background: rgba(12,16,14,.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+  }
+  .stat-item .num {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 300;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-item .lab {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .related {
+    margin-top: 24px;
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .related-tag {
+    padding: 6px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--ink-dim);
+    background: rgba(244,239,230,.03);
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid var(--rule);
+    padding: 0 48px;
+    gap: 0;
+    position: sticky; top: 64px; z-index: 50;
+    background: rgba(15,19,17,.9);
+    backdrop-filter: blur(14px);
+  }
+  .tab {
+    padding: 20px 28px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+    transition: all .2s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .tab .count {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent-dim);
+  }
+  .tab:hover { color: var(--ink-dim); }
+  .tab.active {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+  .tab.active .count { color: var(--accent); }
+
+  /* CONTENT AREA */
+  .content {
+    padding: 60px 48px 100px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .tab-section { display: none; }
+  .tab-section.active { display: block; }
+
+  /* ARTICLES */
+  .articles-hd {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding-bottom: 24px; margin-bottom: 32px;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .articles-hd h3 {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+  }
+  .articles-hd h3 em { font-style: italic; color: var(--accent); }
+  .articles-hd .note {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+
+  .filter-bar {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 24px;
+  }
+  .filter-bar .filter {
+    padding: 8px 14px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--ink-dim);
+    cursor: pointer;
+    background: transparent;
+    font-family: var(--sans);
+  }
+  .filter-bar .filter.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(168,194,182,.08);
+  }
+
+  .article-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .article-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 140px 120px 80px;
+    align-items: center;
+    padding: 24px 8px;
+    border-bottom: 1px solid var(--rule);
+    text-decoration: none;
+    color: inherit;
+    transition: all .2s;
+    gap: 24px;
+    position: relative;
+  }
+  .article-row::before {
+    content: "";
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 0;
+    background: var(--accent);
+    transition: width .2s;
+  }
+  .article-row:hover {
+    padding-left: 20px;
+    background: rgba(168,194,182,.03);
+  }
+  .article-row:hover::before { width: 3px; }
+  .article-row .num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--accent-dim);
+  }
+  .article-row .title {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .article-row .title .t {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .article-row .title .t em { font-style: italic; color: var(--accent); }
+  .article-row .title .s {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-faint);
+    line-height: 1.4;
+  }
+  .article-row .cat {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .article-row .date {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+  .article-row .read {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-dim);
+    text-align: right;
+  }
+  .article-row .read .arrow {
+    display: inline-block;
+    transform: translateX(0);
+    transition: transform .2s;
+    color: var(--accent);
+    margin-left: 8px;
+  }
+  .article-row:hover .read .arrow { transform: translateX(4px); }
+
+  /* PRACTICES */
+  .practice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .practice {
+    border: 1px solid var(--rule);
+    padding: 32px;
+    background: rgba(12,16,14,.5);
+    position: relative;
+    display: flex; flex-direction: column;
+    gap: 16px;
+    transition: all .2s;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .practice::before {
+    content: "";
+    position: absolute;
+    top: 0; right: 0;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, var(--c2), transparent 70%);
+    opacity: .15;
+  }
+  .practice:hover {
+    border-color: var(--accent);
+    background: rgba(168,194,182,.04);
+    transform: translateY(-2px);
+  }
+  .practice-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .practice-tag .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .practice h4 {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .practice p {
+    color: var(--ink-dim);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .practice-foot {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px dashed var(--rule);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .practice-foot .dl {
+    color: var(--accent);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+
+  /* RELATED SECTION */
+  .related-feelings {
+    padding: 60px 48px 100px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-top: 1px solid var(--rule);
+  }
+  .related-feelings h3 {
+    font-family: var(--serif);
+    font-size: 40px;
+    font-weight: 300;
+    margin-bottom: 32px;
+    letter-spacing: -0.02em;
+  }
+  .related-feelings h3 em { font-style: italic; color: var(--accent); }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .related-card {
+    padding: 32px 24px;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    text-decoration: none;
+    color: inherit;
+    display: flex; flex-direction: column; gap: 12px;
+    transition: all .2s;
+    position: relative;
+    overflow: hidden;
+    background: rgba(12,16,14,.3);
+  }
+  .related-card::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--c1), var(--c2));
+    opacity: .08;
+    transition: opacity .2s;
+  }
+  .related-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .related-card:hover::before { opacity: .15; }
+  .related-card .rc-name {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--accent);
+    position: relative;
+  }
+  .related-card .rc-count {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    position: relative;
+  }
+
+  /* FOOTER */
+  .footer {
+    padding: 60px 48px 40px;
+    border-top: 1px solid var(--rule);
+    background: var(--bg-2);
+  }
+  .footer-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 24px;
+    font-size: 12px; color: var(--ink-faint);
+    letter-spacing: 0.08em;
+  }
+  .footer-links { display: flex; gap: 28px; }
+  .footer-links a { color: var(--ink-dim); text-decoration: none; font-size: 13px; }
+
+  @media (max-width: 900px) {
+    .nav, .feel-header, .tabs, .content, .related-feelings, .footer { padding-left: 20px; padding-right: 20px; }
+    .feel-head-wrap { grid-template-columns: 1fr; gap: 32px; }
+    .article-row { grid-template-columns: 40px 1fr; gap: 16px; }
+    .article-row .cat, .article-row .date, .article-row .read { display: none; }
+    .practice-grid { grid-template-columns: 1fr; }
+    .related-grid { grid-template-columns: repeat(2, 1fr); }
+    .tabs { overflow-x: auto; padding: 0 20px; top: 60px; }
+    .tab { white-space: nowrap; padding: 18px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-back" href="Egoera Vlog.html">◀ volver al índice</a>
+  <a class="brand" href="Egoera Vlog.html">
+    <div class="brand-mark"></div>
+    egoera<em>.</em>
+  </a>
+  <div class="nav-meta" id="navMeta">— / — — —</div>
+</nav>
+
+<header class="feel-header" id="feelHeader">
+  <div class="feel-bg"></div>
+  <div class="feel-head-wrap">
+    <div>
+      <div class="feel-crumbs">
+        <a href="Egoera Vlog.html">vlog</a>
+        <span class="sep">/</span>
+        <a href="Egoera Vlog.html#consola">sentimientos</a>
+        <span class="sep">/</span>
+        <span id="crumbName">—</span>
+      </div>
+      <div class="feel-label" id="feelLabel">—</div>
+      <h1 class="feel-title" id="feelTitle">—</h1>
+      <p class="feel-desc" id="feelDesc">—</p>
+    </div>
+    <div>
+      <div class="feel-stats" id="feelStats"></div>
+      <div class="related" id="relatedTags"></div>
+    </div>
+  </div>
+</header>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-tab="articles">Artículos <span class="count" id="cArticles">0</span></div>
+  <div class="tab" data-tab="practices">Prácticas <span class="count" id="cPractices">0</span></div>
+  <div class="tab" data-tab="videos">Vídeos <span class="count">03</span></div>
+  <div class="tab" data-tab="books">Libros <span class="count">05</span></div>
+</div>
+
+<main class="content">
+
+  <section class="tab-section active" data-section="articles">
+    <div class="articles-hd">
+      <h3>Todos los <em>artículos</em></h3>
+      <div class="note" id="articlesNote">— archivados</div>
+    </div>
+    <div class="filter-bar">
+      <button class="filter active">Todo</button>
+      <button class="filter">Recientes</button>
+      <button class="filter">Más leídos</button>
+      <button class="filter">Por Ander</button>
+    </div>
+    <div class="article-list" id="articleList"></div>
+  </section>
+
+  <section class="tab-section" data-section="practices">
+    <div class="articles-hd">
+      <h3>Prácticas <em>descargables</em></h3>
+      <div class="note">ejercicios en PDF · uso libre</div>
+    </div>
+    <div class="practice-grid" id="practiceGrid"></div>
+  </section>
+
+  <section class="tab-section" data-section="videos">
+    <div class="articles-hd">
+      <h3>Vídeos & <em>episodios</em></h3>
+      <div class="note">canal youtube</div>
+    </div>
+    <div style="padding:60px 0; text-align:center; color:var(--ink-faint); font-family:var(--serif); font-style:italic;">
+      Próximamente. Ander está grabando los primeros episodios en vídeo.
+    </div>
+  </section>
+
+  <section class="tab-section" data-section="books">
+    <div class="articles-hd">
+      <h3>Lecturas <em>recomendadas</em></h3>
+      <div class="note">selección de Ander</div>
+    </div>
+    <div style="padding:60px 0; text-align:center; color:var(--ink-faint); font-family:var(--serif); font-style:italic;">
+      Una biblioteca en construcción.
+    </div>
+  </section>
+
+</main>
+
+<section class="related-feelings">
+  <h3>Otros <em>estados</em> cercanos</h3>
+  <div class="related-grid" id="relatedGrid"></div>
+</section>
+
+<footer class="footer">
+  <div class="footer-wrap">
+    <a class="brand" href="Egoera Vlog.html">
+      <div class="brand-mark"></div>
+      egoera<em>.</em>
+    </a>
+    <div class="footer-links">
+      <a href="https://www.instagram.com/egoera.psikologia/">Instagram</a>
+      <a href="#">YouTube</a>
+      <a href="#">Spotify</a>
+      <a href="#">Contacto</a>
+    </div>
+    <div>© 2026 Egoera · Donostia</div>
+  </div>
+</footer>
+
+<script src="data.js"></script>
+<script>
+(() => {
+  const { feelings, articles, practices } = window.EGOERA;
+  const params = new URLSearchParams(window.location.search);
+  const fId = params.get('f') || 'tristeza';
+  const f = feelings.find(x => x.id === fId) || feelings[0];
+
+  // set feeling colors
+  document.documentElement.style.setProperty('--c1', f.c1);
+  document.documentElement.style.setProperty('--c2', f.c2);
+
+  // header
+  document.getElementById('crumbName').textContent = f.name;
+  document.getElementById('feelLabel').textContent = `estado · ${f.meta}`;
+  document.getElementById('feelTitle').innerHTML = `<em>${f.name}</em>.`;
+  document.getElementById('feelDesc').textContent = f.desc;
+  document.getElementById('navMeta').textContent = `${String(feelings.indexOf(f)+1).padStart(2,'0')} / ${f.name} / ${f.count} ART.`;
+  document.title = `Egoera — ${f.name}`;
+
+  // stats
+  const fArticles = articles.filter(a => a.feeling === f.id);
+  const fPractices = practices.filter(p => p.feeling === f.id);
+  document.getElementById('feelStats').innerHTML = `
+    <div class="stat-item"><div class="num">${String(fArticles.length).padStart(2,'0')}</div><div class="lab">Artículos</div></div>
+    <div class="stat-item"><div class="num">${String(fPractices.length).padStart(2,'0')}</div><div class="lab">Prácticas</div></div>
+    <div class="stat-item"><div class="num">${String(Math.floor(f.count/4)).padStart(2,'0')}</div><div class="lab">Vídeos</div></div>
+  `;
+
+  document.getElementById('cArticles').textContent = String(fArticles.length).padStart(2,'0');
+  document.getElementById('cPractices').textContent = String(fPractices.length).padStart(2,'0');
+  document.getElementById('articlesNote').textContent = `${fArticles.length} archivados · ${f.name}`;
+
+  // related tags
+  document.getElementById('relatedTags').innerHTML = (f.related || []).map(r => `<span class="related-tag">${r}</span>`).join('');
+
+  // article list
+  const listEl = document.getElementById('articleList');
+  listEl.innerHTML = fArticles.map((a, i) => `
+    <a class="article-row" href="articulo.html?a=${encodeURIComponent(a.id)}">
+      <div class="num">${String(i+1).padStart(3,'0')}</div>
+      <div class="title">
+        <div class="t">${a.title.replace(/\s(\w+)$/, ' <em>$1</em>')}</div>
+        <div class="s">${a.subtitle || ''}</div>
+      </div>
+      <div class="cat">${a.category}</div>
+      <div class="date">${formatDate(a.date)}</div>
+      <div class="read">${a.readTime} <span class="arrow">→</span></div>
+    </a>
+  `).join('') || '<div style="padding:80px; text-align:center; color:var(--ink-faint); font-family:var(--serif); font-style:italic;">Aún no hay artículos en este estado.</div>';
+
+  // practices
+  const pGrid = document.getElementById('practiceGrid');
+  pGrid.innerHTML = fPractices.map(p => `
+    <a class="practice" href="#" onclick="event.preventDefault(); alert('Descarga próximamente')">
+      <div class="practice-tag"><span class="dot"></span>Ejercicio guiado</div>
+      <h4>${p.title}</h4>
+      <p>${p.subtitle}</p>
+      <div class="practice-foot">
+        <span>${p.type} · ${p.size}</span>
+        <span class="dl">Descargar ↓</span>
+      </div>
+    </a>
+  `).join('') || '<div style="padding:80px; text-align:center; color:var(--ink-faint); font-family:var(--serif); font-style:italic; grid-column: 1 / -1;">No hay prácticas específicas para este estado.</div>';
+
+  // related feelings
+  const others = feelings.filter(x => x.id !== f.id).slice(0, 4);
+  document.getElementById('relatedGrid').innerHTML = others.map(o => `
+    <a class="related-card" href="sentimiento.html?f=${encodeURIComponent(o.id)}" style="--c1:${o.c1};--c2:${o.c2}">
+      <div class="rc-name">${o.name}</div>
+      <div class="rc-count">${o.count} artículos</div>
+    </a>
+  `).join('');
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.tab-section').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      document.querySelector(`.tab-section[data-section="${t.dataset.tab}"]`).classList.add('active');
+    });
+  });
+
+  // filters (visual only)
+  document.querySelectorAll('.filter').forEach(f => {
+    f.addEventListener('click', () => {
+      document.querySelectorAll('.filter').forEach(x => x.classList.remove('active'));
+      f.classList.add('active');
+    });
+  });
+
+  function formatDate(iso) {
+    const d = new Date(iso);
+    return d.toLocaleDateString('es-ES', { day:'2-digit', month:'short', year:'numeric' }).toUpperCase();
+  }
+})();
+</script>
+
+</body>
+</html>

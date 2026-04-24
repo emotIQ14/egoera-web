@@ -8,15 +8,15 @@ import { track } from "@/lib/analytics";
 const MESSAGES = [
   {
     title: "Te ha sido util este articulo?",
-    body: "Si lo que lees aqui te aporta claridad, puedes invitarnos a un cafe. Cada aportacion mantiene el blog sin publicidad invasiva.",
+    body: "Si lo que lees aqui te aporta claridad, puedes invitarme a un cafe. Cada aportacion mantiene el blog sin publicidad invasiva.",
   },
   {
     title: "Psicologia accesible, tambien gratuita.",
-    body: "Escribimos cada semana contenido basado en evidencia. Tu aporte nos permite dedicarle tiempo.",
+    body: "Escribo cada semana contenido basado en evidencia. Tu aporte me permite dedicarle tiempo.",
   },
   {
     title: "Seguimos sin muros de pago.",
-    body: "Todo lo que publicamos es libre. Si te apetece, puedes agradecerlo con un cafe.",
+    body: "Todo lo que publico es libre. Si te apetece, puedes agradecerlo con un cafe.",
   },
   {
     title: "Gracias por leer hasta aqui.",
@@ -28,9 +28,7 @@ const STORAGE_KEY = "egoera:articles-read";
 const SHOW_EVERY = 3;
 
 interface Props {
-  /** Si es true, fuerza mostrarlo siempre (usar en pagina /apoya). */
   alwaysShow?: boolean;
-  /** Cuenta la lectura actual (solo pasar en blog post). */
   countRead?: boolean;
   source?: string;
 }
@@ -58,25 +56,49 @@ export function BuyMeCoffee({
       const prev = Number(localStorage.getItem(STORAGE_KEY) ?? 0);
       const next = prev + 1;
       localStorage.setItem(STORAGE_KEY, String(next));
-
-      // Se muestra cada 3 articulos
       if (next % SHOW_EVERY === 0) {
         setVisible(true);
       }
     } catch {
-      // si localStorage falla, no mostramos
+      // ignore
     }
   }, [alwaysShow, countRead]);
 
   if (!visible) return null;
 
   return (
-    <div className="my-8 rounded-xl border border-amber-200/50 bg-gradient-to-r from-amber-50 to-orange-50 p-6 text-center">
-      <Coffee className="mx-auto mb-3 h-8 w-8 text-amber-600" />
-      <h3 className="mb-2 font-[family-name:var(--font-heading)] text-lg font-semibold text-dark-text">
+    <div
+      className="my-10 rounded-sm border p-8 text-center"
+      style={{
+        borderColor: "rgba(243,146,55,0.25)",
+        background:
+          "linear-gradient(135deg, rgba(243,146,55,0.08), rgba(247,201,74,0.04))",
+      }}
+    >
+      <Coffee
+        className="mx-auto mb-4 h-8 w-8"
+        style={{ color: "var(--gb-orange)" }}
+      />
+      <h3
+        className="mb-3 tracking-[-0.01em]"
+        style={{
+          fontFamily: "var(--font-serif)",
+          fontSize: 22,
+          fontWeight: 400,
+          color: "var(--ink)",
+        }}
+      >
         {message.title}
       </h3>
-      <p className="mx-auto mb-4 max-w-md text-sm text-grey-text">
+      <p
+        className="mx-auto mb-6 max-w-md leading-[1.6]"
+        style={{
+          fontFamily: "var(--font-serif)",
+          fontStyle: "italic",
+          fontSize: 15,
+          color: "var(--ink-dim)",
+        }}
+      >
         {message.body}
       </p>
       <a
@@ -84,10 +106,15 @@ export function BuyMeCoffee({
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => track("buy_me_coffee_click", { source })}
-        className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-amber-600"
+        className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-[13px] font-medium"
+        style={{
+          background: "var(--gb-orange)",
+          color: "var(--bg)",
+          fontFamily: "var(--font-sans)",
+        }}
       >
         <Coffee className="h-4 w-4" />
-        Invitanos a un cafe
+        Invitame a un cafe
       </a>
     </div>
   );

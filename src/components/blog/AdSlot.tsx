@@ -7,22 +7,24 @@ import { MONETIZATION_CONFIG } from "@/lib/monetization-config";
 import { track } from "@/lib/analytics";
 
 export type AdDisplay = "banner" | "sidebar" | "in-article" | "native";
-export type AdFormat = "auto" | "horizontal" | "vertical" | "rectangle" | "fluid";
+export type AdFormat =
+  | "auto"
+  | "horizontal"
+  | "vertical"
+  | "rectangle"
+  | "fluid";
 
 interface AdSlotProps {
-  /** Slot ID de AdSense (numerico, entregado por Google). */
   slot: string;
-  /** Formato del bloque. */
   format?: AdFormat;
-  /** Tipo de ubicacion para estilo y layout. */
   display?: AdDisplay;
   className?: string;
 }
 
 /**
- * Slot compatible con Google AdSense.
- * - Cuando NEXT_PUBLIC_ADSENSE_CLIENT esta configurado, renderiza el anuncio real.
- * - Cuando no lo esta, muestra un placeholder discreto que promociona Buy Me a Coffee.
+ * AdSense compatible (dark editorial restyle).
+ * Si NEXT_PUBLIC_ADSENSE_CLIENT no esta configurado, cae en un placeholder
+ * elegante que lleva a Buy Me a Coffee.
  */
 export function AdSlot({
   slot,
@@ -56,24 +58,50 @@ export function AdSlot({
 
   if (!adsense.enabled) {
     return (
-      <div className={`my-8 ${layoutClass} ${className}`}>
+      <div className={`my-10 ${layoutClass} ${className}`}>
         <a
           href={buyMeCoffee.url}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => track("buy_me_coffee_click", { source: `adslot:${display}` })}
-          className="group flex items-center gap-4 rounded-xl border border-amber-200/40 bg-gradient-to-r from-amber-50/70 to-orange-50/70 p-5 transition-all hover:border-amber-300 hover:shadow-md"
+          onClick={() =>
+            track("buy_me_coffee_click", { source: `adslot:${display}` })
+          }
+          className="group flex items-center gap-4 rounded-sm border p-5 transition-colors"
+          style={{
+            borderColor: "rgba(243,146,55,0.2)",
+            background:
+              "linear-gradient(90deg, rgba(243,146,55,0.04), rgba(247,201,74,0.02))",
+          }}
         >
-          <Coffee className="h-7 w-7 flex-shrink-0 text-amber-600" />
+          <Coffee
+            className="h-7 w-7 flex-shrink-0"
+            style={{ color: "var(--gb-orange)" }}
+          />
           <div className="flex-1">
-            <p className="text-sm font-medium text-dark-text">
+            <p
+              className="text-[14px] font-medium"
+              style={{
+                color: "var(--ink)",
+                fontFamily: "var(--font-sans)",
+              }}
+            >
               Egoera sin publicidad invasiva
             </p>
-            <p className="text-xs text-grey-text">
-              Si te gusta el contenido, invitanos a un cafe y sigue siendo gratuito.
+            <p
+              className="mt-0.5 text-[12px]"
+              style={{
+                color: "var(--ink-dim)",
+                fontFamily: "var(--font-sans)",
+              }}
+            >
+              Si te gusta el contenido, invitame a un cafe y sigue siendo
+              gratuito.
             </p>
           </div>
-          <span className="text-xs font-medium text-amber-600 group-hover:translate-x-0.5 transition-transform">
+          <span
+            className="text-[12px] font-medium transition-transform group-hover:translate-x-0.5"
+            style={{ color: "var(--gb-orange)" }}
+          >
             Apoyar →
           </span>
         </a>
@@ -82,8 +110,14 @@ export function AdSlot({
   }
 
   return (
-    <div className={`ad-slot my-8 ${layoutClass} ${className}`}>
-      <p className="mb-1 text-center text-[10px] uppercase tracking-wider text-grey-text/70">
+    <div className={`ad-slot my-10 ${layoutClass} ${className}`}>
+      <p
+        className="mb-2 text-center text-[10px] uppercase tracking-[0.22em]"
+        style={{
+          color: "var(--ink-faint)",
+          fontFamily: "var(--font-mono)",
+        }}
+      >
         Publicidad
       </p>
       <Script

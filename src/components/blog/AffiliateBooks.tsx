@@ -9,9 +9,7 @@ export interface AffiliateBook {
   title: string;
   author: string;
   asin: string;
-  /** Formato del enlace: amazon (papel/kindle) o audible (audiolibro). */
   format?: "amazon" | "audible";
-  /** Motivo breve de la recomendacion (contextual). */
   note?: string;
 }
 
@@ -115,9 +113,7 @@ function buildClickUrl(book: AffiliateBook, source: string): string {
 
 interface Props {
   categorySlug: string;
-  /** Identificador del articulo o seccion — se usa para tracking. */
   source?: string;
-  /** Estilo: card completa (default) o insercion nativa en texto. */
   variant?: "card" | "native";
 }
 
@@ -131,16 +127,28 @@ export function AffiliateBooks({
 
   if (variant === "native") {
     const primary = books[0];
-    return (
-      <NativeRecommendation book={primary} source={source} />
-    );
+    return <NativeRecommendation book={primary} source={source} />;
   }
 
   return (
-    <aside className="my-10 rounded-2xl border border-teal/15 bg-gradient-to-br from-teal/5 via-mint/5 to-sage/5 p-6">
-      <div className="mb-5 flex items-center gap-2">
-        <BookOpen className="h-5 w-5 text-teal" />
-        <h3 className="text-base font-semibold text-dark-text">
+    <aside
+      className="my-12 rounded-sm border p-7"
+      style={{
+        borderColor: "var(--rule)",
+        background: "rgba(168,194,182,0.03)",
+      }}
+    >
+      <div className="mb-6 flex items-center gap-2.5">
+        <BookOpen className="h-5 w-5" style={{ color: "var(--accent)" }} />
+        <h3
+          className="tracking-[-0.01em]"
+          style={{
+            fontFamily: "var(--font-serif)",
+            fontSize: 22,
+            fontWeight: 400,
+            color: "var(--ink)",
+          }}
+        >
           Lecturas recomendadas
         </h3>
       </div>
@@ -151,9 +159,15 @@ export function AffiliateBooks({
         ))}
       </div>
 
-      <p className="mt-4 text-[10px] text-grey-text">
-        Enlaces de afiliado. Si compras a traves de ellos, Egoera recibe una
-        pequena comision sin coste adicional para ti.
+      <p
+        className="mt-5 text-[10px] uppercase tracking-[0.18em]"
+        style={{
+          color: "var(--ink-faint)",
+          fontFamily: "var(--font-mono)",
+        }}
+      >
+        Enlaces de afiliado · Egoera recibe una pequena comision sin coste
+        adicional para ti
       </p>
     </aside>
   );
@@ -175,9 +189,16 @@ function BookCard({ book, source }: { book: AffiliateBook; source: string }) {
           source,
         })
       }
-      className="group flex gap-4 rounded-xl bg-white p-3 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+      className="group flex gap-4 rounded-sm border p-3 transition-all hover:-translate-y-0.5"
+      style={{
+        borderColor: "var(--rule)",
+        background: "var(--bg-2)",
+      }}
     >
-      <div className="relative h-24 w-16 flex-shrink-0 overflow-hidden rounded-md bg-muted">
+      <div
+        className="relative h-24 w-16 flex-shrink-0 overflow-hidden rounded-sm"
+        style={{ background: "rgba(168,194,182,0.05)" }}
+      >
         <Image
           src={amazonCoverUrl(book.asin)}
           alt={`Portada de ${book.title}`}
@@ -188,16 +209,33 @@ function BookCard({ book, source }: { book: AffiliateBook; source: string }) {
         />
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
-        <p className="line-clamp-2 text-sm font-medium text-dark-text transition-colors group-hover:text-teal">
+        <p
+          className="line-clamp-2 text-[14px] font-medium leading-[1.3] transition-colors group-hover:text-[color:var(--accent)]"
+          style={{ color: "var(--ink)" }}
+        >
           {book.title}
         </p>
-        <p className="mt-0.5 text-xs text-grey-text">{book.author}</p>
+        <p
+          className="mt-0.5 text-[12px]"
+          style={{ color: "var(--ink-dim)" }}
+        >
+          {book.author}
+        </p>
         {book.note && (
-          <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-grey-text/80">
+          <p
+            className="mt-1 line-clamp-2 text-[11px] leading-[1.4]"
+            style={{ color: "var(--ink-faint)" }}
+          >
             {book.note}
           </p>
         )}
-        <span className="mt-auto inline-flex items-center gap-1 pt-2 text-xs font-medium text-teal">
+        <span
+          className="mt-auto inline-flex items-center gap-1 pt-2 text-[11px] uppercase tracking-[0.18em]"
+          style={{
+            color: "var(--accent)",
+            fontFamily: "var(--font-mono)",
+          }}
+        >
           {book.format === "audible" ? (
             <>
               <Headphones className="h-3 w-3" /> {network}
@@ -222,7 +260,15 @@ function NativeRecommendation({
 }) {
   const href = buildClickUrl(book, source);
   return (
-    <p className="my-6 border-l-4 border-teal/40 bg-teal/5 px-4 py-3 text-sm italic text-grey-text">
+    <p
+      className="my-6 border-l-2 px-5 py-4 text-[14px] italic leading-[1.6]"
+      style={{
+        borderLeftColor: "rgba(168,194,182,0.35)",
+        background: "rgba(168,194,182,0.04)",
+        color: "var(--ink-dim)",
+        fontFamily: "var(--font-serif)",
+      }}
+    >
       Lectura recomendada:{" "}
       <a
         href={href}
@@ -235,7 +281,11 @@ function NativeRecommendation({
             source: `${source}:native`,
           })
         }
-        className="font-medium text-teal underline decoration-teal/40 underline-offset-2 hover:decoration-teal"
+        className="font-medium underline underline-offset-4"
+        style={{
+          color: "var(--accent)",
+          textDecorationColor: "rgba(168,194,182,0.4)",
+        }}
       >
         {book.title}
       </a>
@@ -244,26 +294,44 @@ function NativeRecommendation({
   );
 }
 
-/** Recomendacion de audiolibro via Audible (home, sidebar). */
-export function AudibleRecommendation({ source = "sidebar" }: { source?: string }) {
+export function AudibleRecommendation({
+  source = "sidebar",
+}: {
+  source?: string;
+}) {
   return (
     <a
       href={MONETIZATION_CONFIG.audible.baseUrl}
       target="_blank"
       rel="noopener sponsored nofollow noreferrer"
       onClick={() => track("affiliate_click", { network: "audible", source })}
-      className="flex items-center gap-3 rounded-xl border border-sage/20 bg-sage/5 p-4 transition-colors hover:bg-sage/10"
+      className="flex items-center gap-3 rounded-sm border p-4 transition-colors"
+      style={{
+        borderColor: "var(--rule)",
+        background: "var(--bg-2)",
+      }}
     >
-      <Headphones className="h-6 w-6 text-sage" />
+      <Headphones className="h-6 w-6" style={{ color: "var(--accent)" }} />
       <div className="flex-1">
-        <p className="text-sm font-medium text-dark-text">
+        <p
+          className="text-[14px] font-medium"
+          style={{ color: "var(--ink)" }}
+        >
           30 dias gratis en Audible
         </p>
-        <p className="text-xs text-grey-text">
+        <p className="text-[12px]" style={{ color: "var(--ink-dim)" }}>
           Miles de audiolibros de psicologia y desarrollo personal.
         </p>
       </div>
-      <span className="text-xs font-medium text-sage">Probar →</span>
+      <span
+        className="text-[11px] uppercase tracking-[0.18em]"
+        style={{
+          color: "var(--accent)",
+          fontFamily: "var(--font-mono)",
+        }}
+      >
+        Probar →
+      </span>
     </a>
   );
 }

@@ -12,9 +12,9 @@ import {
 import { MONETIZATION_CONFIG } from "@/lib/monetization-config";
 
 export const metadata: Metadata = {
-  title: "Apoya Egoera — Ayudanos a seguir creando",
+  title: "Apoya Egoera",
   description:
-    "Egoera se mantiene gracias a su comunidad. Descubre como puedes apoyarnos: newsletter, donaciones, afiliados o siguiendonos en redes.",
+    "Egoera se mantiene gracias a su comunidad. Descubre como puedes apoyar el vlog de Ander Bilbao: newsletter, cafe, afiliados o redes.",
 };
 
 export default function ApoyaPage() {
@@ -23,29 +23,26 @@ export default function ApoyaPage() {
       icon: Mail,
       title: "Suscribete a la newsletter",
       description:
-        "Un articulo semanal, gratuito y sin spam. Es la manera mas directa de sostener el proyecto.",
+        "Un articulo semanal, gratuito y sin spam. La forma mas directa de sostener el proyecto.",
       cta: "Suscribirme",
-      href: "/recursos#newsletter",
-      accent: "teal" as const,
+      href: "/#newsletter",
     },
     {
       icon: Coffee,
-      title: "Invitanos a un cafe",
+      title: "Invitame a un cafe",
       description:
-        "Aportaciones puntuales via Buy Me a Coffee. Cada una financia horas de redaccion y revision.",
+        "Aportaciones puntuales via Buy Me a Coffee. Cada una financia horas de escritura y revision.",
       cta: "Apoyar con un cafe",
       href: MONETIZATION_CONFIG.buyMeCoffee.url,
       external: true,
-      accent: "amber" as const,
     },
     {
       icon: BookOpen,
       title: "Compra por Amazon Afiliados",
       description:
-        "Si vas a comprar un libro de psicologia, usar nuestros enlaces no te cuesta nada y nos deja una pequena comision.",
+        "Si vas a comprar un libro de psicologia, usar mis enlaces no te cuesta nada y me deja una pequena comision.",
       cta: "Ver lecturas recomendadas",
-      href: "/recursos#lecturas",
-      accent: "sage" as const,
+      href: "/blog",
     },
     {
       icon: Users,
@@ -55,63 +52,111 @@ export default function ApoyaPage() {
       cta: "@egoera.psikologia",
       href: "https://instagram.com/egoera.psikologia",
       external: true,
-      accent: "mint" as const,
     },
   ];
 
   return (
-    <main className="relative overflow-hidden pb-24 pt-24">
-      <div className="watercolor-section watercolor-deep absolute inset-0 -z-10" aria-hidden />
+    <main className="relative overflow-hidden pt-28 pb-24">
+      <section className="mx-auto max-w-[900px] px-5 pt-16 md:px-12">
+        <div className="kicker mb-5">Apoya el proyecto</div>
+        <h1
+          className="mb-6 leading-none tracking-[-0.03em]"
+          style={{
+            fontFamily: "var(--font-serif)",
+            fontWeight: 300,
+            fontSize: "clamp(48px, 7vw, 96px)",
+          }}
+        >
+          Egoera se mantiene{" "}
+          <em className="italic" style={{ color: "var(--accent)" }}>
+            gracias a ti.
+          </em>
+        </h1>
+        <p
+          className="max-w-[620px] leading-[1.6]"
+          style={{
+            fontFamily: "var(--font-serif)",
+            fontStyle: "italic",
+            fontSize: 20,
+            color: "var(--ink-dim)",
+          }}
+        >
+          No tengo patrocinadores agresivos, ni cursos de miles de euros, ni
+          planes premium bloqueando el contenido. Solo psicologia accesible,
+          basada en evidencia. Si te sirve, puedes ayudarme a sostenerlo.
+        </p>
+      </section>
 
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        {/* Hero */}
-        <div className="text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-teal/10 px-3 py-1 text-xs font-medium text-teal">
-            Apoya el proyecto
-          </span>
-          <h1 className="mt-4 font-[family-name:var(--font-heading)] text-4xl font-bold leading-tight text-dark-text sm:text-5xl">
-            Egoera se mantiene <span className="paint-stroke-highlight">gracias a ti</span>
-          </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-lg text-grey-text">
-            No tenemos patrocinadores agresivos, ni cursos de miles de euros,
-            ni planes premium bloqueando el contenido. Solo psicologia accesible,
-            basada en evidencia. Si te sirve, puedes ayudarnos a sostenerlo.
-          </p>
-        </div>
-
-        {/* 4 apoyo cards */}
-        <div className="mt-14 grid gap-5 sm:grid-cols-2">
+      <section className="mx-auto mt-16 max-w-[1100px] px-5 md:px-12">
+        <div className="grid gap-4 sm:grid-cols-2">
           {cards.map((card) => (
             <SupportCard key={card.title} {...card} />
           ))}
         </div>
+      </section>
 
-        {/* Telegram bot */}
-        <div className="mt-14 rounded-3xl border border-teal/15 bg-white/80 p-8 text-center backdrop-blur">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-teal/10">
-            <Send className="h-7 w-7 text-teal" />
+      {/* Telegram */}
+      <section className="mx-auto mt-16 max-w-[900px] px-5 md:px-12">
+        <div
+          className="rounded-sm border p-10 text-center"
+          style={{
+            borderColor: "var(--rule)",
+            background: "var(--bg-2)",
+          }}
+        >
+          <div
+            className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full"
+            style={{
+              background: "rgba(168,194,182,0.1)",
+              border: "1px solid var(--rule)",
+            }}
+          >
+            <Send className="h-6 w-6" style={{ color: "var(--accent)" }} />
           </div>
-          <h2 className="font-[family-name:var(--font-heading)] text-2xl font-semibold text-dark-text">
-            Habla con nosotros por Telegram
+          <h2
+            className="mb-3 tracking-[-0.02em]"
+            style={{
+              fontFamily: "var(--font-serif)",
+              fontWeight: 300,
+              fontSize: 36,
+            }}
+          >
+            Habla conmigo por{" "}
+            <em className="italic" style={{ color: "var(--accent)" }}>
+              Telegram
+            </em>
           </h2>
-          <p className="mx-auto mt-2 max-w-lg text-sm text-grey-text">
-            Tenemos un bot que te responde con articulos, ejercicios y recursos
+          <p
+            className="mx-auto mb-7 max-w-[540px] leading-[1.6]"
+            style={{
+              fontFamily: "var(--font-serif)",
+              fontStyle: "italic",
+              fontSize: 17,
+              color: "var(--ink-dim)",
+            }}
+          >
+            Tengo un bot que te responde con articulos, ejercicios y recursos
             segun lo que estes atravesando. Gratuito y sin registro.
           </p>
           <a
             href={MONETIZATION_CONFIG.telegram.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-5 inline-flex items-center gap-2 rounded-full bg-teal px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-teal/90"
+            className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[13px] font-medium"
+            style={{
+              background: "var(--ink)",
+              color: "var(--bg)",
+              fontFamily: "var(--font-sans)",
+            }}
           >
             <Send className="h-4 w-4" />
             Abrir @{MONETIZATION_CONFIG.telegram.username}
           </a>
         </div>
+      </section>
 
-        {/* Bio Ander */}
-        <AuthorBio />
-      </div>
+      {/* Bio */}
+      <AuthorBio />
     </main>
   );
 }
@@ -123,7 +168,6 @@ function SupportCard({
   cta,
   href,
   external,
-  accent,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
@@ -131,45 +175,75 @@ function SupportCard({
   cta: string;
   href: string;
   external?: boolean;
-  accent: "teal" | "sage" | "mint" | "amber";
 }) {
-  const accentMap: Record<string, string> = {
-    teal: "bg-teal/10 text-teal",
-    sage: "bg-sage/10 text-sage",
-    mint: "bg-mint/20 text-dark-text",
-    amber: "bg-amber-100 text-amber-600",
+  const cardClass =
+    "group flex h-full flex-col rounded-sm border p-8 transition-all hover:-translate-y-0.5 hover:border-[color:var(--accent)]";
+  const cardStyle: React.CSSProperties = {
+    borderColor: "var(--rule)",
+    background: "rgba(12,16,14,0.4)",
   };
-
-  const cardClass = "group flex h-full flex-col rounded-2xl border border-border bg-white/90 p-6 transition-all hover:-translate-y-1 hover:border-teal/30 hover:shadow-lg";
 
   const content = (
     <>
       <div
-        className={`mb-4 flex h-11 w-11 items-center justify-center rounded-xl ${accentMap[accent]}`}
+        className="mb-5 flex h-11 w-11 items-center justify-center rounded-full"
+        style={{
+          background: "rgba(168,194,182,0.1)",
+          border: "1px solid var(--rule)",
+        }}
       >
         <Icon className="h-5 w-5" />
       </div>
-      <h3 className="font-[family-name:var(--font-heading)] text-lg font-semibold text-dark-text">
+      <h3
+        className="mb-3 leading-tight tracking-[-0.01em]"
+        style={{
+          fontFamily: "var(--font-serif)",
+          fontSize: 24,
+          fontWeight: 400,
+          color: "var(--ink)",
+        }}
+      >
         {title}
       </h3>
-      <p className="mt-2 flex-1 text-sm leading-relaxed text-grey-text">
+      <p
+        className="mb-6 flex-1 leading-[1.6]"
+        style={{
+          color: "var(--ink-dim)",
+          fontFamily: "var(--font-serif)",
+          fontStyle: "italic",
+          fontSize: 15,
+        }}
+      >
         {description}
       </p>
-      <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-teal">
-        {cta} {external ? <ExternalLink className="h-3.5 w-3.5" /> : <span aria-hidden>→</span>}
+      <span
+        className="inline-flex items-center gap-2 text-[12px] uppercase tracking-[0.18em]"
+        style={{
+          color: "var(--accent)",
+          fontFamily: "var(--font-mono)",
+        }}
+      >
+        {cta}{" "}
+        {external ? <ExternalLink className="h-3.5 w-3.5" /> : <span>→</span>}
       </span>
     </>
   );
 
   if (external) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={cardClass}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cardClass}
+        style={cardStyle}
+      >
         {content}
       </a>
     );
   }
   return (
-    <Link href={href} className={cardClass}>
+    <Link href={href} className={cardClass} style={cardStyle}>
       {content}
     </Link>
   );
@@ -177,32 +251,67 @@ function SupportCard({
 
 function AuthorBio() {
   return (
-    <div className="mt-14 rounded-3xl border border-border bg-white/80 p-8 backdrop-blur">
-      <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-        <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-2xl bg-teal/10">
-          {/* Fallback avatar si no hay imagen */}
-          <Image
-            src="/egoera-logo.png"
-            alt="Ander Bilbao"
-            fill
-            sizes="96px"
-            className="object-cover"
-          />
-        </div>
-        <div className="flex-1">
-          <h3 className="font-[family-name:var(--font-heading)] text-xl font-semibold text-dark-text">
-            Ander Bilbao Castejon
-          </h3>
-          <p className="text-sm text-grey-text">Creador de Egoera Psikologia</p>
-          <p className="mt-3 text-sm leading-relaxed text-dark-text">
-            Escribo sobre psicologia porque creo que el conocimiento clinico no
-            deberia quedarse en consulta. En Egoera traduzco investigacion
-            reciente a herramientas practicas para el dia a dia, sin
-            infantilizar y sin recetas magicas. Si este proyecto te acompana,
-            cualquier forma de apoyo ayuda a mantenerlo gratuito.
-          </p>
+    <section className="mx-auto mt-16 max-w-[900px] px-5 md:px-12">
+      <div
+        className="rounded-sm border p-10"
+        style={{
+          borderColor: "var(--rule)",
+          background: "var(--bg-2)",
+        }}
+      >
+        <div className="flex flex-col gap-7 sm:flex-row sm:items-start">
+          <div
+            className="relative h-28 w-28 flex-shrink-0 overflow-hidden rounded-full"
+            style={{
+              background: "rgba(168,194,182,0.1)",
+              border: "1px solid var(--rule)",
+            }}
+          >
+            <Image
+              src="/egoera-logo.png"
+              alt="Ander Bilbao"
+              fill
+              sizes="112px"
+              className="object-cover p-3"
+            />
+          </div>
+          <div className="flex-1">
+            <h3
+              className="mb-1 tracking-[-0.02em]"
+              style={{
+                fontFamily: "var(--font-serif)",
+                fontSize: 32,
+                fontWeight: 400,
+              }}
+            >
+              Ander Bilbao Castejon
+            </h3>
+            <p
+              className="mb-4 text-[12px] uppercase tracking-[0.22em]"
+              style={{
+                color: "var(--accent)",
+                fontFamily: "var(--font-mono)",
+              }}
+            >
+              Creador de Egoera · Donostia
+            </p>
+            <p
+              className="leading-[1.65]"
+              style={{
+                fontFamily: "var(--font-serif)",
+                fontSize: 17,
+                color: "var(--ink-dim)",
+              }}
+            >
+              Escribo sobre psicologia porque creo que el conocimiento clinico
+              no deberia quedarse en consulta. En Egoera traduzco investigacion
+              reciente a herramientas practicas para el dia a dia, sin
+              infantilizar y sin recetas magicas. Si este proyecto te acompana,
+              cualquier forma de apoyo ayuda a mantenerlo gratuito.
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

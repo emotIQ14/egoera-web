@@ -19,40 +19,83 @@ interface Props {
 }
 
 /**
- * Espacio para colaboraciones patrocinadas.
- * Requiere `SPONSORED_ENABLED=true` en entorno; si no, no renderiza nada.
- * Siempre queda etiquetado como "Colaboracion" para cumplir con buenas
- * practicas de transparencia publicitaria.
+ * Espacio para colaboraciones patrocinadas. Fondo oscuro editorial.
  */
 export function SponsoredSlot({ content, source = "article" }: Props) {
   if (!MONETIZATION_CONFIG.sponsored.enabled || !content) return null;
 
   return (
-    <aside className="my-10 overflow-hidden rounded-2xl border border-border bg-white">
-      <div className="flex items-center justify-between border-b border-border bg-muted/40 px-4 py-1.5">
-        <span className="text-[10px] font-medium uppercase tracking-wider text-grey-text">
+    <aside
+      className="my-10 overflow-hidden rounded-sm border"
+      style={{
+        borderColor: "var(--rule)",
+        background: "var(--bg-2)",
+      }}
+    >
+      <div
+        className="flex items-center justify-between border-b px-5 py-2"
+        style={{ borderColor: "var(--rule)" }}
+      >
+        <span
+          className="text-[10px] uppercase tracking-[0.22em]"
+          style={{
+            color: "var(--ink-faint)",
+            fontFamily: "var(--font-mono)",
+          }}
+        >
           Colaboracion
         </span>
-        <span className="text-[10px] text-grey-text/70">con {content.brand}</span>
+        <span
+          className="text-[10px]"
+          style={{
+            color: "var(--ink-faint)",
+            fontFamily: "var(--font-mono)",
+          }}
+        >
+          con {content.brand}
+        </span>
       </div>
-      <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-5 p-6 sm:flex-row sm:items-center">
         {content.logo && (
-          <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-muted">
+          <div
+            className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-sm"
+            style={{
+              background: "rgba(168,194,182,0.08)",
+              border: "1px solid var(--rule)",
+            }}
+          >
             <Image
               src={content.logo}
               alt={content.brand}
               fill
               sizes="64px"
-              className="object-contain"
+              className="object-contain p-2"
               unoptimized
             />
           </div>
         )}
         <div className="flex-1">
-          <h4 className="font-[family-name:var(--font-heading)] text-base font-semibold text-dark-text">
+          <h4
+            className="tracking-[-0.01em]"
+            style={{
+              fontFamily: "var(--font-serif)",
+              fontSize: 20,
+              fontWeight: 400,
+              color: "var(--ink)",
+            }}
+          >
             {content.headline}
           </h4>
-          <p className="mt-1 text-sm text-grey-text">{content.description}</p>
+          <p
+            className="mt-1.5 leading-[1.55]"
+            style={{
+              color: "var(--ink-dim)",
+              fontSize: 14,
+              fontFamily: "var(--font-sans)",
+            }}
+          >
+            {content.description}
+          </p>
         </div>
         <a
           href={content.url}
@@ -61,9 +104,14 @@ export function SponsoredSlot({ content, source = "article" }: Props) {
           onClick={() =>
             track("sponsored_click", { brand: content.brand, source })
           }
-          className="inline-flex items-center gap-1 rounded-full bg-teal px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-teal/90"
+          className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-[13px] font-medium"
+          style={{
+            background: "var(--ink)",
+            color: "var(--bg)",
+            fontFamily: "var(--font-sans)",
+          }}
         >
-          {content.ctaLabel} <span aria-hidden>→</span>
+          {content.ctaLabel} <span>→</span>
         </a>
       </div>
     </aside>

@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Egoera — Tu estado importa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script>
+// Inline OBJLoader (minimal, compatible with three 0.160) — parses OBJ to a Group
+(function(){
+  class OBJLoader extends THREE.Loader {
+    load(url, onLoad, onProgress, onError) {
+      const loader = new THREE.FileLoader(this.manager);
+      loader.setPath(this.path);
+      loader.setRequestHeader(this.requestHeader);
+      loader.setWithCredentials(this.withCredentials);
+      loader.load(url, (text) => {
+        try { onLoad(this.parse(text)); }
+        catch(e){ onError ? onError(e) : console.error(e); }
+      }, onProgress, onError);
+    }
+    parse(text) {
+      const group = new THREE.Group();
+      const verts = [], norms = [], uvs = [];
+      const posArr = [], normArr = [];
+      const lines = text.split('\n');
+      for (let i=0; i<lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line || line.startsWith('#')) continue;
+        const parts = line.split(/\s+/);
+        const cmd = parts[0];
+        if (cmd === 'v') verts.push([+parts[1], +parts[2], +parts[3]]);
+        else if (cmd === 'vn') norms.push([+parts[1], +parts[2], +parts[3]]);
+        else if (cmd === 'vt') uvs.push([+parts[1], +parts[2]]);
+        else if (cmd === 'f') {
+          const faceVerts = parts.slice(1).map(s => {
+            const [vi, ti, ni] = s.split('/').map(x => x ? +x : 0);
+            return { vi: vi>0?vi-1:verts.length+vi, ni: ni>0?ni-1:(ni<0?norms.length+ni:-1) };
+          });
+          // triangulate fan
+          for (let k=1; k<faceVerts.length-1; k++) {
+            [faceVerts[0], faceVerts[k], faceVerts[k+1]].forEach(fv => {
+              const v = verts[fv.vi];
+              if (v) posArr.push(v[0], v[1], v[2]);
+              if (fv.ni >= 0 && norms[fv.ni]) {
+                const n = norms[fv.ni];
+                normArr.push(n[0], n[1], n[2]);
+              }
+            });
+          }
+        }
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(posArr, 3));
+      if (normArr.length === posArr.length) geo.setAttribute('normal', new THREE.Float32BufferAttribute(normArr, 3));
+      else geo.computeVertexNormals();
+      const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0xd98983 }));
+      group.add(mesh);
+      return group;
+    }
+  }
+  THREE.OBJLoader = OBJLoader;
+})();
+</script>
+<style>
+  :root {
+    --bg: #0a0d0c;
+    --bg-2: #0f1412;
+    --ink: #f4efe6;
+    --ink-dim: #b8b0a2;
+    --ink-faint: #6d665c;
+    --accent: #a8c2b6;   /* verde agua suave (de la acuarela) */
+    --accent-2: #8fa8bf; /* azul polvo */
+    --rule: rgba(244,239,230,0.12);
+    --serif: 'Fraunces', serif;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+  ::selection { background: var(--accent); color: #0a0d0c; }
+
+  /* ——— Nav ——— */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 48px;
+    backdrop-filter: blur(8px);
+    background: linear-gradient(180deg, rgba(10,13,12,0.55) 0%, rgba(10,13,12,0) 100%);
+    transition: background .3s ease, padding .3s ease;
+  }
+  .nav.scrolled {
+    background: rgba(10,13,12,0.85);
+    padding: 16px 48px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .brand {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .brand-mark {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--accent) 0%, var(--accent-2) 55%, #3d5560 100%);
+    box-shadow: 0 0 24px rgba(168,194,182,.35);
+  }
+  .brand em { font-style: italic; font-weight: 300; color: var(--ink-dim); }
+  .nav-links { display: flex; gap: 36px; align-items: center; font-size: 13.5px; }
+  .nav-links a {
+    color: var(--ink-dim); text-decoration: none; letter-spacing: 0.02em;
+    transition: color .2s ease; position: relative;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a.active { color: var(--ink); }
+  .nav-cta {
+    font-family: var(--sans); font-size: 13px; letter-spacing: 0.04em;
+    color: #0a0d0c; background: var(--ink); padding: 10px 18px;
+    border-radius: 999px; border: none; cursor: pointer; font-weight: 500;
+    transition: transform .2s ease, background .2s ease;
+  }
+  .nav-cta:hover { background: var(--accent); transform: translateY(-1px); }
+
+  /* ——— Hero ——— */
+  .hero {
+    position: relative; width: 100%; min-height: 100vh;
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .hero-video {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; z-index: 0;
+  }
+  .hero-overlay {
+    position: absolute; inset: 0; z-index: 1;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(10,13,12,0) 0%, rgba(10,13,12,0.55) 70%, rgba(10,13,12,0.88) 100%),
+      linear-gradient(180deg, rgba(10,13,12,0.45) 0%, rgba(10,13,12,0.15) 30%, rgba(10,13,12,0.75) 100%);
+    transition: opacity .4s ease;
+  }
+  .hero-grain {
+    position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    opacity: .25; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95  0 0 0 0 0.95  0 0 0 0 0.95  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  .hero-watercolor {
+    position: absolute; z-index: 2; pointer-events: none;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 140%; max-width: 1800px;
+    opacity: .08; mix-blend-mode: screen;
+    filter: hue-rotate(-10deg) saturate(.8);
+  }
+
+  .hero-content {
+    position: relative; z-index: 3;
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center;
+    padding: 180px 48px 80px;
+    max-width: 1400px; margin: 0 auto; width: 100%;
+  }
+  .hero-kicker {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 36px;
+    opacity: 0; animation: fadeUp 1s .2s forwards;
+  }
+  .hero-kicker::before {
+    content: ''; width: 40px; height: 1px; background: var(--accent);
+  }
+  .hero-title {
+    font-family: var(--serif); font-weight: 300;
+    font-size: clamp(56px, 8.5vw, 128px);
+    line-height: 0.95; letter-spacing: -0.02em;
+    max-width: 1100px;
+    opacity: 0; animation: fadeUp 1.2s .4s forwards;
+  }
+  .hero-title em {
+    font-style: italic; font-weight: 300;
+    color: var(--accent);
+  }
+  .hero-sub {
+    font-family: var(--serif); font-weight: 300; font-style: italic;
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.5; color: var(--ink-dim);
+    max-width: 560px; margin-top: 36px;
+    opacity: 0; animation: fadeUp 1s .7s forwards;
+  }
+  .hero-actions {
+    display: flex; gap: 20px; align-items: center; margin-top: 48px;
+    opacity: 0; animation: fadeUp 1s .9s forwards;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 14px;
+    background: var(--ink); color: #0a0d0c;
+    padding: 18px 28px; border-radius: 999px;
+    font-size: 14px; font-weight: 500; letter-spacing: 0.02em;
+    border: none; cursor: pointer; text-decoration: none;
+    transition: all .3s ease;
+  }
+  .btn-primary:hover { background: var(--accent); transform: translateY(-2px); }
+  .btn-primary .play-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #0a0d0c; color: var(--ink);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .btn-primary:hover .play-icon { background: #0a0d0c; color: var(--accent); }
+  .btn-ghost {
+    color: var(--ink); background: transparent;
+    padding: 18px 24px; border: 1px solid rgba(244,239,230,.25);
+    border-radius: 999px; font-size: 14px; letter-spacing: 0.02em;
+    cursor: pointer; text-decoration: none;
+    transition: all .3s ease;
+  }
+  .btn-ghost:hover { border-color: var(--ink); background: rgba(244,239,230,.06); }
+
+  /* Hero bottom bar */
+  .hero-bottom {
+    position: relative; z-index: 3;
+    display: flex; justify-content: space-between; align-items: flex-end;
+    padding: 0 48px 40px;
+    max-width: 1400px; margin: 0 auto; width: 100%;
+    opacity: 0; animation: fadeUp 1s 1.1s forwards;
+  }
+  .hero-episode {
+    display: flex; align-items: center; gap: 20px;
+    color: var(--ink-dim); font-size: 13px;
+  }
+  .hero-episode .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 12px var(--accent);
+    animation: pulse 2s infinite;
+  }
+  .hero-episode strong { color: var(--ink); font-weight: 500; margin-right: 8px; }
+  .hero-meta {
+    display: flex; gap: 32px; color: var(--ink-faint);
+    font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .hero-meta span { display: flex; align-items: center; gap: 8px; }
+
+  .scroll-hint {
+    position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+    z-index: 3; color: var(--ink-faint); font-size: 11px;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    animation: fadeUp 1s 1.3s forwards; opacity: 0;
+  }
+  .scroll-hint::after {
+    content: ''; width: 1px; height: 40px;
+    background: linear-gradient(180deg, var(--ink-faint), transparent);
+    animation: scrollLine 2.4s ease-in-out infinite;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(24px); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .5; transform: scale(1.3); }
+  }
+  @keyframes scrollLine {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* ——— Featured Episode ——— */
+  .section {
+    padding: 140px 48px;
+    max-width: 1400px; margin: 0 auto;
+  }
+  .section-head {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 72px; gap: 48px;
+  }
+  .section-label {
+    font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .section-label::before {
+    content: ''; width: 32px; height: 1px; background: var(--accent);
+  }
+  .section-title {
+    font-family: var(--serif); font-weight: 300;
+    font-size: clamp(40px, 5vw, 72px); line-height: 1.02;
+    letter-spacing: -0.02em; max-width: 800px;
+  }
+  .section-title em { font-style: italic; color: var(--accent); }
+  .section-sub {
+    font-family: var(--serif); font-style: italic; font-weight: 300;
+    font-size: 18px; color: var(--ink-dim); max-width: 380px;
+    line-height: 1.5;
+  }
+
+  /* Featured episode card */
+  .featured {
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: 64px;
+    align-items: center;
+  }
+  .featured-media {
+    position: relative; aspect-ratio: 16/10; border-radius: 4px;
+    overflow: hidden; cursor: pointer;
+    background: #000;
+  }
+  .featured-media video {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform .8s ease;
+  }
+  .featured-media:hover video { transform: scale(1.03); }
+  .featured-media::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(10,13,12,.6) 100%);
+    pointer-events: none;
+  }
+  .featured-play {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); z-index: 2;
+    width: 88px; height: 88px; border-radius: 50%;
+    background: rgba(244,239,230,.95); color: #0a0d0c;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .3s ease;
+    box-shadow: 0 0 0 0 rgba(244,239,230,.4);
+  }
+  .featured-media:hover .featured-play {
+    background: var(--accent);
+    box-shadow: 0 0 0 20px rgba(168,194,182,.15);
+  }
+  .featured-duration {
+    position: absolute; bottom: 20px; right: 20px; z-index: 2;
+    background: rgba(10,13,12,.8); backdrop-filter: blur(8px);
+    color: var(--ink); padding: 6px 12px; border-radius: 3px;
+    font-size: 12px; letter-spacing: 0.08em;
+  }
+  .featured-info h3 {
+    font-family: var(--serif); font-weight: 300;
+    font-size: clamp(32px, 3vw, 44px); line-height: 1.1;
+    letter-spacing: -0.01em; margin-bottom: 24px;
+  }
+  .featured-info h3 em { font-style: italic; color: var(--accent); }
+  .featured-info p {
+    color: var(--ink-dim); font-size: 16px; line-height: 1.7;
+    margin-bottom: 32px; max-width: 460px;
+  }
+  .featured-tags {
+    display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--ink-dim); padding: 8px 14px;
+    border: 1px solid var(--rule); border-radius: 999px;
+  }
+  .featured-author {
+    display: flex; align-items: center; gap: 14px;
+    padding-top: 24px; border-top: 1px solid var(--rule);
+  }
+  .author-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif); font-size: 18px; color: #0a0d0c;
+    font-weight: 500;
+  }
+  .author-info .name {
+    font-size: 14px; color: var(--ink); font-weight: 500;
+  }
+  .author-info .role {
+    font-size: 12px; color: var(--ink-faint); margin-top: 2px;
+  }
+
+  /* ——— Episodes Grid ——— */
+  .episodes {
+    background: var(--bg-2);
+    padding: 140px 48px;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .episodes-wrap { max-width: 1400px; margin: 0 auto; position: relative; }
+  .episodes-watercolor {
+    position: absolute; top: -120px; right: -200px;
+    width: 900px; opacity: .04; mix-blend-mode: screen;
+    pointer-events: none; transform: rotate(15deg);
+  }
+  .ep-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px 32px;
+    position: relative;
+  }
+  .ep-card {
+    cursor: pointer; transition: transform .4s ease;
+  }
+  .ep-card:hover { transform: translateY(-6px); }
+  .ep-thumb {
+    position: relative; aspect-ratio: 4/3; border-radius: 3px;
+    overflow: hidden; background: #1a2020;
+    margin-bottom: 20px;
+  }
+  .ep-thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform .8s ease; filter: brightness(.85);
+  }
+  .ep-card:hover .ep-thumb img {
+    transform: scale(1.06); filter: brightness(1);
+  }
+  .ep-thumb::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 50%, rgba(10,13,12,.7) 100%);
+  }
+  .ep-num {
+    position: absolute; top: 16px; left: 16px; z-index: 2;
+    font-family: var(--serif); font-size: 13px; font-style: italic;
+    color: var(--ink-dim); letter-spacing: 0.05em;
+  }
+  .ep-dur {
+    position: absolute; bottom: 16px; right: 16px; z-index: 2;
+    background: rgba(10,13,12,.75); backdrop-filter: blur(6px);
+    color: var(--ink); padding: 5px 10px; border-radius: 2px;
+    font-size: 11px; letter-spacing: 0.06em;
+  }
+  .ep-category {
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 10px;
+  }
+  .ep-title {
+    font-family: var(--serif); font-weight: 400;
+    font-size: 22px; line-height: 1.25; margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .ep-meta {
+    display: flex; gap: 14px; color: var(--ink-faint);
+    font-size: 12px; letter-spacing: 0.04em;
+  }
+  .ep-meta span { display: flex; align-items: center; gap: 6px; }
+
+  /* ——— Quote / Manifesto ——— */
+  .manifesto {
+    padding: 180px 48px;
+    max-width: 1100px; margin: 0 auto;
+    text-align: center; position: relative;
+  }
+  .manifesto-watercolor {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%; opacity: .06; mix-blend-mode: screen;
+    pointer-events: none;
+  }
+  .manifesto-quote {
+    font-family: var(--serif); font-weight: 300; font-style: italic;
+    font-size: clamp(32px, 4.5vw, 64px); line-height: 1.2;
+    letter-spacing: -0.02em;
+    position: relative; z-index: 2;
+  }
+  .manifesto-quote em {
+    font-style: italic; color: var(--accent);
+    font-weight: 400;
+  }
+  .manifesto-cite {
+    margin-top: 56px; font-size: 12px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--ink-faint);
+    position: relative; z-index: 2;
+  }
+
+  /* ——— Newsletter ——— */
+  .newsletter {
+    padding: 120px 48px;
+    border-top: 1px solid var(--rule);
+    background:
+      radial-gradient(ellipse 60% 80% at 50% 100%, rgba(168,194,182,.06) 0%, transparent 70%),
+      var(--bg);
+    text-align: center;
+  }
+  .newsletter-wrap { max-width: 680px; margin: 0 auto; }
+  .newsletter h2 {
+    font-family: var(--serif); font-weight: 300;
+    font-size: clamp(36px, 4vw, 52px); line-height: 1.1;
+    margin-bottom: 20px; letter-spacing: -0.02em;
+  }
+  .newsletter h2 em { font-style: italic; color: var(--accent); }
+  .newsletter p {
+    color: var(--ink-dim); font-size: 16px; line-height: 1.6;
+    margin-bottom: 48px; max-width: 500px; margin-left: auto; margin-right: auto;
+  }
+  .newsletter-form {
+    display: flex; gap: 12px; max-width: 480px; margin: 0 auto;
+    padding: 8px; background: rgba(244,239,230,.04);
+    border: 1px solid var(--rule); border-radius: 999px;
+    transition: border-color .2s ease;
+  }
+  .newsletter-form:focus-within { border-color: var(--accent); }
+  .newsletter-form input {
+    flex: 1; background: transparent; border: none; outline: none;
+    color: var(--ink); font-family: var(--sans); font-size: 14px;
+    padding: 12px 20px;
+  }
+  .newsletter-form input::placeholder { color: var(--ink-faint); }
+  .newsletter-form button {
+    background: var(--ink); color: #0a0d0c;
+    border: none; padding: 12px 24px; border-radius: 999px;
+    font-size: 13px; font-weight: 500; letter-spacing: 0.02em;
+    cursor: pointer; transition: background .2s ease;
+  }
+  .newsletter-form button:hover { background: var(--accent); }
+
+  /* ——— Brain map ——— */
+  .brain {
+    position: relative;
+    padding: 160px 48px;
+    background: #07090a;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .brain-wrap {
+    max-width: 1400px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1.3fr; gap: 80px;
+    align-items: center;
+  }
+  .brain-copy .section-label { margin-bottom: 20px; }
+  .brain-copy h2 {
+    font-family: var(--serif); font-weight: 300;
+    font-size: clamp(40px, 4.5vw, 64px); line-height: 1.05;
+    letter-spacing: -0.02em; margin-bottom: 28px;
+  }
+  .brain-copy h2 em { font-style: italic; color: var(--accent); }
+  .brain-copy p {
+    color: var(--ink-dim); font-size: 16px; line-height: 1.7;
+    max-width: 440px; margin-bottom: 28px;
+  }
+  .brain-legend {
+    display: flex; flex-direction: column; gap: 2px;
+    border-top: 1px solid var(--rule); padding-top: 20px;
+    max-width: 440px;
+  }
+  .brain-legend-item {
+    display: grid; grid-template-columns: 28px 1fr auto;
+    align-items: center; gap: 14px;
+    padding: 14px 4px; border-bottom: 1px solid var(--rule);
+    cursor: pointer; transition: padding .25s ease, background .25s ease;
+  }
+  .brain-legend-item:hover, .brain-legend-item.active {
+    padding-left: 14px; background: rgba(244,239,230,.02);
+  }
+  .brain-legend-item .dot-c {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--c); box-shadow: 0 0 14px var(--c);
+  }
+  .brain-legend-item .name {
+    font-family: var(--serif); font-size: 18px; font-weight: 400;
+  }
+  .brain-legend-item .count {
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .brain-stage {
+    position: relative; aspect-ratio: 1/1;
+    border-radius: 4px; overflow: hidden;
+    background: transparent;
+    cursor: grab;
+  }
+  .brain-stage:active { cursor: grabbing; }
+  .brain-stage canvas {
+    width: 100% !important; height: 100% !important;
+    display: block;
+  }
+  .brain-hot {
+    display: none;
+  }
+  .brain-hot-hidden {
+    position: absolute; z-index: 3;
+    width: 90px; height: 90px; border-radius: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    background: radial-gradient(circle, var(--c) 0%, transparent 70%);
+    opacity: .35;
+    transition: opacity .3s ease, transform .3s ease;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brain-hot::before {
+    content: ''; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--c); box-shadow: 0 0 18px var(--c), 0 0 0 0 var(--c);
+    animation: ping 2.4s ease-out infinite;
+  }
+  .brain-hot:hover, .brain-hot.active {
+    opacity: 1; transform: translate(-50%, -50%) scale(1.15);
+  }
+  @keyframes ping {
+    0% { box-shadow: 0 0 18px var(--c), 0 0 0 0 var(--c); }
+    70% { box-shadow: 0 0 18px var(--c), 0 0 0 22px transparent; }
+    100% { box-shadow: 0 0 18px var(--c), 0 0 0 0 transparent; }
+  }
+  .brain-tooltip {
+    position: absolute; z-index: 4;
+    pointer-events: none; opacity: 0;
+    transform: translate(-50%, calc(-100% - 48px));
+    background: rgba(10,13,12,.94); backdrop-filter: blur(14px);
+    border: 1px solid var(--rule); border-radius: 6px;
+    padding: 18px 20px; width: 260px;
+    transition: opacity .25s ease;
+  }
+  .brain-tooltip.show { opacity: 1; }
+  .brain-tooltip .t-cat {
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--c); margin-bottom: 8px;
+  }
+  .brain-tooltip .t-title {
+    font-family: var(--serif); font-size: 20px; line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .brain-tooltip .t-desc {
+    font-size: 13px; color: var(--ink-dim); line-height: 1.5; margin-bottom: 12px;
+  }
+  .brain-tooltip .t-count {
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .brain-tooltip .t-count::before {
+    content: ''; width: 20px; height: 1px; background: var(--c);
+  }
+
+  @media (max-width: 900px) {
+    .brain { padding: 80px 20px; }
+    .brain-wrap { grid-template-columns: 1fr; gap: 40px; }
+    .brain-hot { width: 60px; height: 60px; }
+    .brain-tooltip { width: 220px; }
+  }
+
+  /* ——— Footer ——— */
+  .footer {
+    padding: 64px 48px 40px;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-faint); font-size: 13px;
+  }
+  .footer-wrap {
+    max-width: 1400px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 24px;
+  }
+  .footer-links { display: flex; gap: 32px; }
+  .footer-links a { color: var(--ink-faint); text-decoration: none; }
+  .footer-links a:hover { color: var(--ink); }
+
+  /* ——— Tweaks panel ——— */
+  .tweaks {
+    position: fixed; bottom: 24px; right: 24px; z-index: 100;
+    background: rgba(15,20,18,.96); backdrop-filter: blur(16px);
+    border: 1px solid var(--rule); border-radius: 12px;
+    padding: 20px; width: 300px; display: none;
+    font-size: 13px; color: var(--ink);
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  }
+  .tweaks.open { display: block; }
+  .tweaks-head {
+    font-family: var(--serif); font-size: 16px; font-style: italic;
+    margin-bottom: 16px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .tweak { margin-bottom: 16px; }
+  .tweak label {
+    display: block; font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-dim); margin-bottom: 8px;
+  }
+  .tweak input[type="range"] { width: 100%; accent-color: var(--accent); }
+  .tweak-swatches { display: flex; gap: 8px; }
+  .swatch {
+    width: 28px; height: 28px; border-radius: 50%;
+    cursor: pointer; border: 2px solid transparent;
+    transition: border-color .2s ease;
+  }
+  .swatch.active { border-color: var(--ink); }
+  .tweak-opts { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  /* Brain hotspots */
+  .brain-dot {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(168,194,182,.15);
+    border: 1px solid rgba(168,194,182,.5);
+    backdrop-filter: blur(8px);
+    color: var(--ink); font-family: var(--sans);
+    font-size: 10px; letter-spacing: 0.04em; font-weight: 500;
+    cursor: pointer;
+    transition: background .2s, transform .2s, box-shadow .2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brain-dot:hover, .brain-dot.active {
+    background: var(--accent); color: #0a0d0c;
+    transform: translate(-50%, -50%) scale(1.15);
+    box-shadow: 0 0 0 4px rgba(168,194,182,.18), 0 0 20px var(--accent);
+  }
+  .brain-dot-num { line-height: 1; }
+
+  /* Brodmann legend */
+  .brodmann-item {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%; padding: 10px 0;
+    border: none; background: none; color: inherit;
+    border-bottom: 1px solid var(--rule);
+    cursor: pointer; text-align: left;
+    transition: padding .2s, color .2s;
+  }
+  .brodmann-item:hover { padding-left: 6px; color: var(--accent); }
+  .bm-num {
+    font-family: var(--serif); font-style: italic;
+    font-size: 14px; color: var(--accent);
+    min-width: 40px;
+  }
+  .bm-body { display: flex; flex-direction: column; gap: 2px; }
+  .bm-name { font-family: var(--serif); font-size: 16px; }
+  .bm-fn { font-size: 11px; letter-spacing: 0.08em; color: var(--ink-faint); text-transform: uppercase; }
+
+  /* About Egoera */
+  .about { padding: 120px 48px; position: relative; }
+  .about-wrap { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center; }
+  .about-copy h2 { font-family: var(--serif); font-size: clamp(40px, 5vw, 64px); font-weight: 400; line-height: 1.05; margin: 14px 0 24px; }
+  .about-copy h2 em { font-style: italic; color: var(--accent); }
+  .about-copy p { font-size: 17px; line-height: 1.6; color: var(--ink-dim); margin-bottom: 14px; max-width: 52ch; }
+  .about-social { margin-top: 32px; display: flex; flex-direction: column; gap: 8px; max-width: 420px; }
+  .social-chip {
+    display: grid; grid-template-columns: 24px 1fr auto; align-items: center; gap: 14px;
+    padding: 14px 18px;
+    border: 1px solid var(--rule); border-radius: 4px;
+    color: var(--ink); text-decoration: none;
+    font-size: 14px; letter-spacing: 0.02em;
+    transition: background .2s, border-color .2s, transform .2s;
+  }
+  .social-chip:hover { background: rgba(168,194,182,.06); border-color: var(--accent); transform: translateX(4px); }
+  .social-handle { font-size: 12px; color: var(--ink-faint); font-family: var(--serif); font-style: italic; }
+  .about-visual { position: relative; aspect-ratio: 4/5; display: flex; align-items: flex-end; justify-content: center; }
+  .about-watercolor { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .35; mix-blend-mode: screen; border-radius: 4px; }
+  .about-card {
+    position: relative; z-index: 2;
+    background: rgba(10,13,12,.85); backdrop-filter: blur(12px);
+    border: 1px solid var(--rule); border-radius: 4px;
+    padding: 24px 28px; margin-bottom: 32px;
+    max-width: 320px;
+  }
+  .about-card-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+  .about-card-title { font-family: var(--serif); font-size: 22px; margin-bottom: 6px; }
+  .about-card-meta { font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  @media (max-width: 860px) {
+    .about-wrap { grid-template-columns: 1fr; gap: 48px; }
+    .about { padding: 80px 24px; }
+  }
+  .tweak-opt {
+    padding: 6px 12px; background: rgba(244,239,230,.05);
+    border: 1px solid var(--rule); border-radius: 999px;
+    font-size: 12px; cursor: pointer; color: var(--ink-dim);
+    transition: all .2s ease;
+  }
+  .tweak-opt.active {
+    background: var(--accent); color: #0a0d0c; border-color: var(--accent);
+  }
+
+  /* Layout variants */
+  .hero[data-layout="centered"] .hero-content { text-align: center; align-items: center; }
+  .hero[data-layout="centered"] .hero-kicker { justify-content: center; }
+  .hero[data-layout="centered"] .hero-sub { margin-left: auto; margin-right: auto; }
+  .hero[data-layout="centered"] .hero-actions { justify-content: center; }
+
+  .hero[data-layout="split"] .hero-content {
+    display: grid; grid-template-columns: 1.5fr 1fr; gap: 80px; align-items: end;
+  }
+  .hero[data-layout="split"] .hero-sidecard {
+    background: rgba(15,20,18,.6); backdrop-filter: blur(12px);
+    border: 1px solid var(--rule); border-radius: 4px;
+    padding: 32px; max-width: 380px;
+  }
+
+  @media (max-width: 900px) {
+    .nav { padding: 20px; }
+    .nav-links { display: none; }
+    .hero-content { padding: 140px 20px 60px; }
+    .hero-bottom { padding: 0 20px 32px; flex-direction: column; align-items: flex-start; gap: 20px; }
+    .section, .episodes, .newsletter { padding: 80px 20px; }
+    .featured { grid-template-columns: 1fr; gap: 40px; }
+    .ep-grid { grid-template-columns: 1fr; }
+    .section-head { flex-direction: column; align-items: flex-start; }
+    .tweaks { left: 20px; right: 20px; width: auto; bottom: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="brand">
+    <div class="brand-mark"></div>
+    egoera<em>.</em>
+  </div>
+  <div class="nav-links">
+    <a href="#" class="active">Vlog</a>
+    <a href="#episodios">Episodios</a>
+    <a href="#">Categorías</a>
+    <a href="#sobre">Sobre Egoera</a>
+    <a href="#">Contacto</a>
+  </div>
+  <button class="nav-cta">Suscribirme</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero" data-layout="left">
+  <video class="hero-video" autoplay loop muted playsinline>
+    <source src="https://res.cloudinary.com/dfonotyfb/video/upload/v1775585556/dds3_1_rqhg7x.mp4" type="video/mp4" />
+  </video>
+  <div class="hero-overlay" id="heroOverlay"></div>
+  <img class="hero-watercolor" src="assets/watercolor.png" alt="" id="heroWatercolor" style="display:none" />
+  <div class="hero-grain"></div>
+
+  <div class="hero-content">
+    <div class="hero-kicker">El vlog de Egoera</div>
+    <h1 class="hero-title" id="heroTitle">
+      Tu estado<br/><em>importa.</em>
+    </h1>
+    <p class="hero-sub" id="heroSub">
+      Conversaciones pausadas sobre psicología, emociones y la forma en que nos habitamos. Un episodio cada semana.
+    </p>
+    <div class="hero-actions">
+      <a href="#featured" class="btn-primary">
+        <span class="play-icon">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M2 1v8l7-4z"/></svg>
+        </span>
+        Artículos más recientes
+      </a>
+      <a href="#episodios" class="btn-ghost">Explorar archivo</a>
+    </div>
+
+    <div class="hero-sidecard" style="display:none">
+      <div style="font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:12px;">Ahora reproduciendo</div>
+      <div style="font-family:var(--serif); font-size:20px; line-height:1.25; margin-bottom:16px;">Ep. 24 — Sobre quedarse, aunque duela: el apego y sus disfraces</div>
+      <div style="display:flex; gap:16px; color:var(--ink-faint); font-size:12px; letter-spacing:0.08em;">
+        <span>42 MIN</span><span>·</span><span>APEGO</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-bottom">
+    <div class="hero-episode">
+      <span class="dot"></span>
+      <span><strong>Última entrada</strong> Sobre quedarse, aunque duela</span>
+    </div>
+    <div class="hero-meta">
+      <span>◉ Nueva entrada cada jueves</span>
+      <span>24 artículos</span>
+      <span>2026</span>
+    </div>
+  </div>
+
+  <div class="scroll-hint">Scroll</div>
+</section>
+
+<!-- LATEST POST -->
+<section class="section" id="featured">
+  <div class="section-head">
+    <div>
+      <div class="section-label">Última entrada</div>
+      <h2 class="section-title">Lo más reciente<br/>del <em>blog</em>.</h2>
+    </div>
+    <p class="section-sub">
+      Artículos, reflexiones y vídeos semanales sobre lo que nos atraviesa.
+    </p>
+  </div>
+
+  <div class="featured">
+    <div class="featured-media">
+      <video autoplay loop muted playsinline>
+        <source src="https://res.cloudinary.com/dfonotyfb/video/upload/v1775585556/dds3_1_rqhg7x.mp4" type="video/mp4" />
+      </video>
+      <div class="featured-play">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4v16l14-8z"/></svg>
+      </div>
+      <div class="featured-duration">42:18</div>
+    </div>
+    <div class="featured-info">
+      <div class="featured-tags">
+        <span class="tag">Apego</span>
+        <span class="tag">Relaciones</span>
+        <span class="tag">Artículo</span>
+      </div>
+      <h3>Sobre <em>quedarse</em>, aunque duela.</h3>
+      <p>
+        Hablamos del apego y sus disfraces: por qué nos cuesta tanto soltar lo que ya no nos sostiene, y cómo empezar a reconocer los patrones que repetimos sin darnos cuenta.
+      </p>
+      <a class="featured-author" href="https://www.linkedin.com/in/anderbilbaoc/" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+        <div class="author-avatar">A</div>
+        <div class="author-info">
+          <div class="name">Ander Bilbao Castejón</div>
+          <div class="role">Psicólogo · Fundador de Egoera</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- BRAIN MAP -->
+<section class="brain" id="cerebro">
+  <div class="brain-wrap">
+    <div class="brain-copy">
+      <div class="section-label">Mapa emocional</div>
+      <h2>El cerebro<br/>que <em>sentimos</em>.</h2>
+      <p>Cada emoción vive en una región. Explora el mapa y encuentra los artículos y episodios según lo que estés sintiendo hoy.</p>
+      <div class="brain-legend" id="brainLegend"></div>
+    </div>
+    <div class="brain-stage" id="brainStage">
+      <canvas id="brainCanvas"></canvas>
+      <div class="brain-tooltip" id="brainTooltip">
+        <div class="t-cat"></div>
+        <div class="t-title"></div>
+        <div class="t-desc"></div>
+        <div class="t-count"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EPISODES GRID -->
+<section class="episodes" id="episodios">
+  <div class="episodes-wrap">
+    <img class="episodes-watercolor" src="assets/watercolor.png" alt="" />
+    <div class="section-head">
+      <div>
+        <div class="section-label">Archivo</div>
+        <h2 class="section-title">Episodios <em>anteriores</em>.</h2>
+      </div>
+      <p class="section-sub">
+        Una biblioteca viva. Cada episodio, una pregunta.
+      </p>
+    </div>
+
+    <div class="ep-grid" id="epGrid"></div>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<section class="manifesto">
+  <img class="manifesto-watercolor" src="assets/watercolor.png" alt="" />
+  <blockquote class="manifesto-quote">
+    "No se trata de <em>estar bien</em> todo el tiempo. Se trata de aprender a acompañarse en todos los estados."
+  </blockquote>
+  <div class="manifesto-cite">— Egoera Psikologia · Donostia</div>
+</section>
+
+<!-- SOBRE EGOERA -->
+<section class="about" id="sobre">
+  <div class="about-wrap">
+    <div class="about-copy">
+      <div class="section-label">Sobre Egoera</div>
+      <h2>Un espacio para <em>habitarse</em>.</h2>
+      <p>
+        Egoera nace como un proyecto de psicología en Donostia que cree en las conversaciones pausadas, en el cuidado de los estados que atravesamos y en hacer de la consulta un lugar de encuentro —no de diagnóstico.
+      </p>
+      <p>
+        Este blog es una extensión de esa misma idea: reflexiones, herramientas y entrevistas para acompañarte entre sesiones y entre semanas.
+      </p>
+      <div class="about-social">
+        <a class="social-chip" href="https://www.instagram.com/egoera.psikologia/" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+          <span>Instagram</span>
+          <span class="social-handle">@egoera.psikologia</span>
+        </a>
+        <a class="social-chip" href="https://www.tiktok.com/@egoera.psikologia" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 3v2.6a4.4 4.4 0 0 0 4.4 4.4V12a6.6 6.6 0 0 1-4.4-1.6V15a5.6 5.6 0 1 1-5.6-5.6v2.3a3.3 3.3 0 1 0 3.3 3.3V3H16z"/></svg>
+          <span>TikTok</span>
+          <span class="social-handle">@egoera.psikologia</span>
+        </a>
+        <a class="social-chip" href="https://www.youtube.com/@egoera.psikologia" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12s0-3.6-.5-5.3a2.8 2.8 0 0 0-2-2C17.7 4 12 4 12 4s-5.7 0-7.5.7a2.8 2.8 0 0 0-2 2C2 8.4 2 12 2 12s0 3.6.5 5.3a2.8 2.8 0 0 0 2 2C6.3 20 12 20 12 20s5.7 0 7.5-.7a2.8 2.8 0 0 0 2-2C22 15.6 22 12 22 12zM10 8.5l6 3.5-6 3.5v-7z"/></svg>
+          <span>YouTube</span>
+          <span class="social-handle">Canal</span>
+        </a>
+        <a class="social-chip" href="https://open.spotify.com/search/egoera%20psikologia" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 9c3.3-1 7-.6 10 1M7.5 12c2.8-.8 6-.4 8.5 1.1M8 15c2.2-.6 4.8-.3 6.8.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
+          <span>Spotify</span>
+          <span class="social-handle">Podcast</span>
+        </a>
+      </div>
+    </div>
+    <div class="about-visual">
+      <img src="assets/watercolor.png" alt="" class="about-watercolor" />
+      <div class="about-card">
+        <div class="about-card-label">Consulta presencial</div>
+        <div class="about-card-title">Donostia — San Sebastián</div>
+        <div class="about-card-meta">Psicología clínica · Adultos · Adolescentes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+  <div class="newsletter-wrap">
+    <h2>Un jueves, un <em>episodio</em>,<br/>una pregunta nueva.</h2>
+    <p>Suscríbete y recibe cada episodio directo en tu correo, con una reflexión breve para llevarte la semana.</p>
+    <form class="newsletter-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Te esperamos ✓'">
+      <input type="email" placeholder="tu@correo.com" required />
+      <button type="submit">Suscribirme</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-wrap">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      egoera<em>.</em>
+    </div>
+    <div class="footer-links">
+      <a href="#">Instagram</a>
+      <a href="#">YouTube</a>
+      <a href="#">Spotify</a>
+      <a href="#">Contacto</a>
+    </div>
+    <div>© 2026 Egoera · Donostia</div>
+  </div>
+</footer>
+
+<!-- TWEAKS PANEL -->
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-head">Tweaks</div>
+
+  <div class="tweak">
+    <label>Layout del hero</label>
+    <div class="tweak-opts" data-tweak="layout">
+      <div class="tweak-opt active" data-val="left">Izquierda</div>
+      <div class="tweak-opt" data-val="centered">Centrado</div>
+      <div class="tweak-opt" data-val="split">Split</div>
+    </div>
+  </div>
+
+  <div class="tweak">
+    <label>Intensidad del overlay</label>
+    <input type="range" min="0" max="100" value="55" id="overlayIntensity" />
+  </div>
+
+  <div class="tweak">
+    <label>Acuarela en hero</label>
+    <input type="range" min="0" max="40" value="8" id="watercolorOpacity" />
+  </div>
+
+  <div class="tweak">
+    <label>Color de acento</label>
+    <div class="tweak-swatches" data-tweak="accent">
+      <div class="swatch active" data-val="#a8c2b6" style="background:#a8c2b6"></div>
+      <div class="swatch" data-val="#8fa8bf" style="background:#8fa8bf"></div>
+      <div class="swatch" data-val="#d4b896" style="background:#d4b896"></div>
+      <div class="swatch" data-val="#c9a8b8" style="background:#c9a8b8"></div>
+      <div class="swatch" data-val="#e8e2d4" style="background:#e8e2d4"></div>
+    </div>
+  </div>
+
+  <div class="tweak">
+    <label>Tipografía del titular</label>
+    <div class="tweak-opts" data-tweak="titleFont">
+      <div class="tweak-opt active" data-val="Fraunces">Fraunces</div>
+      <div class="tweak-opt" data-val="serif">System Serif</div>
+      <div class="tweak-opt" data-val="Inter">Inter</div>
+    </div>
+  </div>
+
+  <div class="tweak">
+    <label>Claim</label>
+    <div class="tweak-opts" data-tweak="claim">
+      <div class="tweak-opt active" data-val="0">Tu estado importa.</div>
+      <div class="tweak-opt" data-val="1">Psicología, despacio.</div>
+      <div class="tweak-opt" data-val="2">Aprender a habitarse.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Episodes data
+const EPISODES = [
+  { n: 23, cat: 'Regulación', title: 'El cuerpo que avisa antes que la mente.', dur: '38:20', img: 'https://images.unsplash.com/photo-1518081461904-9d8f136351c2?w=800&q=80' },
+  { n: 22, cat: 'Autoconocimiento', title: 'Los personajes que fuimos para sobrevivir.', dur: '45:02', img: 'https://images.unsplash.com/photo-1502139214982-d0ad755818d8?w=800&q=80' },
+  { n: 21, cat: 'Ansiedad', title: 'Cuando pensar demasiado es una forma de huir.', dur: '41:55', img: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800&q=80' },
+  { n: 20, cat: 'Duelo', title: 'Despedirse en voz alta de lo que ya no es.', dur: '36:40', img: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=800&q=80' },
+  { n: 19, cat: 'Relaciones', title: 'Vínculos que nos devuelven a casa.', dur: '48:10', img: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=800&q=80' },
+  { n: 18, cat: 'Identidad', title: 'Quién soy cuando nadie mira.', dur: '33:15', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80' },
+];
+
+const epGrid = document.getElementById('epGrid');
+EPISODES.forEach(ep => {
+  const card = document.createElement('div');
+  card.className = 'ep-card';
+  card.innerHTML = `
+    <div class="ep-thumb">
+      <span class="ep-num">#${String(ep.n).padStart(2,'0')}</span>
+      <img src="${ep.img}" alt="" loading="lazy" />
+      <span class="ep-dur">${ep.dur}</span>
+    </div>
+    <div class="ep-category">${ep.cat}</div>
+    <h4 class="ep-title">${ep.title}</h4>
+    <div class="ep-meta"><span>Abr 2026</span><span>·</span><span>${ep.dur}</span></div>
+  `;
+  epGrid.appendChild(card);
+});
+
+// ——— Brain map ———
+const BRAIN_REGIONS = [
+  { id: 'amygdala', name: 'Miedo & Ansiedad', cat: 'Amígdala',
+    desc: 'El radar del peligro. Aquí viven las emociones de alerta, el miedo y la ansiedad.',
+    color: '#e89b7a', count: 8, x: 58, y: 62 },
+  { id: 'prefrontal', name: 'Autoconocimiento', cat: 'Corteza prefrontal',
+    desc: 'Pensar sobre pensar. Aquí explora quién eres cuando nadie mira.',
+    color: '#a8c2b6', count: 12, x: 32, y: 30 },
+  { id: 'hippocampus', name: 'Memoria & Duelo', cat: 'Hipocampo',
+    desc: 'Lo que recordamos nos habita. Artículos sobre duelo, nostalgia y despedidas.',
+    color: '#c9a8b8', count: 6, x: 55, y: 48 },
+  { id: 'insula', name: 'Cuerpo & Emoción', cat: 'Ínsula',
+    desc: 'El cuerpo que avisa antes que la mente. Regulación e interocepción.',
+    color: '#8fa8bf', count: 9, x: 42, y: 55 },
+  { id: 'accumbens', name: 'Vínculos & Apego', cat: 'Núcleo accumbens',
+    desc: 'La química del vínculo. Amor, apego y lo que nos cuesta soltar.',
+    color: '#d4b896', count: 11, x: 48, y: 68 },
+  { id: 'cerebellum', name: 'Hábitos & Ritmo', cat: 'Cerebelo',
+    desc: 'Lo que repetimos nos forma. Rutinas, cuerpo y regulación diaria.',
+    color: '#b8a8c9', count: 5, x: 70, y: 78 },
+];
+
+const stage = document.getElementById('brainStage');
+const legend = document.getElementById('brainLegend');
+const tooltip = document.getElementById('brainTooltip');
+
+BRAIN_REGIONS.forEach(r => {
+  // hotspot
+  const h = document.createElement('div');
+  h.className = 'brain-hot';
+  h.dataset.id = r.id;
+  h.style.setProperty('--c', r.color);
+  h.style.left = r.x + '%';
+  h.style.top = r.y + '%';
+  stage.appendChild(h);
+
+  // legend
+  const li = document.createElement('div');
+  li.className = 'brain-legend-item';
+  li.dataset.id = r.id;
+  li.style.setProperty('--c', r.color);
+  li.innerHTML = `
+    <span class="dot-c"></span>
+    <span class="name">${r.name}</span>
+    <span class="count">${r.count} artículos</span>
+  `;
+  legend.appendChild(li);
+});
+
+function showRegion(r, sourceEl) {
+  const rect = sourceEl.getBoundingClientRect();
+  const stageRect = stage.getBoundingClientRect();
+  tooltip.style.setProperty('--c', r.color);
+  tooltip.style.left = (rect.left - stageRect.left + rect.width/2) + 'px';
+  tooltip.style.top = (rect.top - stageRect.top) + 'px';
+  tooltip.querySelector('.t-cat').textContent = r.cat;
+  tooltip.querySelector('.t-cat').style.color = r.color;
+  tooltip.querySelector('.t-title').textContent = r.name;
+  tooltip.querySelector('.t-desc').textContent = r.desc;
+  tooltip.querySelector('.t-count').textContent = r.count + ' artículos · Ver todos';
+  tooltip.querySelector('.t-count').style.setProperty('--c', r.color);
+  tooltip.classList.add('show');
+  document.querySelectorAll('.brain-hot, .brain-legend-item').forEach(e => {
+    e.classList.toggle('active', e.dataset.id === r.id);
+  });
+}
+function hideRegion() {
+  tooltip.classList.remove('show');
+  document.querySelectorAll('.brain-hot, .brain-legend-item').forEach(e => e.classList.remove('active'));
+}
+
+document.querySelectorAll('.brain-hot').forEach(h => {
+  const r = BRAIN_REGIONS.find(x => x.id === h.dataset.id);
+  h.addEventListener('mouseenter', () => showRegion(r, h));
+  h.addEventListener('mouseleave', hideRegion);
+  h.addEventListener('click', () => { window.location.href = `categoria.html?c=${r.id}`; });
+});
+document.querySelectorAll('.brain-legend-item').forEach(li => {
+  const r = BRAIN_REGIONS.find(x => x.id === li.dataset.id);
+  const hot = document.querySelector(`.brain-hot[data-id="${r.id}"]`);
+  li.addEventListener('mouseenter', () => showRegion(r, hot));
+  li.addEventListener('mouseleave', hideRegion);
+  li.addEventListener('click', () => { window.location.href = `categoria.html?c=${r.id}`; });
+});
+
+// Nav scroll
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 80);
+});
+
+// ——— 3D Brain (Three.js) — auténtico con OBJ real + áreas de Brodmann ———
+(function() {
+  if (!window.THREE) return;
+  const canvas = document.getElementById('brainCanvas');
+  if (!canvas) return;
+  const stage = document.getElementById('brainStage');
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  camera.position.set(0, 0, 5.2);
+
+  // Lights — anatomical rendering
+  scene.add(new THREE.AmbientLight(0x3a2628, 0.45));
+  const key = new THREE.DirectionalLight(0xffeadd, 1.5); key.position.set(2, 5, 4); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xa8c2b6, 0.7); rim.position.set(-5, 1, -2); scene.add(rim);
+  const warmFill = new THREE.PointLight(0xe89a8a, 0.5, 20); warmFill.position.set(1, 0, 5); scene.add(warmFill);
+
+  const brain = new THREE.Group();
+  scene.add(brain);
+
+  // Áreas de Brodmann clicables — coordenadas aproximadas en el lateral (x-positive) del cerebro
+  // BRAIN ORIENTATION: +X = derecha (lateral), -Z = frente, +Y = arriba
+  const BRODMANN = [
+    { id: 'prefrontal',  num: '9/46', name: 'Córtex prefrontal', fn: 'Pensamiento · planificación',       pos: [1.1, 0.55, 0.9],  slug: 'prefrontal' },
+    { id: 'broca',       num: '44/45', name: 'Área de Broca',    fn: 'Lenguaje · expresión',              pos: [1.2, 0.05, 0.55], slug: 'lenguaje' },
+    { id: 'motor',       num: '4',    name: 'Córtex motor',      fn: 'Movimiento voluntario',             pos: [1.1, 0.85, -0.1], slug: 'cuerpo' },
+    { id: 'somato',      num: '1-3',  name: 'Somatosensorial',   fn: 'Tacto · sensación corporal',        pos: [0.9, 0.85, -0.55], slug: 'sensacion' },
+    { id: 'wernicke',    num: '22',   name: 'Área de Wernicke',  fn: 'Comprensión · escucha',             pos: [1.25, -0.05, -0.75], slug: 'escucha' },
+    { id: 'visual',      num: '17',   name: 'Córtex visual',     fn: 'Ver · reconocer',                   pos: [0.3, 0.1, -1.35], slug: 'mirada' },
+    { id: 'temporal',    num: '20/21',name: 'Lóbulo temporal',   fn: 'Memoria · emoción',                 pos: [1.3, -0.45, 0.1], slug: 'memoria' },
+  ];
+
+  // Anchors 3D para los hotspots
+  const anchors = BRODMANN.map(r => {
+    const o = new THREE.Object3D();
+    o.position.fromArray(r.pos);
+    brain.add(o);
+    return { region: r, obj: o };
+  });
+
+  // ——— Carga OBJ real del cerebro ———
+  const loader = new THREE.OBJLoader();
+  const MODEL_URL = 'https://raw.githubusercontent.com/alperbayram/3DBrainmodel/main/obj/brain.obj';
+
+  const brainMat = new THREE.MeshStandardMaterial({
+    color: 0xd98983, roughness: 0.75, metalness: 0.0,
+    emissive: 0x2a0e10, emissiveIntensity: 0.12, flatShading: false,
+  });
+
+  function buildFallback() {
+    // Cerebro procedural de reserva (por si el OBJ no carga)
+    function sulci(n) {
+      const r1 = Math.abs(Math.sin(n.x * 7.5 + Math.sin(n.y * 5.5) * 2.5));
+      const r2 = Math.abs(Math.sin(n.y * 9.0 + Math.sin(n.z * 7.0) * 2.2));
+      const r3 = Math.abs(Math.sin(n.z * 8.5 + Math.sin(n.x * 8.0) * 2.0));
+      return -(1 - Math.min(r1, r2, r3)) * 0.1;
+    }
+    [1, -1].forEach(side => {
+      const geo = new THREE.IcosahedronGeometry(1, 64);
+      const pos = geo.attributes.position, v = new THREE.Vector3();
+      for (let i = 0; i < pos.count; i++) {
+        v.fromBufferAttribute(pos, i);
+        const n = v.clone().normalize();
+        const medial = Math.max(0, -n.x * side);
+        const r = 1 + sulci(n) - medial * 0.16;
+        v.copy(n).multiplyScalar(r);
+        v.x *= 0.90; v.y *= 0.75; v.z *= 1.25;
+        pos.setXYZ(i, v.x, v.y, v.z);
+      }
+      geo.computeVertexNormals();
+      const m = new THREE.Mesh(geo, brainMat.clone());
+      m.position.x = side * 0.14;
+      brain.add(m);
+    });
+  }
+
+  loader.load(
+    MODEL_URL,
+    obj => {
+      // Centrar, escalar y aplicar material anatómico
+      const box = new THREE.Box3().setFromObject(obj);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const scale = 2.2 / maxDim;
+      obj.position.sub(center);
+      obj.scale.setScalar(scale);
+      obj.traverse(child => {
+        if (child.isMesh) {
+          child.material = brainMat;
+          child.geometry.computeVertexNormals();
+        }
+      });
+      brain.add(obj);
+    },
+    undefined,
+    err => { console.warn('[brain] OBJ load failed, using fallback', err); buildFallback(); }
+  );
+
+  brain.rotation.x = 0.08;
+  brain.rotation.y = -0.3;
+
+  function resize() {
+    const r = stage.getBoundingClientRect();
+    renderer.setSize(r.width, r.height, false);
+    camera.aspect = r.width / r.height;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  new ResizeObserver(resize).observe(stage);
+
+  // ——— Hotspots DOM posicionados desde el mundo 3D ———
+  const hotLayer = document.createElement('div');
+  hotLayer.className = 'brain-hotspots';
+  hotLayer.style.cssText = 'position:absolute; inset:0; pointer-events:none; z-index:3;';
+  stage.appendChild(hotLayer);
+
+  const tooltip = document.getElementById('brainTooltip');
+
+  const hotEls = anchors.map(a => {
+    const el = document.createElement('button');
+    el.className = 'brain-dot';
+    el.dataset.id = a.region.id;
+    el.innerHTML = `<span class="brain-dot-num">${a.region.num}</span>`;
+    el.style.cssText = `position:absolute; transform:translate(-50%,-50%); pointer-events:auto;`;
+    el.addEventListener('mouseenter', () => showTip(a.region, el));
+    el.addEventListener('mouseleave', hideTip);
+    el.addEventListener('focus', () => showTip(a.region, el));
+    el.addEventListener('blur', hideTip);
+    el.addEventListener('click', () => {
+      window.location.href = `categoria.html?c=${a.region.slug}`;
+    });
+    hotLayer.appendChild(el);
+    return { anchor: a, el };
+  });
+
+  function showTip(r, el) {
+    tooltip.querySelector('.t-cat').textContent = `ÁREA ${r.num} · BRODMANN`;
+    tooltip.querySelector('.t-title').textContent = r.name;
+    tooltip.querySelector('.t-desc').textContent = r.fn;
+    tooltip.querySelector('.t-count').textContent = 'Ver artículos →';
+    const left = parseFloat(el.style.left);
+    const top = parseFloat(el.style.top);
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
+    tooltip.classList.add('show');
+  }
+  function hideTip() { tooltip.classList.remove('show'); }
+
+  // ——— Leyenda dinámica ———
+  const legend = document.getElementById('brainLegend');
+  if (legend) {
+    legend.innerHTML = BRODMANN.map(r => `
+      <button class="brodmann-item" data-id="${r.id}">
+        <span class="bm-num">${r.num}</span>
+        <span class="bm-body">
+          <span class="bm-name">${r.name}</span>
+          <span class="bm-fn">${r.fn}</span>
+        </span>
+      </button>
+    `).join('');
+    legend.querySelectorAll('.brodmann-item').forEach(btn => {
+      const r = BRODMANN.find(x => x.id === btn.dataset.id);
+      const hot = hotEls.find(h => h.anchor.region.id === r.id);
+      btn.addEventListener('mouseenter', () => { hot.el.classList.add('active'); showTip(r, hot.el); });
+      btn.addEventListener('mouseleave', () => { hot.el.classList.remove('active'); hideTip(); });
+      btn.addEventListener('click', () => { window.location.href = `categoria.html?c=${r.slug}`; });
+    });
+  }
+
+  // ——— Proyección de anchors a coords DOM ———
+  const tmpV = new THREE.Vector3();
+  function updateHotspots() {
+    const rect = stage.getBoundingClientRect();
+    hotEls.forEach(({ anchor, el }) => {
+      anchor.obj.getWorldPosition(tmpV);
+      tmpV.project(camera);
+      // Oclusión: ocultar hotspots detrás del cerebro (z>0 en espacio de cámara)
+      const camZ = anchor.obj.getWorldPosition(new THREE.Vector3()).applyMatrix4(camera.matrixWorldInverse).z;
+      const behind = camZ < -3.5;
+      const x = (tmpV.x * 0.5 + 0.5) * rect.width;
+      const y = (-tmpV.y * 0.5 + 0.5) * rect.height;
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      el.style.opacity = behind ? '0.2' : '1';
+      el.style.pointerEvents = behind ? 'none' : 'auto';
+    });
+  }
+
+  // ——— Drag / touch 360° ———
+  let rotX = 0.08, rotY = -0.3;
+  let velX = 0, velY = 0.0012;
+  let dragging = false;
+  let lastX = 0, lastY = 0;
+
+  function onDown(e) {
+    if (e.target.closest('.brain-dot')) return; // no arrastrar desde hotspot
+    dragging = true;
+    const p = e.touches ? e.touches[0] : e;
+    lastX = p.clientX; lastY = p.clientY;
+    velX = 0; velY = 0;
+    e.preventDefault();
+  }
+  function onMove(e) {
+    if (!dragging) return;
+    const p = e.touches ? e.touches[0] : e;
+    const dx = p.clientX - lastX;
+    const dy = p.clientY - lastY;
+    lastX = p.clientX; lastY = p.clientY;
+    velY = dx * 0.005;
+    velX = dy * 0.005;
+    rotY += velY;
+    rotX += velX;
+    rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX));
+  }
+  function onUp() { dragging = false; }
+
+  stage.addEventListener('mousedown', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+  stage.addEventListener('touchstart', onDown, { passive: false });
+  window.addEventListener('touchmove', onMove, { passive: false });
+  window.addEventListener('touchend', onUp);
+
+  function tick() {
+    if (!dragging) {
+      velY = velY * 0.95 + 0.0012 * 0.05;
+      velX *= 0.92;
+      rotY += velY;
+      rotX += velX;
+      rotX *= 0.98;
+      rotX += 0.08 * 0.02;
+    }
+    brain.rotation.y = rotY;
+    brain.rotation.x = rotX;
+    brain.updateMatrixWorld();
+    camera.updateMatrixWorld();
+    updateHotspots();
+    renderer.render(scene, camera);
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+// ——— Tweaks ———
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "layout": "left",
+  "overlayIntensity": 48,
+  "watercolorOpacity": 13,
+  "accent": "#a8c2b6",
+  "titleFont": "serif",
+  "claim": 1
+}/*EDITMODE-END*/;
+
+const state = { ...TWEAK_DEFAULTS };
+
+const CLAIMS = [
+  { title: 'Tu estado<br/><em>importa.</em>', sub: 'Conversaciones pausadas sobre psicología, emociones y la forma en que nos habitamos. Un episodio cada semana.' },
+  { title: 'Psicología,<br/><em>despacio.</em>', sub: 'Un vlog para detenerse, mirar hacia dentro y volver a la semana con otras preguntas.' },
+  { title: 'Aprender a<br/><em>habitarse.</em>', sub: 'Herramientas, historias y conversaciones para acompañarte en los estados que habitas.' },
+];
+
+function applyState() {
+  // Layout
+  document.getElementById('hero').dataset.layout = state.layout;
+  const sidecard = document.querySelector('.hero-sidecard');
+  sidecard.style.display = state.layout === 'split' ? 'block' : 'none';
+
+  // Overlay
+  const intensity = state.overlayIntensity / 100;
+  document.getElementById('heroOverlay').style.background = `
+    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(10,13,12,0) 0%, rgba(10,13,12,${intensity * 0.7}) 70%, rgba(10,13,12,${Math.min(1, intensity * 1.1)}) 100%),
+    linear-gradient(180deg, rgba(10,13,12,${intensity * 0.5}) 0%, rgba(10,13,12,${intensity * 0.15}) 30%, rgba(10,13,12,${intensity * 0.9}) 100%)
+  `;
+
+  // Watercolor
+  document.getElementById('heroWatercolor').style.opacity = state.watercolorOpacity / 100;
+
+  // Accent
+  document.documentElement.style.setProperty('--accent', state.accent);
+
+  // Title font
+  const fontMap = {
+    'Fraunces': "'Fraunces', serif",
+    'serif': "Georgia, 'Times New Roman', serif",
+    'Inter': "'Inter', sans-serif"
+  };
+  document.querySelectorAll('.hero-title, .section-title, .featured-info h3, .ep-title, .manifesto-quote, .newsletter h2').forEach(el => {
+    el.style.fontFamily = fontMap[state.titleFont];
+  });
+
+  // Claim
+  document.getElementById('heroTitle').innerHTML = CLAIMS[state.claim].title;
+  document.getElementById('heroSub').textContent = CLAIMS[state.claim].sub;
+
+  // Update UI
+  document.querySelectorAll('[data-tweak]').forEach(group => {
+    const key = group.dataset.tweak;
+    group.querySelectorAll('.tweak-opt, .swatch').forEach(opt => {
+      const val = opt.dataset.val;
+      const match = key === 'claim' ? String(state[key]) === val : state[key] === val;
+      opt.classList.toggle('active', match);
+    });
+  });
+}
+
+function setTweak(key, val) {
+  state[key] = val;
+  applyState();
+  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [key]: val } }, '*');
+}
+
+// Bind option groups
+document.querySelectorAll('[data-tweak]').forEach(group => {
+  const key = group.dataset.tweak;
+  group.querySelectorAll('.tweak-opt, .swatch').forEach(opt => {
+    opt.addEventListener('click', () => {
+      let val = opt.dataset.val;
+      if (key === 'claim') val = parseInt(val, 10);
+      setTweak(key, val);
+    });
+  });
+});
+
+// Sliders
+document.getElementById('overlayIntensity').addEventListener('input', e => setTweak('overlayIntensity', parseInt(e.target.value, 10)));
+document.getElementById('watercolorOpacity').addEventListener('input', e => setTweak('watercolorOpacity', parseInt(e.target.value, 10)));
+
+// Edit mode protocol
+window.addEventListener('message', (e) => {
+  if (!e.data || typeof e.data !== 'object') return;
+  if (e.data.type === '__activate_edit_mode') {
+    document.getElementById('tweaks').classList.add('open');
+    document.getElementById('overlayIntensity').value = state.overlayIntensity;
+    document.getElementById('watercolorOpacity').value = state.watercolorOpacity;
+  }
+  if (e.data.type === '__deactivate_edit_mode') {
+    document.getElementById('tweaks').classList.remove('open');
+  }
+});
+window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+
+applyState();
+</script>
+</body>
+</html>

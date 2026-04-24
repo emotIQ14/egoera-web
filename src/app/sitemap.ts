@@ -1,4 +1,5 @@
-import { getAllPosts, CATEGORIES } from "@/lib/blog";
+import { getAllPosts } from "@/lib/blog";
+import { BRAIN_REGIONS, FEELINGS } from "@/lib/egoera-data";
 import type { MetadataRoute } from "next";
 
 export const revalidate = 3600;
@@ -14,11 +15,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  const categoryPages = Object.keys(CATEGORIES).map((cat) => ({
-    url: `${baseUrl}/blog?cat=${cat}`,
+  const regionPages = BRAIN_REGIONS.map((r) => ({
+    url: `${baseUrl}/categoria/${r.id}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
-    priority: 0.6,
+    priority: 0.75,
+  }));
+
+  const feelingPages = FEELINGS.map((f) => ({
+    url: `${baseUrl}/sentimiento/${f.id}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
   }));
 
   return [
@@ -41,34 +49,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/servicios`,
+      url: `${baseUrl}/apoya`,
       lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/sobre-nosotros`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.5,
+      priority: 0.75,
     },
     {
       url: `${baseUrl}/contacto`,
       lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/recursos`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/cursos`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.5,
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/privacidad`,
@@ -88,7 +78,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "yearly",
       priority: 0.2,
     },
-    ...categoryPages,
+    ...regionPages,
+    ...feelingPages,
     ...blogPosts,
   ];
 }

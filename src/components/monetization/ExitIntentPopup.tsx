@@ -5,16 +5,10 @@ import { CheckCircle, Loader2, Mail, X } from "lucide-react";
 import { track } from "@/lib/analytics";
 
 const STORAGE_KEY = "egoera:newsletter-popup-shown";
-const DELAY_MS = 60_000; // 60 segundos
+const DELAY_MS = 60_000;
 
 type State = "idle" | "loading" | "success" | "error";
 
-/**
- * Popup gentil que aparece una vez por sesion:
- * - Tras 60s en la pagina, o
- * - Cuando el raton sale por el borde superior (exit intent, solo desktop).
- * Se desactiva permanentemente tras ser mostrado/cerrado.
- */
 export function ExitIntentPopup() {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
@@ -97,58 +91,103 @@ export function ExitIntentPopup() {
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 backdrop-blur-sm"
+      style={{ background: "rgba(0,0,0,0.6)" }}
       role="dialog"
       aria-modal="true"
       aria-labelledby="exit-intent-title"
       onClick={dismiss}
     >
       <div
-        className="relative w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"
+        className="relative w-full max-w-md overflow-hidden rounded-sm border shadow-2xl"
+        style={{
+          background: "var(--bg)",
+          borderColor: "var(--rule)",
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={dismiss}
           aria-label="Cerrar"
-          className="absolute right-3 top-3 rounded-full p-1.5 text-grey-text transition-colors hover:bg-muted"
+          className="absolute right-4 top-4 rounded-full p-1.5 transition-colors"
+          style={{ color: "var(--ink-dim)" }}
         >
           <X className="h-4 w-4" />
         </button>
 
-        <div className="newsletter-watercolor p-7 pt-10">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-teal/15">
-            <Mail className="h-6 w-6 text-teal" />
+        <div className="p-8 pt-10">
+          <div
+            className="mb-5 flex h-12 w-12 items-center justify-center rounded-full"
+            style={{
+              background: "rgba(168,194,182,0.1)",
+              border: "1px solid var(--rule)",
+            }}
+          >
+            <Mail className="h-6 w-6" style={{ color: "var(--accent)" }} />
           </div>
           <h2
             id="exit-intent-title"
-            className="font-[family-name:var(--font-heading)] text-2xl font-semibold text-dark-text"
+            className="tracking-[-0.02em]"
+            style={{
+              fontFamily: "var(--font-serif)",
+              fontSize: 32,
+              fontWeight: 400,
+              color: "var(--ink)",
+            }}
           >
             Antes de irte
           </h2>
-          <p className="mt-2 text-sm text-grey-text">
-            Suscribete gratis y recibe un articulo semanal de psicologia
-            accionable. Sin spam, solo contenido util.
+          <p
+            className="mt-3 leading-[1.55]"
+            style={{
+              fontFamily: "var(--font-serif)",
+              fontStyle: "italic",
+              fontSize: 16,
+              color: "var(--ink-dim)",
+            }}
+          >
+            Suscribete gratis y recibe una entrada cada jueves, con una
+            pregunta breve para llevarte la semana.
           </p>
 
           {state === "success" ? (
-            <div className="mt-5 flex items-center gap-2 text-sage">
+            <div
+              className="mt-6 flex items-center gap-2"
+              style={{ color: "var(--accent)" }}
+            >
               <CheckCircle className="h-5 w-5" />
-              <span className="text-sm font-medium">{message}</span>
+              <span
+                className="text-[14px] font-medium"
+                style={{ fontFamily: "var(--font-sans)" }}
+              >
+                {message}
+              </span>
             </div>
           ) : (
-            <form className="mt-5 flex flex-col gap-2" onSubmit={submit}>
+            <form className="mt-6 flex flex-col gap-3" onSubmit={submit}>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu@email.com"
-                className="rounded-full border border-teal/20 bg-white/80 px-4 py-3 text-sm text-dark-text placeholder:text-grey-text/60 focus:outline-none focus:ring-2 focus:ring-teal/40"
+                placeholder="tu@correo.com"
+                className="rounded-full border px-5 py-3 text-[14px] outline-none focus:ring-2"
+                style={{
+                  borderColor: "var(--rule)",
+                  color: "var(--ink)",
+                  background: "var(--bg-2)",
+                  fontFamily: "var(--font-sans)",
+                }}
               />
               <button
                 type="submit"
                 disabled={state === "loading"}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-teal px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-teal/90 disabled:opacity-60"
+                className="inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-[13px] font-medium disabled:opacity-60"
+                style={{
+                  background: "var(--ink)",
+                  color: "var(--bg)",
+                  fontFamily: "var(--font-sans)",
+                }}
               >
                 {state === "loading" ? (
                   <>
@@ -159,12 +198,15 @@ export function ExitIntentPopup() {
                 )}
               </button>
               {state === "error" && (
-                <p className="text-xs text-red-500">{message}</p>
+                <p className="text-[12px]" style={{ color: "#ef4444" }}>
+                  {message}
+                </p>
               )}
               <button
                 type="button"
                 onClick={dismiss}
-                className="mt-1 text-xs text-grey-text/70 underline-offset-2 hover:underline"
+                className="mt-1 text-[12px] underline-offset-2 hover:underline"
+                style={{ color: "var(--ink-faint)" }}
               >
                 No, gracias
               </button>

@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Egoera — Artículo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1311;
+    --bg-2: #0b0e0d;
+    --ink: #f4efe6;
+    --ink-dim: rgba(244,239,230,.78);
+    --ink-faint: rgba(244,239,230,.45);
+    --accent: #a8c2b6;
+    --accent-dim: #6f8478;
+    --rule: rgba(244,239,230,.1);
+    --serif: "Fraunces", serif;
+    --sans: "Inter", sans-serif;
+    --mono: "JetBrains Mono", monospace;
+    --c1: #3a4a5c;
+    --c2: #6b7a8c;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--accent); color: var(--bg); }
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 9999;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.94 0 0 0 0 0.9 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: .4; mix-blend-mode: overlay;
+  }
+
+  /* READING PROGRESS */
+  .progress {
+    position: fixed; top: 0; left: 0;
+    height: 2px; width: 0%;
+    background: var(--accent);
+    z-index: 200;
+    transition: width .05s linear;
+  }
+
+  /* NAV */
+  .nav {
+    position: sticky; top: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    z-index: 100;
+    background: rgba(15,19,17,.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-size: 22px; text-decoration: none; color: var(--ink); }
+  .brand em { color: var(--accent); font-style: normal; }
+  .brand-mark { width: 24px; height: 24px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #d6e4dc, #6f8478 65%, #2a3833); }
+  .nav-back { color: var(--ink-dim); text-decoration: none; font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; }
+  .nav-back:hover { color: var(--accent); }
+  .nav-meta { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); letter-spacing: 0.18em; }
+
+  /* ARTICLE HEADER */
+  .art-header {
+    padding: 100px 48px 60px;
+    max-width: 880px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .art-crumbs {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.18em;
+    color: var(--ink-faint); text-transform: uppercase;
+    margin-bottom: 40px;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .art-crumbs a { color: var(--ink-dim); text-decoration: none; }
+  .art-crumbs .sep { color: var(--accent-dim); }
+
+  .art-cat {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    padding: 8px 14px;
+    border: 1px solid rgba(168,194,182,.3);
+    border-radius: 999px;
+    background: rgba(168,194,182,.06);
+  }
+  .art-cat::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 6px var(--accent);
+  }
+  .art-title {
+    font-family: var(--serif);
+    font-size: clamp(44px, 6vw, 84px);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.035em;
+    margin-bottom: 28px;
+  }
+  .art-title em { font-style: italic; color: var(--accent); }
+  .art-subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(18px, 2vw, 24px);
+    line-height: 1.5;
+    color: var(--ink-dim);
+    max-width: 720px;
+    margin-bottom: 56px;
+  }
+
+  .art-meta {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 32px;
+    padding-top: 28px; padding-bottom: 28px;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .author {
+    display: flex; align-items: center; gap: 14px;
+    flex: 1;
+    min-width: 240px;
+  }
+  .author-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #d6e4dc, var(--accent-dim));
+    color: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif); font-size: 20px; font-style: italic;
+  }
+  .author-info .name { font-weight: 500; font-size: 14px; }
+  .author-info .role { font-size: 12px; color: var(--ink-faint); margin-top: 2px; }
+  .meta-cols { display: flex; gap: 32px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); }
+  .meta-cols .lab { display: block; margin-bottom: 4px; color: var(--accent-dim); }
+  .meta-cols .val { font-family: var(--sans); font-size: 13px; color: var(--ink); letter-spacing: 0; text-transform: none; font-weight: 400; }
+  .share-tools { display: flex; gap: 8px; }
+  .share-tool {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid var(--rule); background: transparent;
+    color: var(--ink-dim); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+  .share-tool:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* COVER */
+  .art-cover {
+    max-width: 1200px;
+    margin: 0 auto 80px;
+    padding: 0 48px;
+  }
+  .art-cover-inner {
+    aspect-ratio: 16/9;
+    background: linear-gradient(135deg, var(--c1), var(--c2));
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .art-cover-inner::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: url("assets/watercolor.png") center/cover;
+    mix-blend-mode: overlay; opacity: .35;
+  }
+  .art-cover-inner::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(15,19,17,.5));
+  }
+  .cover-glyph {
+    position: absolute;
+    font-family: var(--serif);
+    font-size: clamp(240px, 40vw, 520px);
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(244,239,230,.08);
+    line-height: 0.7;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    user-select: none;
+  }
+  .cover-caption {
+    position: absolute;
+    bottom: 20px; left: 24px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: rgba(244,239,230,.7);
+    text-transform: uppercase;
+  }
+  .cover-stamp {
+    position: absolute;
+    top: 20px; right: 24px;
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--mono);
+    font-size: 10px; letter-spacing: 0.18em;
+    color: rgba(244,239,230,.7);
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border: 1px solid rgba(244,239,230,.3);
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+  }
+
+  /* ARTICLE BODY */
+  .art-body {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 48px 80px;
+    position: relative;
+  }
+  .lead-drop {
+    float: left;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 92px;
+    line-height: 0.9;
+    color: var(--accent);
+    padding: 10px 14px 0 0;
+    margin-top: 4px;
+  }
+  .art-body p {
+    font-family: var(--serif);
+    font-size: 20px;
+    line-height: 1.7;
+    color: var(--ink-dim);
+    margin-bottom: 28px;
+    font-weight: 300;
+  }
+  .art-body p.lead {
+    font-size: 24px;
+    color: var(--ink);
+    line-height: 1.55;
+    font-style: italic;
+    margin-bottom: 40px;
+  }
+  .art-body h2 {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 64px 0 24px;
+    color: var(--ink);
+  }
+  .art-body h2 em { font-style: italic; color: var(--accent); }
+  .art-body h2::before {
+    content: attr(data-num);
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    font-weight: 400;
+  }
+  .art-body h3 {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 500;
+    font-style: italic;
+    margin: 40px 0 16px;
+    color: var(--ink);
+  }
+  .art-body em { color: var(--accent); }
+  .art-body strong { color: var(--ink); font-weight: 500; }
+  .art-body blockquote {
+    margin: 48px 0;
+    padding: 0 32px;
+    border-left: 2px solid var(--accent);
+    font-family: var(--serif);
+    font-size: 28px;
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.35;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .art-body blockquote .cite {
+    display: block;
+    margin-top: 18px;
+    font-size: 12px;
+    font-family: var(--mono);
+    font-style: normal;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+  .art-body ul {
+    list-style: none;
+    padding: 0;
+    margin: 28px 0;
+  }
+  .art-body ul li {
+    font-family: var(--serif);
+    font-size: 19px;
+    line-height: 1.65;
+    color: var(--ink-dim);
+    padding: 12px 0 12px 32px;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+  }
+  .art-body ul li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+  .art-body ul li:last-child { border-bottom: none; }
+  .art-body ul li strong { color: var(--ink); display: block; font-style: italic; font-family: var(--serif); margin-bottom: 4px; font-weight: 500; }
+
+  /* Pull quote callout */
+  .callout {
+    margin: 56px 0;
+    padding: 40px;
+    background: rgba(168,194,182,.05);
+    border: 1px solid rgba(168,194,182,.15);
+    border-radius: 4px;
+    position: relative;
+  }
+  .callout::before {
+    content: "◎";
+    position: absolute;
+    top: 20px; right: 24px;
+    color: var(--accent);
+    font-size: 20px;
+  }
+  .callout .c-lab {
+    font-family: var(--mono);
+    font-size: 10px; letter-spacing: 0.22em;
+    color: var(--accent); text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .callout h4 {
+    font-family: var(--serif);
+    font-size: 22px; font-weight: 400;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+  .callout p {
+    font-size: 16px !important;
+    margin-bottom: 16px !important;
+    line-height: 1.6 !important;
+    font-style: normal !important;
+  }
+  .callout .c-foot {
+    padding-top: 16px;
+    border-top: 1px dashed rgba(168,194,182,.2);
+    display: flex; justify-content: space-between;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.15em;
+  }
+  .callout .dl-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--accent); color: var(--bg);
+    padding: 8px 16px; border-radius: 999px;
+    text-decoration: none;
+    font-family: var(--sans); font-size: 12px;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+
+  /* END SIGNATURE */
+  .art-end {
+    margin: 64px 0 0;
+    padding-top: 40px;
+    border-top: 1px solid var(--rule);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 24px;
+  }
+  .art-end .mark {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 32px;
+    color: var(--accent);
+  }
+  .art-end .bio {
+    flex: 1;
+    max-width: 360px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 0.08em;
+    text-align: right;
+    line-height: 1.7;
+  }
+
+  /* SIDEBAR TOC */
+  .toc {
+    position: fixed;
+    left: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 50;
+    display: flex; flex-direction: column;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .toc a {
+    color: var(--ink-faint);
+    text-decoration: none;
+    padding: 4px 0 4px 20px;
+    position: relative;
+    transition: color .2s;
+    max-width: 140px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .toc a::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 10px;
+    width: 12px; height: 1px;
+    background: var(--ink-faint);
+    transition: width .2s, background .2s;
+  }
+  .toc a:hover, .toc a.active { color: var(--accent); }
+  .toc a.active::before { width: 16px; background: var(--accent); }
+
+  /* NEXT */
+  .next-section {
+    padding: 80px 48px 120px;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-top: 1px solid var(--rule);
+  }
+  .next-hd {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.22em;
+    color: var(--accent); text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .next-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+  .next-card {
+    padding: 32px;
+    border: 1px solid var(--rule);
+    text-decoration: none; color: inherit;
+    display: flex; flex-direction: column; gap: 16px;
+    background: rgba(12,16,14,.4);
+    transition: all .2s;
+    position: relative;
+    border-radius: 2px;
+  }
+  .next-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .nc-cat { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+  .nc-title { font-family: var(--serif); font-size: 28px; font-weight: 400; line-height: 1.2; letter-spacing: -0.01em; }
+  .nc-title em { font-style: italic; color: var(--accent); }
+  .nc-sub { font-family: var(--serif); font-style: italic; color: var(--ink-faint); font-size: 15px; line-height: 1.5; }
+
+  /* FOOTER */
+  .footer { padding: 60px 48px 40px; border-top: 1px solid var(--rule); background: var(--bg-2); }
+  .footer-wrap { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; font-size: 12px; color: var(--ink-faint); letter-spacing: 0.08em; }
+  .footer-links { display: flex; gap: 28px; }
+  .footer-links a { color: var(--ink-dim); text-decoration: none; font-size: 13px; }
+
+  @media (max-width: 1100px) {
+    .toc { display: none; }
+  }
+  @media (max-width: 900px) {
+    .nav, .art-header, .art-cover, .next-section, .footer { padding-left: 20px; padding-right: 20px; }
+    .art-body { padding: 0 20px 80px; }
+    .meta-cols { gap: 20px; }
+    .next-grid { grid-template-columns: 1fr; }
+    .art-body blockquote { font-size: 22px; padding: 0 20px; }
+    .art-body p { font-size: 18px; }
+    .lead-drop { font-size: 72px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="nav">
+  <a class="nav-back" href="javascript:history.back()">◀ volver</a>
+  <a class="brand" href="Egoera Vlog.html">
+    <div class="brand-mark"></div>
+    egoera<em>.</em>
+  </a>
+  <div class="nav-meta" id="navMeta">—</div>
+</nav>
+
+<aside class="toc" id="toc"></aside>
+
+<header class="art-header">
+  <div class="art-crumbs">
+    <a href="Egoera Vlog.html">vlog</a>
+    <span class="sep">/</span>
+    <a href="#" id="crumbFeeling">—</a>
+    <span class="sep">/</span>
+    <span id="crumbTitle">—</span>
+  </div>
+  <div class="art-cat" id="artCat">—</div>
+  <h1 class="art-title" id="artTitle">—</h1>
+  <p class="art-subtitle" id="artSub">—</p>
+
+  <div class="art-meta">
+    <a class="author" href="https://www.linkedin.com/in/anderbilbaoc/" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+      <div class="author-avatar">A</div>
+      <div class="author-info">
+        <div class="name" id="authName">Ander Bilbao Castejón</div>
+        <div class="role" id="authRole">Psicólogo · Egoera</div>
+      </div>
+    </a>
+    <div class="meta-cols">
+      <div>
+        <span class="lab">Publicado</span>
+        <span class="val" id="mDate">—</span>
+      </div>
+      <div>
+        <span class="lab">Lectura</span>
+        <span class="val" id="mRead">—</span>
+      </div>
+      <div>
+        <span class="lab">Archivo</span>
+        <span class="val" id="mNum">—</span>
+      </div>
+    </div>
+    <div class="share-tools">
+      <button class="share-tool" title="Copiar enlace" onclick="navigator.clipboard.writeText(location.href); this.textContent='✓'">🔗</button>
+      <button class="share-tool" title="Guardar">☆</button>
+    </div>
+  </div>
+</header>
+
+<section class="art-cover">
+  <div class="art-cover-inner" id="artCover">
+    <div class="cover-glyph" id="coverGlyph">—</div>
+    <div class="cover-stamp" id="coverStamp">—</div>
+    <div class="cover-caption" id="coverCap">—</div>
+  </div>
+</section>
+
+<article class="art-body" id="artBody">
+  <!-- populated by JS -->
+</article>
+
+<section class="next-section">
+  <div class="next-hd">Seguir leyendo sobre <span id="nextFeelName">—</span></div>
+  <div class="next-grid" id="nextGrid"></div>
+</section>
+
+<footer class="footer">
+  <div class="footer-wrap">
+    <a class="brand" href="Egoera Vlog.html">
+      <div class="brand-mark"></div>
+      egoera<em>.</em>
+    </a>
+    <div class="footer-links">
+      <a href="https://www.instagram.com/egoera.psikologia/">Instagram</a>
+      <a href="#">YouTube</a>
+      <a href="#">Spotify</a>
+      <a href="#">Contacto</a>
+    </div>
+    <div>© 2026 Egoera · Donostia</div>
+  </div>
+</footer>
+
+<script src="data.js"></script>
+<script src="articles-content.js"></script>
+<script>
+(() => {
+  const { feelings, articles } = window.EGOERA;
+  const bodies = window.ARTICLE_BODIES || {};
+  const params = new URLSearchParams(window.location.search);
+  const aId = params.get('a') || 'quedarse-aunque-duela';
+  const a = articles.find(x => x.id === aId) || articles[0];
+  const f = feelings.find(x => x.id === a.feeling);
+
+  document.documentElement.style.setProperty('--c1', f.c1);
+  document.documentElement.style.setProperty('--c2', f.c2);
+  document.title = `${a.title} — Egoera`;
+
+  document.getElementById('crumbFeeling').textContent = f.name;
+  document.getElementById('crumbFeeling').href = `sentimiento.html?f=${encodeURIComponent(f.id)}`;
+  document.getElementById('crumbTitle').textContent = a.title;
+  document.getElementById('artCat').textContent = `${a.category} · ${f.meta}`;
+  document.getElementById('artTitle').innerHTML = a.title.replace(/\s(\w+)$/, ' <em>$1</em>');
+  document.getElementById('artSub').textContent = a.subtitle;
+  document.getElementById('mDate').textContent = formatDate(a.date);
+  document.getElementById('mRead').textContent = a.readTime;
+  const idx = articles.indexOf(a);
+  document.getElementById('mNum').textContent = `Nº ${String(articles.length - idx).padStart(3,'0')} / 2026`;
+  document.getElementById('navMeta').textContent = `Nº ${String(articles.length - idx).padStart(3,'0')} · ${a.category}`;
+
+  document.getElementById('coverGlyph').textContent = f.glyph;
+  document.getElementById('coverStamp').textContent = `Egoera · Nº ${String(articles.length - idx).padStart(3,'0')}`;
+  document.getElementById('coverCap').textContent = `${a.category} — ${f.name}`;
+
+  // body
+  const body = bodies[a.id] || bodies.__placeholder(a, f);
+  document.getElementById('artBody').innerHTML = body;
+
+  // TOC
+  const headings = document.querySelectorAll('.art-body h2');
+  const toc = document.getElementById('toc');
+  toc.innerHTML = [...headings].map((h, i) => `<a href="#h${i}" data-i="${i}">${h.textContent.replace(/^·?\s*/, '')}</a>`).join('');
+  headings.forEach((h, i) => h.id = `h${i}`);
+
+  // next articles
+  const nextList = articles.filter(x => x.feeling === a.feeling && x.id !== a.id).slice(0, 2);
+  const fallback = articles.filter(x => x.id !== a.id).slice(0, 2);
+  const nexts = nextList.length ? nextList : fallback;
+  document.getElementById('nextFeelName').textContent = f.name;
+  document.getElementById('nextGrid').innerHTML = nexts.map(n => `
+    <a class="next-card" href="articulo.html?a=${encodeURIComponent(n.id)}">
+      <div class="nc-cat">${n.category} · ${n.readTime}</div>
+      <div class="nc-title">${n.title.replace(/\s(\w+)$/, ' <em>$1</em>')}</div>
+      <div class="nc-sub">${n.subtitle || ''}</div>
+    </a>
+  `).join('');
+
+  // scroll progress + active toc
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const progress = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    document.getElementById('progress').style.width = progress + '%';
+
+    let activeId = null;
+    headings.forEach(x => {
+      if (x.getBoundingClientRect().top < 120) activeId = x.id;
+    });
+    toc.querySelectorAll('a').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + activeId));
+  });
+
+  function formatDate(iso) {
+    const d = new Date(iso);
+    return d.toLocaleDateString('es-ES', { day:'2-digit', month:'long', year:'numeric' });
+  }
+})();
+</script>
+
+</body>
+</html>

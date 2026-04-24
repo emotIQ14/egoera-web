@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Egoera — El vlog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1311;
+    --bg-2: #0b0e0d;
+    --ink: #f4efe6;
+    --ink-dim: rgba(244,239,230,.72);
+    --ink-faint: rgba(244,239,230,.42);
+    --accent: #a8c2b6;
+    --accent-glow: #b8d4c6;
+    --accent-dim: #6f8478;
+    /* gameboy palette */
+    --gb-green: #3aa372;
+    --gb-orange: #f39237;
+    --gb-blue: #3b6fd4;
+    --gb-pink: #f3a8c4;
+    --gb-yellow: #f7c94a;
+    --gb-cream: #f4efe0;
+    --gb-screen-bg: #c9d98f;
+    --gb-screen-ink: #2a3d1f;
+    --rule: rgba(244,239,230,.1);
+    --serif: "Fraunces", serif;
+    --sans: "Inter", sans-serif;
+    --mono: "JetBrains Mono", monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  body::selection, ::selection { background: var(--accent); color: var(--bg); }
+
+  /* Subtle film grain */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 9999;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.94 0 0 0 0 0.9 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: .55;
+    mix-blend-mode: overlay;
+  }
+
+  /* NAV ——————————————————————— */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(15,19,17,.7), transparent);
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--serif); font-size: 22px; font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+  .brand em { color: var(--accent); font-style: normal; margin-left: 2px; }
+  .brand-mark {
+    width: 32px; height: 32px;
+    background: url('assets/logo.png') center/contain no-repeat;
+    filter: drop-shadow(0 0 8px rgba(168,194,182,.3));
+  }
+  .nav-links { display: flex; gap: 36px; }
+  .nav-links a {
+    color: var(--ink-dim); text-decoration: none;
+    font-size: 14px; font-weight: 400;
+    transition: color .2s;
+    position: relative;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a.active { color: var(--ink); }
+  .nav-links a.active::after {
+    content: ""; position: absolute;
+    left: 0; right: 0; bottom: -6px;
+    height: 1px; background: var(--accent);
+  }
+  .nav-cta {
+    background: var(--ink); color: var(--bg);
+    border: none; padding: 10px 22px;
+    border-radius: 999px;
+    font-family: var(--sans); font-size: 14px; font-weight: 500;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .nav-cta:hover { background: var(--accent); }
+
+  /* HERO ——————————————————————— */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    padding: 140px 48px 100px;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .hero-video {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: .45;
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 70% 40%, rgba(168,194,182,.08), transparent 60%),
+      linear-gradient(to bottom, rgba(15,19,17,.6), rgba(15,19,17,.92));
+    z-index: 1;
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 900px; }
+  .hero-kicker {
+    display: inline-flex; align-items: center; gap: 14px;
+    font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 40px;
+  }
+  .hero-kicker::before {
+    content: ""; width: 48px; height: 1px; background: var(--accent);
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(56px, 10vw, 148px);
+    line-height: 0.92;
+    font-weight: 300;
+    letter-spacing: -0.035em;
+    margin-bottom: 32px;
+  }
+  .hero-title em {
+    font-style: italic; font-weight: 300;
+    color: var(--accent);
+  }
+  .hero-sub {
+    font-family: var(--serif);
+    font-size: clamp(16px, 1.5vw, 20px);
+    font-style: italic;
+    color: var(--ink-dim);
+    max-width: 480px;
+    margin-bottom: 48px;
+    line-height: 1.55;
+  }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--ink); color: var(--bg);
+    text-decoration: none;
+    padding: 16px 28px 16px 12px;
+    border-radius: 999px;
+    font-size: 14px; font-weight: 500;
+    transition: transform .2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .play-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--bg); color: var(--ink);
+  }
+  .btn-ghost {
+    display: inline-flex; align-items: center;
+    border: 1px solid var(--rule);
+    color: var(--ink); text-decoration: none;
+    padding: 16px 28px;
+    border-radius: 999px;
+    font-size: 14px; font-weight: 400;
+    transition: border-color .2s, background .2s;
+  }
+  .btn-ghost:hover { border-color: var(--accent); background: rgba(168,194,182,.05); }
+
+  .hero-bottom {
+    position: absolute; bottom: 32px; left: 48px; right: 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    z-index: 2;
+    font-size: 12px;
+    color: var(--ink-faint);
+    letter-spacing: 0.08em;
+  }
+  .hero-bottom strong { color: var(--ink); font-weight: 500; margin-right: 8px; }
+  .hero-bottom .dot {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); margin-right: 8px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(168,194,182,.5); }
+    50% { opacity: .6; box-shadow: 0 0 0 8px rgba(168,194,182,0); }
+  }
+  .hero-meta { display: flex; gap: 32px; text-transform: uppercase; }
+
+  /* SECCIÓN CONSOLA ————————————————— */
+  .console-section {
+    position: relative;
+    padding: 140px 48px 120px;
+    background: linear-gradient(180deg, var(--bg) 0%, #1a2420 60%, var(--bg) 100%);
+    overflow: hidden;
+  }
+  .console-section::before {
+    content: "";
+    position: absolute;
+    top: 5%; right: -5%;
+    width: 1000px; height: 1000px;
+    background:
+      radial-gradient(circle at 40% 40%, rgba(59,111,212,.22), transparent 50%),
+      radial-gradient(circle at 60% 60%, rgba(58,163,114,.2), transparent 55%);
+    pointer-events: none;
+    filter: blur(60px);
+  }
+  .console-section::after {
+    content: "";
+    position: absolute;
+    bottom: 10%; left: -10%;
+    width: 800px; height: 800px;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(243,168,196,.14), transparent 60%);
+    pointer-events: none;
+    filter: blur(80px);
+  }
+  .console-intro {
+    max-width: 720px;
+    margin: 0 auto 80px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+  .section-label {
+    font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: inline-flex; align-items: center; gap: 14px;
+  }
+  .section-label::before, .section-label::after {
+    content: ""; width: 32px; height: 1px; background: var(--accent-dim);
+  }
+  .console-intro h2 {
+    font-family: var(--serif);
+    font-size: clamp(44px, 6vw, 80px);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+  .console-intro h2 em {
+    font-style: italic; color: var(--accent);
+  }
+  .console-intro p {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-dim);
+    font-size: 18px;
+    line-height: 1.6;
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  /* DEVICE ——————————————————————— */
+  .console-device {
+    position: relative;
+    max-width: 960px;
+    margin: 0 auto;
+    z-index: 2;
+  }
+  .console-watercolor {
+    position: absolute;
+    inset: -80px -120px;
+    width: calc(100% + 240px);
+    height: calc(100% + 160px);
+    object-fit: contain;
+    opacity: .08;
+    filter: hue-rotate(100deg) saturate(.6);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .device-frame {
+    background:
+      linear-gradient(115deg,
+        var(--gb-cream) 0%, var(--gb-cream) 38%,
+        var(--gb-green) 38%, var(--gb-green) 50%,
+        var(--gb-orange) 50%, var(--gb-orange) 100%);
+    border: 1px solid rgba(0,0,0,.4);
+    border-radius: 36px 36px 48px 36px;
+    padding: 32px 28px 28px;
+    box-shadow:
+      0 40px 80px -30px rgba(0,0,0,.8),
+      inset 0 2px 0 rgba(255,255,255,.5),
+      inset 0 -3px 0 rgba(0,0,0,.15),
+      inset 6px 0 0 rgba(0,0,0,.04),
+      inset -6px 0 0 rgba(0,0,0,.04);
+    position: relative;
+    transform: rotate(-2deg);
+  }
+  .device-frame::before {
+    /* pokeball strap dot */
+    content: "";
+    position: absolute;
+    top: -8px; right: 40px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background:
+      linear-gradient(to bottom, #e84a3c 0%, #e84a3c 45%, #111 45%, #111 55%, #f0f0f0 55%);
+    border: 2px solid #111;
+    box-shadow: 0 4px 8px rgba(0,0,0,.5);
+    z-index: 3;
+  }
+  .device-frame::after {
+    /* small chain */
+    content: "";
+    position: absolute;
+    top: -24px; right: 52px;
+    width: 2px; height: 20px;
+    background: repeating-linear-gradient(to bottom, #888 0 2px, transparent 2px 4px);
+  }
+  .device-top {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 8px 18px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgba(0,0,0,.55);
+  }
+  .device-brand span { margin: 0 8px; color: var(--gb-orange); }
+  .device-led { display: flex; gap: 6px; }
+  .device-led span {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(0,0,0,.2);
+    box-shadow: inset 0 0 2px rgba(0,0,0,.5);
+  }
+  .device-led span:first-child {
+    background: var(--gb-green);
+    box-shadow: 0 0 8px var(--gb-green);
+    animation: blink 2s ease-in-out infinite;
+  }
+  .device-led span:nth-child(2) {
+    background: var(--gb-orange);
+    box-shadow: 0 0 4px rgba(243,146,55,.5);
+  }
+  @keyframes blink {
+    0%, 70%, 100% { opacity: 1; }
+    80% { opacity: .3; }
+  }
+
+  /* SCREEN ——————————————————————— */
+  .device-screen {
+    position: relative;
+    background: #060807;
+    border-radius: 4px;
+    border: 12px solid #1a1a1a;
+    box-shadow:
+      inset 0 0 40px rgba(0,0,0,.9),
+      inset 0 0 4px rgba(168,194,182,.15),
+      0 4px 0 rgba(0,0,0,.25);
+    padding: 24px 28px;
+    min-height: 440px;
+    overflow: hidden;
+  }
+  .device-screen::after {
+    /* logo cornered */
+    content: "EGOERA · COLOR";
+    position: absolute;
+    bottom: -28px; left: 0; right: 0;
+    text-align: center;
+    font-family: var(--serif);
+    font-size: 11px;
+    font-style: italic;
+    color: rgba(0,0,0,.55);
+    letter-spacing: 0.06em;
+    z-index: 2;
+  }
+  .crt-scanlines {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0, transparent 2px,
+      rgba(0,0,0,.25) 2px, rgba(0,0,0,.25) 3px
+    );
+    pointer-events: none;
+    z-index: 5;
+    mix-blend-mode: multiply;
+  }
+  .crt-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,.4) 100%);
+    pointer-events: none;
+    z-index: 4;
+  }
+  .screen-view { position: relative; z-index: 3; }
+
+  .screen-header {
+    display: flex; align-items: center; gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed rgba(168,194,182,.25);
+    margin-bottom: 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+  }
+  .sh-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+  .sh-title { flex: 1; }
+  .sh-meta { color: var(--accent-dim); }
+
+  .cursor-hint {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent-dim);
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .cursor-hint .arrow {
+    color: var(--accent);
+    animation: blinkCursor 1s step-end infinite;
+  }
+  @keyframes blinkCursor {
+    50% { opacity: 0; }
+  }
+
+  .feeling-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    font-family: var(--mono);
+  }
+  .feeling {
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 14px;
+    color: var(--ink-dim);
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all .15s ease;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    position: relative;
+  }
+  .feeling .idx {
+    color: var(--accent-dim);
+    font-size: 10px;
+    min-width: 20px;
+  }
+  .feeling .name {
+    flex: 1;
+    text-transform: lowercase;
+  }
+  .feeling .meta {
+    font-size: 10px;
+    color: var(--accent-dim);
+    letter-spacing: 0.12em;
+  }
+  .feeling:hover {
+    color: var(--accent);
+    background: rgba(168,194,182,.04);
+  }
+  .feeling.active {
+    color: var(--accent-glow);
+    background: rgba(168,194,182,.08);
+    border-left-color: var(--accent);
+    text-shadow: 0 0 8px rgba(168,194,182,.5);
+  }
+  .feeling.active::before {
+    content: "▸";
+    position: absolute;
+    left: -4px;
+    color: var(--accent);
+    animation: blinkCursor 1s step-end infinite;
+  }
+  .feeling.active .idx { color: var(--accent); }
+  .feeling.active .meta { color: var(--accent); }
+
+  .screen-footer {
+    margin-top: 28px;
+    padding-top: 16px;
+    border-top: 1px dashed rgba(168,194,182,.15);
+    display: flex; gap: 24px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-faint);
+    letter-spacing: 0.1em;
+  }
+  kbd {
+    display: inline-block;
+    font-family: var(--mono);
+    background: rgba(168,194,182,.12);
+    border: 1px solid rgba(168,194,182,.3);
+    color: var(--accent);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    margin-right: 6px;
+  }
+
+  /* CONTROLS ——————————————————————— */
+  .device-controls {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 48px 8px 12px;
+  }
+  .dpad {
+    position: relative;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle at center, rgba(59,111,212,.18) 0%, transparent 62%);
+    border-radius: 50%;
+    padding: 10px;
+  }
+  .dpad-btn {
+    position: absolute;
+    background: linear-gradient(145deg, var(--gb-blue), #2a4fa0);
+    border: 2px solid rgba(0,0,0,.7);
+    color: rgba(255,255,255,.9);
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    cursor: pointer;
+    transition: all .1s;
+    box-shadow: 0 2px 4px rgba(0,0,0,.4);
+  }
+  .dpad-btn:hover { filter: brightness(1.15); }
+  .dpad-btn:active { transform: scale(0.94); filter: brightness(0.85); }
+  .dpad-btn.up { top: 8px; left: 41px; border-radius: 8px 8px 0 0; }
+  .dpad-btn.down { bottom: 8px; left: 41px; border-radius: 0 0 8px 8px; }
+  .dpad-btn.left { top: 41px; left: 8px; border-radius: 8px 0 0 8px; }
+  .dpad-btn.right { top: 41px; right: 8px; border-radius: 0 8px 8px 0; }
+  .dpad-center {
+    position: absolute;
+    top: 41px; left: 41px;
+    width: 38px; height: 38px;
+    background: #1a2a5a;
+    border: 2px solid rgba(0,0,0,.7);
+    border-left: none; border-right: none;
+    border-top: none; border-bottom: none;
+  }
+
+  .action-buttons {
+    display: flex; gap: 18px;
+    transform: rotate(-20deg);
+    align-items: center;
+  }
+  .btn-a, .btn-b {
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--gb-yellow), #d19a1e);
+    border: 2px solid rgba(0,0,0,.7);
+    color: #2a1e00;
+    font-family: var(--serif);
+    font-size: 22px; font-weight: 600;
+    font-style: italic;
+    cursor: pointer;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative;
+    transition: all .1s;
+    box-shadow:
+      0 4px 0 rgba(0,0,0,.4),
+      inset 0 2px 0 rgba(255,255,255,.3),
+      inset 0 -3px 0 rgba(0,0,0,.15);
+  }
+  .btn-a { width: 68px; height: 68px; background: radial-gradient(circle at 35% 35%, #fff, var(--gb-yellow) 60%, #c48a0a); }
+  .btn-b { background: radial-gradient(circle at 35% 35%, #f3a8c4, #b0547a); color: #3a0a20; }
+  .btn-a:hover, .btn-b:hover { filter: brightness(1.08); }
+  .btn-a:active, .btn-b:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,.4); }
+  .btn-a span, .btn-b span {
+    position: absolute;
+    bottom: -24px;
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: rgba(0,0,0,.6);
+    text-transform: uppercase;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  /* select + start pills */
+  .select-start {
+    position: absolute;
+    bottom: 76px; left: 50%;
+    transform: translateX(-50%) rotate(-20deg);
+    display: flex; gap: 16px;
+  }
+  .ss-pill {
+    width: 28px; height: 8px;
+    border-radius: 999px;
+    background: #d8a3b5;
+    border: 1px solid rgba(0,0,0,.4);
+    box-shadow: 0 1px 0 rgba(0,0,0,.3);
+    position: relative;
+  }
+  .ss-pill::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: -14px; left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.2em;
+    color: rgba(0,0,0,.5);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* BOTTOM DEVICE ——————————————————————— */
+  .device-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 8px 0;
+    margin-top: 24px;
+  }
+  .speaker {
+    display: flex; flex-direction: column; gap: 4px;
+    transform: rotate(-20deg);
+    align-items: flex-end;
+  }
+  .speaker-row { display: flex; gap: 4px; }
+  .speaker-row span {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: rgba(0,0,0,.35);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.5);
+  }
+  .device-meta {
+    display: flex; gap: 24px;
+    font-family: var(--mono);
+    font-size: 9px; letter-spacing: 0.18em;
+    color: rgba(0,0,0,.55);
+    font-weight: 600;
+  }
+
+  /* FOOTNOTE ——————————————————————— */
+  .console-footnote {
+    max-width: 720px;
+    margin: 80px auto 0;
+    display: flex; align-items: stretch; justify-content: space-between; gap: 20px;
+  }
+  .fn-item { text-align: center; flex: 1; }
+  .fn-num {
+    font-family: var(--serif);
+    font-size: 48px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .fn-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    line-height: 1.5;
+  }
+  .fn-sep { width: 1px; background: var(--rule); }
+
+  /* RECENT ARTICLES ——————————————————————— */
+  .recent {
+    padding: 140px 48px 120px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .section-head {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 48px;
+    align-items: end;
+    margin-bottom: 64px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section-head .section-label { margin-bottom: 16px; }
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5vw, 72px);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .section-title em { font-style: italic; color: var(--accent); }
+  .section-sub {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-dim);
+    font-size: 18px;
+    line-height: 1.6;
+    max-width: 380px;
+  }
+
+  .recent-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .article-card {
+    text-decoration: none;
+    color: inherit;
+    display: flex; flex-direction: column;
+    gap: 20px;
+    position: relative;
+  }
+  .article-card .card-media {
+    aspect-ratio: 4/5;
+    background: #1a211e;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+  .article-card .card-media::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(15,19,17,.6));
+    z-index: 2;
+  }
+  .article-card .card-media .swatch {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--c1), var(--c2));
+  }
+  .article-card .card-media .glyph {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif);
+    font-size: 160px;
+    font-style: italic;
+    color: rgba(244,239,230,.12);
+    font-weight: 300;
+  }
+  .article-card .card-cat {
+    position: absolute;
+    top: 16px; left: 16px;
+    z-index: 3;
+    background: rgba(15,19,17,.75);
+    backdrop-filter: blur(8px);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .article-card .card-num {
+    position: absolute;
+    bottom: 16px; right: 16px;
+    z-index: 3;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+  }
+  .article-card .card-title {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .article-card .card-title em { color: var(--accent); font-style: italic; }
+  .article-card .card-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display: flex; gap: 14px;
+  }
+  .article-card:hover .card-title { color: var(--accent); transition: color .2s; }
+
+  /* ABOUT ——————————————————————— */
+  .about {
+    padding: 140px 48px 120px;
+    background: var(--bg-2);
+    position: relative;
+    overflow: hidden;
+  }
+  .about-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .about h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin: 16px 0 24px;
+  }
+  .about h2 em { font-style: italic; color: var(--accent); }
+  .about p {
+    color: var(--ink-dim);
+    margin-bottom: 20px;
+    line-height: 1.7;
+    max-width: 480px;
+  }
+  .about-social {
+    margin-top: 32px;
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+  .social-chip {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 10px 16px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    transition: all .2s;
+  }
+  .social-chip svg { color: var(--accent); }
+  .social-chip .social-handle { color: var(--ink-faint); font-size: 12px; }
+  .social-chip:hover { border-color: var(--accent); background: rgba(168,194,182,.05); }
+
+  .about-visual {
+    position: relative;
+    height: 480px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .about-card {
+    background: rgba(26,33,30,.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--rule);
+    padding: 32px;
+    max-width: 320px;
+    z-index: 2;
+    border-radius: 2px;
+  }
+  .about-card-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+  .about-card-title { font-family: var(--serif); font-size: 22px; margin-bottom: 6px; }
+  .about-card-meta { font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+
+  /* NEWSLETTER ——————————————————————— */
+  .newsletter {
+    padding: 120px 48px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .newsletter h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+  .newsletter h2 em { font-style: italic; color: var(--accent); }
+  .newsletter p {
+    color: var(--ink-dim);
+    max-width: 540px;
+    margin: 0 auto 40px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+  }
+  .newsletter-form {
+    display: flex;
+    max-width: 480px;
+    margin: 0 auto;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    overflow: hidden;
+    padding: 6px;
+    background: rgba(244,239,230,.03);
+  }
+  .newsletter-form input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--ink);
+    font-family: var(--sans);
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+  .newsletter-form button {
+    background: var(--ink); color: var(--bg);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-family: var(--sans); font-size: 14px; font-weight: 500;
+    cursor: pointer;
+  }
+
+  /* FOOTER ——————————————————————— */
+  .footer {
+    padding: 60px 48px 40px;
+    border-top: 1px solid var(--rule);
+    background: var(--bg-2);
+  }
+  .footer-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 24px;
+    font-size: 12px; color: var(--ink-faint);
+    letter-spacing: 0.08em;
+  }
+  .footer-links { display: flex; gap: 28px; }
+  .footer-links a { color: var(--ink-dim); text-decoration: none; font-size: 13px; transition: color .2s; }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* TWEAKS PANEL ——————————————————————— */
+  .tweaks {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 280px;
+    background: rgba(12,16,14,.96);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 20px;
+    z-index: 1000;
+    display: none;
+    font-size: 13px;
+  }
+  .tweaks.active { display: block; }
+  .tweaks-head {
+    font-family: var(--serif);
+    font-size: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .tweaks-head button {
+    background: transparent; border: none;
+    color: var(--ink-dim);
+    cursor: pointer;
+    font-size: 18px;
+  }
+  .tweak { margin-bottom: 16px; }
+  .tweak label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  .tweak-opts { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tweak-opt {
+    padding: 6px 12px; background: rgba(244,239,230,.05);
+    border: 1px solid var(--rule); border-radius: 999px;
+    font-size: 12px; cursor: pointer; color: var(--ink-dim);
+    transition: all .2s ease;
+  }
+  .tweak-opt:hover { border-color: var(--accent); }
+  .tweak-opt.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .tweak-swatches { display: flex; gap: 8px; }
+  .swatch {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color .2s ease;
+  }
+  .swatch.active { border-color: var(--ink); }
+
+  /* MEDIA ——————————————————————— */
+  @media (max-width: 900px) {
+    .nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 120px 20px 80px; }
+    .hero-bottom { left: 20px; right: 20px; flex-direction: column; align-items: flex-start; gap: 12px; }
+    .console-section, .recent, .about, .newsletter { padding-left: 20px; padding-right: 20px; }
+    .section-head, .about-wrap, .recent-grid { grid-template-columns: 1fr; gap: 40px; }
+    .feeling-list { grid-template-columns: 1fr; }
+    .console-footnote { flex-direction: column; gap: 32px; }
+    .fn-sep { display: none; }
+    .device-screen { padding: 18px; min-height: 520px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="brand">
+    <div class="brand-mark"></div>
+    egoera<em>.</em>
+  </div>
+  <div class="nav-links">
+    <a href="#" class="active">Vlog</a>
+    <a href="#consola">Sentimientos</a>
+    <a href="#recientes">Artículos</a>
+    <a href="#sobre">Sobre Egoera</a>
+    <a href="#">Contacto</a>
+  </div>
+  <button class="nav-cta">Suscribirme</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero" data-screen-label="01 Hero">
+  <video class="hero-video" autoplay loop muted playsinline>
+    <source src="https://res.cloudinary.com/dfonotyfb/video/upload/v1775585556/dds3_1_rqhg7x.mp4" type="video/mp4" />
+  </video>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-kicker">El vlog de Egoera</div>
+    <h1 class="hero-title">
+      Psicología,<br/><em>despacio.</em>
+    </h1>
+    <p class="hero-sub">
+      Un vlog para detenerse, mirar hacia dentro y volver a la semana con otras preguntas.
+    </p>
+  </div>
+
+  <div class="hero-bottom">
+    <div>
+      <span class="dot"></span>
+      <span><strong>Última entrada</strong> Sobre quedarse, aunque duela</span>
+    </div>
+    <div class="hero-meta">
+      <span>◉ Nueva entrada cada jueves</span>
+      <span>24 artículos</span>
+      <span>2026</span>
+    </div>
+  </div>
+</section>
+
+<!-- CONSOLA DE SENTIMIENTOS -->
+<section class="console-section" id="consola" data-screen-label="02 Consola">
+  <div class="console-intro">
+    <div class="section-label">Mapa emocional</div>
+    <h2>¿Qué estás <em>sintiendo</em>?</h2>
+    <p>Selecciona un estado y abre un archivo de artículos, prácticas y episodios para acompañarte en él. Sin prisa.</p>
+  </div>
+
+  <div class="console-device" id="consoleDevice">
+    <img src="assets/watercolor.png" alt="" class="console-watercolor" />
+
+    <div class="device-frame">
+      <div class="device-top">
+        <div class="device-brand">EGOERA <span>·</span> ESTADO v01</div>
+        <div class="device-led"><span></span><span></span><span></span></div>
+      </div>
+
+      <div class="device-screen" id="deviceScreen">
+        <div class="crt-scanlines"></div>
+        <div class="crt-glow"></div>
+
+        <div class="screen-view" data-view="select">
+          <div class="screen-header">
+            <div class="sh-dot"></div>
+            <div class="sh-title">SELECT.EMOTION ▸ /egoera/estado</div>
+            <div class="sh-meta" id="selectMeta">01 / 08</div>
+          </div>
+
+          <div class="cursor-hint">
+            <span class="arrow">▸</span>
+            <span>Usa las flechas / A para abrir / B para volver</span>
+          </div>
+
+          <div class="feeling-list" id="feelingList"></div>
+        </div>
+
+        <div class="screen-footer">
+          <div><kbd>↑↓</kbd>Navegar</div>
+          <div><kbd>A</kbd>Abrir</div>
+          <div><kbd>B</kbd>Volver</div>
+          <div style="margin-left:auto; color: var(--accent-dim);">egoera://blog</div>
+        </div>
+      </div>
+
+      <div class="device-controls">
+        <div class="dpad">
+          <button class="dpad-btn up" data-dir="up">▲</button>
+          <button class="dpad-btn left" data-dir="left">◀</button>
+          <div class="dpad-center"></div>
+          <button class="dpad-btn right" data-dir="right">▶</button>
+          <button class="dpad-btn down" data-dir="down">▼</button>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-b" id="btnB">B<span>atrás</span></button>
+          <button class="btn-a" id="btnA">A<span>abrir</span></button>
+        </div>
+      </div>
+
+      <div class="device-bottom">
+        <div class="select-start">
+          <div class="ss-pill" data-label="SELECT"></div>
+          <div class="ss-pill" data-label="START"></div>
+        </div>
+        <div class="speaker">
+          <div class="speaker-row"><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="speaker-row"><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="speaker-row"><span></span><span></span><span></span><span></span><span></span></div>
+        </div>
+        <div class="device-meta">
+          <span>BAT ◼◼◼◼◻</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="console-footnote" style="display:none">
+    <div class="fn-item">
+      <div class="fn-num">08</div>
+      <div class="fn-label">Sentimientos<br/>principales</div>
+    </div>
+    <div class="fn-sep"></div>
+    <div class="fn-item">
+      <div class="fn-num">120+</div>
+      <div class="fn-label">Artículos<br/>archivados</div>
+    </div>
+    <div class="fn-sep"></div>
+    <div class="fn-item">
+      <div class="fn-num">42</div>
+      <div class="fn-label">Prácticas<br/>descargables</div>
+    </div>
+  </div>
+</section>
+
+<!-- RECIENTES -->
+<section class="recent" id="recientes" data-screen-label="03 Recientes">
+  <div class="section-head">
+    <div>
+      <div class="section-label">Archivo</div>
+      <h2 class="section-title">Lo último<br/>del <em>blog</em>.</h2>
+    </div>
+    <p class="section-sub">
+      Artículos, prácticas y entrevistas que Ander publica cada jueves. Archivo en expansión.
+    </p>
+  </div>
+
+  <div class="recent-grid" id="recentGrid">
+    <a class="article-card" href="articulo.html" style="--c1:#3b6fd4;--c2:#1a2d5c">
+      <div class="card-media">
+        <div class="swatch"></div>
+        <div class="glyph" style="color:#f4efe0">◌</div>
+        <div class="card-cat">Ansiedad</div>
+        <div class="card-num">№ 014</div>
+      </div>
+      <h3 class="card-title">Cuando el cuerpo <em>avisa</em> antes que la palabra.</h3>
+      <div class="card-meta">
+        <span>15 Mar</span>
+        <span>· 8 min</span>
+        <span>· Ander G.</span>
+      </div>
+    </a>
+
+    <a class="article-card" href="articulo.html" style="--c1:#f39237;--c2:#b8501a">
+      <div class="card-media">
+        <div class="swatch"></div>
+        <div class="glyph" style="color:#2a1e00">◐</div>
+        <div class="card-cat">Vínculos</div>
+        <div class="card-num">№ 013</div>
+      </div>
+      <h3 class="card-title">La amistad adulta: <em>conservar</em> sin retener.</h3>
+      <div class="card-meta">
+        <span>08 Mar</span>
+        <span>· 12 min</span>
+        <span>· Entrevista</span>
+      </div>
+    </a>
+
+    <a class="article-card" href="articulo.html" style="--c1:#3aa372;--c2:#1a5c3d">
+      <div class="card-media">
+        <div class="swatch"></div>
+        <div class="glyph" style="color:#f4efe0">✦</div>
+        <div class="card-cat">Rutina</div>
+        <div class="card-num">№ 012</div>
+      </div>
+      <h3 class="card-title">Hábitos lentos: <em>enraizar</em> sin endurecerse.</h3>
+      <div class="card-meta">
+        <span>01 Mar</span>
+        <span>· 6 min</span>
+        <span>· Ander G.</span>
+      </div>
+    </a>
+
+    <a class="article-card" href="articulo.html" style="--c1:#f3a8c4;--c2:#a0476a">
+      <div class="card-media">
+        <div class="swatch"></div>
+        <div class="glyph" style="color:#3a0a20">❋</div>
+        <div class="card-cat">Cuerpo</div>
+        <div class="card-num">№ 011</div>
+      </div>
+      <h3 class="card-title">Sostener lo blando: <em>ternura</em> como práctica.</h3>
+      <div class="card-meta">
+        <span>22 Feb</span>
+        <span>· 10 min</span>
+        <span>· Práctica</span>
+      </div>
+    </a>
+
+    <a class="article-card" href="articulo.html" style="--c1:#f7c94a;--c2:#b8881a">
+      <div class="card-media">
+        <div class="swatch"></div>
+        <div class="glyph" style="color:#2a1e00">◈</div>
+        <div class="card-cat">Identidad</div>
+        <div class="card-num">№ 010</div>
+      </div>
+      <h3 class="card-title">Quién soy cuando <em>nadie mira</em>.</h3>
+      <div class="card-meta">
+        <span>15 Feb</span>
+        <span>· 11 min</span>
+        <span>· Ander G.</span>
+      </div>
+    </a>
+
+    <a class="article-card" href="articulo.html" style="--c1:#b8a8d4;--c2:#5a4880">
+      <div class="card-media">
+        <div class="swatch"></div>
+        <div class="glyph" style="color:#f4efe0">◯</div>
+        <div class="card-cat">Duelo</div>
+        <div class="card-num">№ 009</div>
+      </div>
+      <h3 class="card-title">Duelos pequeños que <em>no se nombran</em>.</h3>
+      <div class="card-meta">
+        <span>08 Feb</span>
+        <span>· 9 min</span>
+        <span>· Ensayo</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- SOBRE EGOERA -->
+<section class="about" id="sobre" data-screen-label="04 Sobre">
+  <div class="about-wrap">
+    <div class="about-copy">
+      <div class="section-label">Sobre Egoera</div>
+      <h2>Un espacio para <em>habitarse</em>.</h2>
+      <p>
+        Egoera nace como proyecto de psicología en Donostia que cree en las conversaciones pausadas, en el cuidado de los estados que atravesamos y en hacer de la consulta un lugar de encuentro —no de diagnóstico.
+      </p>
+      <p>
+        Este blog es una extensión de esa idea: reflexiones, prácticas y entrevistas para acompañarte entre sesiones y entre semanas.
+      </p>
+      <div class="about-social">
+        <a class="social-chip" href="https://www.instagram.com/egoera.psikologia/" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+          <span>Instagram</span>
+          <span class="social-handle">@egoera.psikologia</span>
+        </a>
+        <a class="social-chip" href="https://www.tiktok.com/@egoera.psikologia" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 3v2.6a4.4 4.4 0 0 0 4.4 4.4V12a6.6 6.6 0 0 1-4.4-1.6V15a5.6 5.6 0 1 1-5.6-5.6v2.3a3.3 3.3 0 1 0 3.3 3.3V3H16z"/></svg>
+          <span>TikTok</span>
+          <span class="social-handle">@egoera.psikologia</span>
+        </a>
+        <a class="social-chip" href="https://www.youtube.com/@egoera.psikologia" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12s0-3.6-.5-5.3a2.8 2.8 0 0 0-2-2C17.7 4 12 4 12 4s-5.7 0-7.5.7a2.8 2.8 0 0 0-2 2C2 8.4 2 12 2 12s0 3.6.5 5.3a2.8 2.8 0 0 0 2 2C6.3 20 12 20 12 20s5.7 0 7.5-.7a2.8 2.8 0 0 0 2 2C22 15.6 22 12 22 12zM10 8.5l6 3.5-6 3.5v-7z"/></svg>
+          <span>YouTube</span>
+          <span class="social-handle">Canal</span>
+        </a>
+        <a class="social-chip" href="https://open.spotify.com/search/egoera%20psikologia" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 9c3.3-1 7-.6 10 1M7.5 12c2.8-.8 6-.4 8.5 1.1M8 15c2.2-.6 4.8-.3 6.8.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
+          <span>Spotify</span>
+          <span class="social-handle">Podcast</span>
+        </a>
+      </div>
+    </div>
+    <div class="about-visual">
+      <div class="about-card">
+        <div class="about-card-label">Consulta presencial</div>
+        <div class="about-card-title">Donostia — San Sebastián</div>
+        <div class="about-card-meta">Psicología clínica · Adultos · Adolescentes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+  <h2>Un jueves, una <em>pregunta</em> nueva.</h2>
+  <p>Suscríbete y recibe cada entrada directa en tu correo, con una reflexión breve para llevarte la semana.</p>
+  <form class="newsletter-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Te esperamos ✓'">
+    <input type="email" placeholder="tu@correo.com" required />
+    <button type="submit">Suscribirme</button>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-wrap">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      egoera<em>.</em>
+    </div>
+    <div class="footer-links">
+      <a href="https://www.instagram.com/egoera.psikologia/">Instagram</a>
+      <a href="#">YouTube</a>
+      <a href="#">Spotify</a>
+      <a href="#">Contacto</a>
+    </div>
+    <div>© 2026 Egoera · Donostia</div>
+  </div>
+</footer>
+
+<!-- TWEAKS -->
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-head">
+    Tweaks
+    <button id="tweaksClose">×</button>
+  </div>
+
+  <div class="tweak">
+    <label>Modo consola</label>
+    <div class="tweak-opts" data-tweak="consoleMode">
+      <div class="tweak-opt active" data-val="gameboy">Game Console</div>
+      <div class="tweak-opt" data-val="terminal">Terminal</div>
+    </div>
+  </div>
+
+  <div class="tweak">
+    <label>Intensidad CRT</label>
+    <input type="range" min="0" max="100" value="55" id="crtIntensity" />
+  </div>
+
+  <div class="tweak">
+    <label>Color de acento</label>
+    <div class="tweak-swatches" data-tweak="accent">
+      <div class="swatch active" data-val="#a8c2b6" style="background:#a8c2b6"></div>
+      <div class="swatch" data-val="#c9b296" style="background:#c9b296"></div>
+      <div class="swatch" data-val="#b8a8d4" style="background:#b8a8d4"></div>
+      <div class="swatch" data-val="#d4a8a8" style="background:#d4a8a8"></div>
+    </div>
+  </div>
+
+  <div class="tweak">
+    <label>Video hero</label>
+    <div class="tweak-opts" data-tweak="heroVideo">
+      <div class="tweak-opt active" data-val="on">On</div>
+      <div class="tweak-opt" data-val="off">Off</div>
+    </div>
+  </div>
+</div>
+
+<!-- DATA + BEHAVIOUR -->
+<script src="data.js"></script>
+<script src="home.js"></script>
+</body>
+</html>

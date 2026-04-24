@@ -4,48 +4,51 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ═════════════════════════════════════════════════════════════════════
+   EGOERA — Dark editorial redesign
+   Fonts: Fraunces (serif), Inter (sans), JetBrains Mono (mono)
+   Palette: deep greens / cream / sage / gameboy accents
+   ════════════════════════════════════════════════════════════════════ */
+
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-heading);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-serif);
+
+  /* Shadcn tokens kept for backwards compat */
+  --color-card: var(--bg-2);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--bg-2);
+  --color-popover-foreground: var(--ink);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--bg);
+  --color-secondary: var(--accent-dim);
+  --color-secondary-foreground: var(--ink);
+  --color-muted: rgba(244, 239, 230, 0.06);
+  --color-muted-foreground: var(--ink-dim);
   --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --color-teal: #6BA3BE;
+  --color-accent-foreground: var(--bg);
+  --color-destructive: #ef4444;
+  --color-border: var(--rule);
+  --color-input: var(--rule);
+  --color-ring: var(--accent);
+  --color-chart-1: var(--gb-green);
+  --color-chart-2: var(--gb-orange);
+  --color-chart-3: var(--gb-blue);
+  --color-chart-4: var(--gb-pink);
+  --color-chart-5: var(--gb-yellow);
+
+  /* Legacy tokens kept so older classes still compile */
+  --color-teal: #a8c2b6;
   --color-sage: #7FB5A0;
   --color-mint: #A8D5C8;
   --color-mint-light: #d4ece5;
-  --color-warm-bg: #F7F9F8;
-  --color-dark-text: #2D373C;
-  --color-grey-text: #78878C;
+  --color-warm-bg: #0f1311;
+  --color-dark-text: #f4efe6;
+  --color-grey-text: rgba(244, 239, 230, 0.6);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -56,489 +59,298 @@
 }
 
 :root {
-  --background: #F7F9F8;
-  --foreground: #2D373C;
-  --card: #ffffff;
-  --card-foreground: #2D373C;
-  --popover: #ffffff;
-  --popover-foreground: #2D373C;
-  --primary: #6BA3BE;
-  --primary-foreground: #ffffff;
-  --secondary: #7FB5A0;
-  --secondary-foreground: #ffffff;
-  --muted: #f0f4f2;
-  --muted-foreground: #78878C;
-  --accent: #A8D5C8;
-  --accent-foreground: #2D373C;
+  /* Core palette */
+  --bg: #0f1311;
+  --bg-2: #0b0e0d;
+  --ink: #f4efe6;
+  --ink-dim: rgba(244, 239, 230, 0.72);
+  --ink-faint: rgba(244, 239, 230, 0.42);
+  --accent: #a8c2b6;
+  --accent-glow: #b8d4c6;
+  --accent-dim: #6f8478;
+
+  /* Gameboy palette */
+  --gb-green: #3aa372;
+  --gb-orange: #f39237;
+  --gb-blue: #3b6fd4;
+  --gb-pink: #f3a8c4;
+  --gb-yellow: #f7c94a;
+  --gb-cream: #f4efe0;
+  --gb-screen-bg: #c9d98f;
+  --gb-screen-ink: #2a3d1f;
+
+  --rule: rgba(244, 239, 230, 0.1);
+
+  /* Shadcn compat vars (dark) */
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: var(--bg-2);
+  --card-foreground: var(--ink);
+  --popover: var(--bg-2);
+  --popover-foreground: var(--ink);
+  --primary: var(--accent);
+  --primary-foreground: var(--bg);
+  --secondary: var(--accent-dim);
+  --secondary-foreground: var(--ink);
+  --muted: rgba(244, 239, 230, 0.06);
+  --muted-foreground: var(--ink-dim);
+  --accent-foreground: var(--bg);
   --destructive: #ef4444;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #6BA3BE;
-  --chart-1: #6BA3BE;
-  --chart-2: #7FB5A0;
-  --chart-3: #A8D5C8;
-  --chart-4: #5b8fa8;
-  --chart-5: #6aa08a;
-  --radius: 0.75rem;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #2D373C;
-  --sidebar-primary: #6BA3BE;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f0f4f2;
-  --sidebar-accent-foreground: #2D373C;
-  --sidebar-border: #e2e8f0;
-  --sidebar-ring: #6BA3BE;
-  --font-heading: "Cormorant Garamond", Georgia, serif;
+  --border: var(--rule);
+  --input: var(--rule);
+  --ring: var(--accent);
+  --radius: 0.25rem;
+  --sidebar: var(--bg-2);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--accent);
+  --sidebar-primary-foreground: var(--bg);
+  --sidebar-accent: rgba(244, 239, 230, 0.06);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--rule);
+  --sidebar-ring: var(--accent);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
+    @apply border-border;
   }
   html {
-    @apply font-sans scroll-smooth;
+    background: var(--bg);
+    color: var(--ink);
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans, "Inter", system-ui, sans-serif);
+    font-weight: 300;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  ::selection {
+    background: var(--accent);
+    color: var(--bg);
   }
 }
 
-/* =============================================
-   WATERCOLOR AESTHETIC — Global Effects
-   ============================================= */
+/* ═══════════════════════════════════════════════════════════════
+   FILM GRAIN OVERLAY (global)
+   ══════════════════════════════════════════════════════════════ */
 
-/* Watercolor paint blob backgrounds via pseudo-elements */
-.watercolor-section {
-  position: relative;
-  overflow: hidden;
-}
-
-.watercolor-section::before,
-.watercolor-section::after {
+body::before {
   content: "";
-  position: absolute;
-  border-radius: 50%;
+  position: fixed;
+  inset: 0;
   pointer-events: none;
-  z-index: 0;
-  mix-blend-mode: multiply;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.94 0 0 0 0 0.9 0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.55;
+  mix-blend-mode: overlay;
 }
 
-.watercolor-section::before {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(
-    ellipse at 30% 40%,
-    rgba(107, 163, 190, 0.12) 0%,
-    rgba(107, 163, 190, 0.06) 40%,
-    transparent 70%
-  );
-  top: -100px;
-  right: -150px;
-  filter: blur(40px);
-  animation: watercolor-drift 20s ease-in-out infinite;
+/* ═══════════════════════════════════════════════════════════════
+   TYPOGRAPHY HELPERS
+   ══════════════════════════════════════════════════════════════ */
+
+.font-serif {
+  font-family: var(--font-serif, "Fraunces", serif);
+}
+.font-mono {
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
 }
 
-.watercolor-section::after {
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(
-    ellipse at 60% 50%,
-    rgba(168, 213, 200, 0.15) 0%,
-    rgba(127, 181, 160, 0.08) 40%,
-    transparent 70%
-  );
-  bottom: -80px;
-  left: -120px;
-  filter: blur(35px);
-  animation: watercolor-drift-reverse 18s ease-in-out infinite;
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
-
-/* Deeper color blobs for scroll-depth intensity */
-.watercolor-deep::before {
-  background: radial-gradient(
-    ellipse at 40% 30%,
-    rgba(107, 163, 190, 0.22) 0%,
-    rgba(127, 181, 160, 0.12) 40%,
-    transparent 65%
-  );
-}
-
-.watercolor-deep::after {
-  background: radial-gradient(
-    ellipse at 50% 60%,
-    rgba(127, 181, 160, 0.2) 0%,
-    rgba(168, 213, 200, 0.12) 40%,
-    transparent 65%
-  );
-}
-
-/* Even deeper intensity for bottom sections */
-.watercolor-intense::before {
-  background: radial-gradient(
-    ellipse at 35% 45%,
-    rgba(107, 163, 190, 0.3) 0%,
-    rgba(127, 181, 160, 0.18) 35%,
-    transparent 60%
-  );
-  width: 600px;
-  height: 600px;
-}
-
-.watercolor-intense::after {
-  background: radial-gradient(
-    ellipse at 65% 40%,
-    rgba(168, 213, 200, 0.28) 0%,
-    rgba(107, 163, 190, 0.15) 35%,
-    transparent 60%
-  );
-  width: 550px;
-  height: 550px;
-}
-
-/* Paint splatter divider between sections */
-.watercolor-divider {
-  position: relative;
-  height: 60px;
-  width: 100%;
-  overflow: hidden;
-}
-
-.watercolor-divider::before {
+.kicker::before {
   content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100%;
-  background:
-    radial-gradient(ellipse 80px 30px at 15% 50%, rgba(107, 163, 190, 0.2) 0%, transparent 100%),
-    radial-gradient(ellipse 60px 25px at 35% 40%, rgba(127, 181, 160, 0.18) 0%, transparent 100%),
-    radial-gradient(ellipse 90px 20px at 55% 55%, rgba(168, 213, 200, 0.22) 0%, transparent 100%),
-    radial-gradient(ellipse 50px 35px at 75% 45%, rgba(107, 163, 190, 0.15) 0%, transparent 100%),
-    radial-gradient(ellipse 70px 28px at 90% 50%, rgba(127, 181, 160, 0.2) 0%, transparent 100%);
-  filter: blur(8px);
+  width: 48px;
+  height: 1px;
+  background: var(--accent);
 }
 
-/* Watercolor drift animations */
-@keyframes watercolor-drift {
-  0%, 100% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  25% {
-    transform: translate(30px, -20px) rotate(5deg) scale(1.05);
-  }
-  50% {
-    transform: translate(-10px, 15px) rotate(-3deg) scale(0.98);
-  }
-  75% {
-    transform: translate(20px, 10px) rotate(4deg) scale(1.03);
-  }
+.kicker-center {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
-
-@keyframes watercolor-drift-reverse {
-  0%, 100% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  25% {
-    transform: translate(-25px, 15px) rotate(-4deg) scale(1.03);
-  }
-  50% {
-    transform: translate(15px, -10px) rotate(5deg) scale(1.06);
-  }
-  75% {
-    transform: translate(-15px, -20px) rotate(-2deg) scale(0.97);
-  }
-}
-
-/* Floating blob animation */
-@keyframes blob-float {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 0.15;
-  }
-  33% {
-    transform: translateY(-15px) rotate(3deg);
-    opacity: 0.25;
-  }
-  66% {
-    transform: translateY(10px) rotate(-2deg);
-    opacity: 0.18;
-  }
-}
-
-@keyframes blob-pulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.2;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.3;
-  }
-}
-
-/* Paint stroke highlight behind text */
-.paint-stroke-highlight {
-  position: relative;
-  display: inline-block;
-}
-
-.paint-stroke-highlight::before {
+.kicker-center::before,
+.kicker-center::after {
   content: "";
-  position: absolute;
-  bottom: 0;
-  left: -8px;
-  right: -8px;
-  height: 40%;
-  background: linear-gradient(
-    90deg,
-    rgba(107, 163, 190, 0.15) 0%,
-    rgba(107, 163, 190, 0.3) 20%,
-    rgba(168, 213, 200, 0.25) 50%,
-    rgba(127, 181, 160, 0.3) 80%,
-    rgba(127, 181, 160, 0.1) 100%
-  );
-  border-radius: 4px 8px 6px 10px;
-  z-index: -1;
-  filter: blur(1px);
-  transform: rotate(-0.5deg) skewX(-2deg);
+  width: 32px;
+  height: 1px;
+  background: var(--accent-dim);
 }
 
-/* =============================================
-   BLOG CARD — Glassmorphism + 3D Tilt
-   ============================================= */
+/* ═══════════════════════════════════════════════════════════════
+   ARTICLE PROSE — dark editorial
+   ══════════════════════════════════════════════════════════════ */
 
-.glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow:
-    0 4px 24px rgba(107, 163, 190, 0.08),
-    0 1px 4px rgba(0, 0, 0, 0.04);
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-  transform-style: preserve-3d;
-  perspective: 1000px;
-}
-
-.glass-card:hover {
-  box-shadow:
-    0 20px 60px rgba(107, 163, 190, 0.15),
-    0 4px 12px rgba(0, 0, 0, 0.06);
-}
-
-/* 3D tilt on hover — applied via JS in the component, but base transition here */
-.tilt-card {
-  transition: transform 0.3s ease;
-  transform-style: preserve-3d;
-}
-
-/* Color bar on cards */
-.card-color-bar {
-  position: relative;
-  overflow: hidden;
-}
-
-.card-color-bar::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--bar-color, #6BA3BE);
-  border-radius: 4px 4px 0 0;
-  opacity: 0.8;
-  transition: height 0.3s ease, opacity 0.3s ease;
-}
-
-.card-color-bar:hover::before {
-  height: 6px;
-  opacity: 1;
-}
-
-/* =============================================
-   HERO — Watercolor Stroke Animation
-   ============================================= */
-
-@keyframes paint-reveal {
-  0% {
-    clip-path: inset(0 100% 0 0);
-    opacity: 0;
-  }
-  30% {
-    opacity: 0.6;
-  }
-  100% {
-    clip-path: inset(0 0 0 0);
-    opacity: 1;
-  }
-}
-
-.paint-stroke-animated {
-  animation: paint-reveal 1.2s ease-out forwards;
-  animation-delay: 0.8s;
-  clip-path: inset(0 100% 0 0);
-}
-
-/* Hero floating blobs */
-@keyframes hero-blob-1 {
-  0%, 100% {
-    transform: translate(0, 0) scale(1) rotate(0deg);
-  }
-  25% {
-    transform: translate(40px, -30px) scale(1.1) rotate(10deg);
-  }
-  50% {
-    transform: translate(-20px, 20px) scale(0.95) rotate(-5deg);
-  }
-  75% {
-    transform: translate(30px, 10px) scale(1.05) rotate(8deg);
-  }
-}
-
-@keyframes hero-blob-2 {
-  0%, 100% {
-    transform: translate(0, 0) scale(1) rotate(0deg);
-  }
-  33% {
-    transform: translate(-30px, 25px) scale(1.08) rotate(-8deg);
-  }
-  66% {
-    transform: translate(25px, -15px) scale(0.97) rotate(6deg);
-  }
-}
-
-.hero-blob-1 {
-  animation: hero-blob-1 16s ease-in-out infinite;
-}
-
-.hero-blob-2 {
-  animation: hero-blob-2 20s ease-in-out infinite;
-}
-
-.hero-blob-3 {
-  animation: hero-blob-1 14s ease-in-out infinite reverse;
-}
-
-/* =============================================
-   SCROLL REVEAL
-   ============================================= */
-
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.85s ease, transform 0.85s ease;
-}
-.reveal.in-view {
-  opacity: 1;
-  transform: translateY(0);
-}
-.reveal-delay-1 { transition-delay: 0.1s; }
-.reveal-delay-2 { transition-delay: 0.2s; }
-.reveal-delay-3 { transition-delay: 0.3s; }
-.reveal-delay-4 { transition-delay: 0.4s; }
-
-/* =============================================
-   BRAIN INTERACTIVE
-   ============================================= */
-
-.brain-region {
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-.brain-region:hover {
-  filter: drop-shadow(0 0 12px rgba(107, 163, 190, 0.6));
-  transform: scale(1.02);
-}
-.brain-region.active {
-  filter: drop-shadow(0 0 20px rgba(107, 163, 190, 0.8));
-}
-
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
-}
-.pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-/* =============================================
-   BLOG ARTICLE PROSE
-   ============================================= */
-
-.prose-egoera h2 {
-  font-family: var(--font-heading);
-  color: #2D373C;
-  font-size: 1.75rem;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-}
-.prose-egoera h3 {
-  color: #6BA3BE;
-  font-size: 1.25rem;
-  margin-top: 1.5rem;
-  margin-bottom: 0.75rem;
+.prose-egoera {
+  font-family: var(--font-serif, "Fraunces", serif);
+  font-size: 20px;
+  line-height: 1.7;
+  color: var(--ink-dim);
+  font-weight: 300;
 }
 .prose-egoera p {
-  line-height: 1.8;
-  margin-bottom: 1.25rem;
-  color: #2D373C;
+  margin-bottom: 1.6rem;
+  color: var(--ink-dim);
 }
-.prose-egoera blockquote {
-  border-left: 4px solid #6BA3BE;
-  padding-left: 1.25rem;
+.prose-egoera p:first-of-type::first-letter {
+  font-family: var(--font-serif, "Fraunces", serif);
   font-style: italic;
-  color: #78878C;
-  margin: 1.5rem 0;
+  font-weight: 300;
+  font-size: 5.2em;
+  line-height: 0.85;
+  float: left;
+  padding-right: 14px;
+  padding-top: 6px;
+  color: var(--accent);
+}
+.prose-egoera h1,
+.prose-egoera h2 {
+  font-family: var(--font-serif, "Fraunces", serif);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 3.5rem 0 1.25rem;
+  color: var(--ink);
+}
+.prose-egoera h2 em {
+  font-style: italic;
+  color: var(--accent);
+}
+.prose-egoera h3 {
+  font-family: var(--font-serif, "Fraunces", serif);
+  font-size: 24px;
+  font-weight: 500;
+  font-style: italic;
+  margin: 2.5rem 0 1rem;
+  color: var(--ink);
+}
+.prose-egoera em {
+  color: var(--accent);
+}
+.prose-egoera strong {
+  color: var(--ink);
+  font-weight: 500;
 }
 .prose-egoera a {
-  color: #6BA3BE;
+  color: var(--accent);
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-decoration-color: rgba(168, 194, 182, 0.35);
+  text-underline-offset: 3px;
 }
-.prose-egoera ul, .prose-egoera ol {
-  padding-left: 1.5rem;
-  margin-bottom: 1.25rem;
+.prose-egoera a:hover {
+  text-decoration-color: var(--accent);
 }
-.prose-egoera li {
-  margin-bottom: 0.5rem;
-  line-height: 1.7;
+.prose-egoera blockquote {
+  margin: 3rem 0;
+  padding: 0 2rem;
+  border-left: 2px solid var(--accent);
+  font-family: var(--font-serif, "Fraunces", serif);
+  font-size: 28px;
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.35;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.prose-egoera ul,
+.prose-egoera ol {
+  list-style: none;
+  padding: 0;
+  margin: 1.75rem 0;
+}
+.prose-egoera ul li,
+.prose-egoera ol li {
+  font-family: var(--font-serif, "Fraunces", serif);
+  font-size: 19px;
+  line-height: 1.65;
+  color: var(--ink-dim);
+  padding: 0.75rem 0 0.75rem 2rem;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+}
+.prose-egoera ul li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+.prose-egoera ol {
+  counter-reset: li;
+}
+.prose-egoera ol li::before {
+  counter-increment: li;
+  content: counter(li, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  top: 0.95rem;
+}
+.prose-egoera ul li:last-child,
+.prose-egoera ol li:last-child {
+  border-bottom: none;
 }
 .prose-egoera img,
 .prose-egoera figure img,
 .prose-egoera .wp-block-image img {
-  border-radius: 0.75rem;
-  margin: 1.5rem 0;
+  border-radius: 2px;
+  margin: 2rem 0;
   max-width: 100%;
   height: auto;
+  filter: brightness(0.9);
 }
 .prose-egoera figure {
-  margin: 1.5rem 0;
+  margin: 2rem 0;
 }
 .prose-egoera figcaption,
 .prose-egoera .wp-element-caption {
-  font-size: 0.85rem;
-  color: #78878C;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 11px;
+  color: var(--ink-faint);
   text-align: center;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 .prose-egoera pre {
-  background: #2D373C;
-  color: #F7F9F8;
-  padding: 1rem 1.25rem;
-  border-radius: 0.75rem;
+  background: var(--bg-2);
+  color: var(--ink);
+  padding: 1.25rem;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
   overflow-x: auto;
-  margin: 1.25rem 0;
-  font-size: 0.85rem;
+  margin: 1.5rem 0;
+  font-size: 13px;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
 }
 .prose-egoera code {
-  background: rgba(107, 163, 190, 0.1);
-  color: #2D373C;
+  background: rgba(168, 194, 182, 0.08);
+  color: var(--accent);
   padding: 0.15rem 0.4rem;
-  border-radius: 0.25rem;
-  font-size: 0.9em;
+  border-radius: 3px;
+  font-size: 0.88em;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
 }
 .prose-egoera pre code {
   background: transparent;
@@ -547,356 +359,240 @@
 }
 .prose-egoera hr {
   border: none;
-  border-top: 1px solid #e2e8f0;
-  margin: 2rem 0;
+  border-top: 1px solid var(--rule);
+  margin: 2.5rem 0;
 }
 .prose-egoera iframe {
   max-width: 100%;
-  border-radius: 0.75rem;
-  margin: 1.5rem 0;
+  border-radius: 3px;
+  margin: 2rem 0;
 }
 
-/* =============================================
-   DIARY EMOJI PICKER
-   ============================================= */
+/* ═══════════════════════════════════════════════════════════════
+   GAMEBOY CONSOLE
+   ══════════════════════════════════════════════════════════════ */
 
-.emoji-btn {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.emoji-btn:hover {
-  transform: scale(1.2);
-}
-.emoji-btn.selected {
-  transform: scale(1.3);
-  box-shadow: 0 0 0 3px rgba(107, 163, 190, 0.4);
-}
-
-/* =============================================
-   NAVBAR
-   ============================================= */
-
-.nav-scrolled {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background-color: rgba(247, 249, 248, 0.85);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-}
-
-/* =============================================
-   CARD HOVER
-   ============================================= */
-
-.card-hover {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(107, 163, 190, 0.15);
-}
-
-/* =============================================
-   NEWSLETTER — Watercolor Style
-   ============================================= */
-
-.newsletter-watercolor {
-  position: relative;
+.gb-device {
   background: linear-gradient(
-    135deg,
-    rgba(107, 163, 190, 0.06) 0%,
-    rgba(168, 213, 200, 0.08) 50%,
-    rgba(127, 181, 160, 0.06) 100%
+    115deg,
+    var(--gb-cream) 0%,
+    var(--gb-cream) 38%,
+    var(--gb-green) 38%,
+    var(--gb-green) 50%,
+    var(--gb-orange) 50%,
+    var(--gb-orange) 100%
   );
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  border-radius: 36px 36px 48px 36px;
+  padding: 32px 28px 28px;
+  box-shadow:
+    0 40px 80px -30px rgba(0, 0, 0, 0.8),
+    inset 0 2px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.15),
+    inset 6px 0 0 rgba(0, 0, 0, 0.04),
+    inset -6px 0 0 rgba(0, 0, 0, 0.04);
+  position: relative;
+  transform: rotate(-2deg);
 }
-
-.newsletter-watercolor::before {
+.gb-device::before {
   content: "";
   position: absolute;
-  top: -30px;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background:
-    radial-gradient(ellipse 100px 30px at 20% 50%, rgba(107, 163, 190, 0.15) 0%, transparent 100%),
-    radial-gradient(ellipse 80px 25px at 50% 50%, rgba(168, 213, 200, 0.12) 0%, transparent 100%),
-    radial-gradient(ellipse 120px 35px at 80% 50%, rgba(127, 181, 160, 0.15) 0%, transparent 100%);
-  filter: blur(10px);
-}
-
-/* =============================================
-   FOOTER — Light watercolor aesthetic
-   ============================================= */
-
-.footer-watercolor {
-  position: relative;
-  background: linear-gradient(
-    180deg,
-    #F7F9F8 0%,
-    rgba(168, 213, 200, 0.12) 30%,
-    rgba(107, 163, 190, 0.1) 70%,
-    rgba(127, 181, 160, 0.08) 100%
-  );
-}
-
-.footer-watercolor::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(107, 163, 190, 0.3) 20%,
-    rgba(168, 213, 200, 0.4) 50%,
-    rgba(127, 181, 160, 0.3) 80%,
-    transparent 100%
-  );
-}
-
-/* =============================================
-   RESPONSIVE — Full-width vs mobile
-   ============================================= */
-
-@media (min-width: 1024px) {
-  .watercolor-section::before {
-    width: 700px;
-    height: 700px;
-  }
-  .watercolor-section::after {
-    width: 600px;
-    height: 600px;
-  }
-}
-
-@media (max-width: 768px) {
-  .watercolor-section::before {
-    width: 300px;
-    height: 300px;
-    top: -60px;
-    right: -80px;
-  }
-  .watercolor-section::after {
-    width: 250px;
-    height: 250px;
-    bottom: -50px;
-    left: -60px;
-  }
-
-  .watercolor-divider {
-    height: 40px;
-  }
-
-  .paint-stroke-highlight::before {
-    height: 35%;
-  }
-}
-
-/* =============================================
-   PARALLAX HERO
-   ============================================= */
-
-.parallax-hero {
-  background-attachment: fixed;
-  background-position: center;
-  background-size: cover;
-}
-
-/* =============================================
-   PAINT SPLATTER EFFECT — between sections
-   ============================================= */
-
-.paint-splatter {
-  position: relative;
-}
-
-.paint-splatter::after {
-  content: "";
-  position: absolute;
-  bottom: -30px;
-  left: 0;
-  right: 0;
-  height: 60px;
-  z-index: 1;
-  background:
-    radial-gradient(ellipse 40px 15px at 10% 50%, rgba(107, 163, 190, 0.2) 0%, transparent 100%),
-    radial-gradient(ellipse 25px 20px at 25% 30%, rgba(168, 213, 200, 0.18) 0%, transparent 100%),
-    radial-gradient(ellipse 35px 12px at 40% 70%, rgba(127, 181, 160, 0.15) 0%, transparent 100%),
-    radial-gradient(ellipse 50px 18px at 60% 40%, rgba(107, 163, 190, 0.12) 0%, transparent 100%),
-    radial-gradient(ellipse 30px 22px at 78% 55%, rgba(168, 213, 200, 0.2) 0%, transparent 100%),
-    radial-gradient(ellipse 45px 14px at 92% 35%, rgba(127, 181, 160, 0.16) 0%, transparent 100%);
-  filter: blur(6px);
-  pointer-events: none;
-}
-
-/* =============================================
-   DIARY CTA — Watercolor integrated
-   ============================================= */
-
-.diary-cta-watercolor {
-  position: relative;
-  background: linear-gradient(
-    135deg,
-    rgba(107, 163, 190, 0.04) 0%,
-    rgba(168, 213, 200, 0.08) 40%,
-    rgba(127, 181, 160, 0.06) 70%,
-    rgba(107, 163, 190, 0.04) 100%
-  );
-}
-
-.diary-cta-watercolor::before {
-  content: "";
-  position: absolute;
-  top: 20%;
-  right: -100px;
-  width: 400px;
-  height: 400px;
+  top: -8px;
+  right: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(107, 163, 190, 0.12) 0%,
-    transparent 70%
+  background: linear-gradient(
+    to bottom,
+    #e84a3c 0%,
+    #e84a3c 45%,
+    #111 45%,
+    #111 55%,
+    #f0f0f0 55%
   );
-  filter: blur(40px);
-  pointer-events: none;
-  animation: watercolor-drift 15s ease-in-out infinite;
+  border: 2px solid #111;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  z-index: 3;
 }
-
-.diary-cta-watercolor::after {
+.gb-device::after {
   content: "";
   position: absolute;
-  bottom: 10%;
-  left: -80px;
-  width: 350px;
-  height: 350px;
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(127, 181, 160, 0.1) 0%,
-    transparent 70%
+  top: -24px;
+  right: 52px;
+  width: 2px;
+  height: 20px;
+  background: repeating-linear-gradient(
+    to bottom,
+    #888 0 2px,
+    transparent 2px 4px
   );
-  filter: blur(35px);
-  pointer-events: none;
-  animation: watercolor-drift-reverse 18s ease-in-out infinite;
 }
 
-/* =============================================
-   PAINT SPLASH BACKGROUND — Pulse & Drift
-   ============================================= */
-
-@keyframes paint-splash-pulse {
-  0%, 100% {
-    opacity: 0.05;
-  }
-  50% {
-    opacity: 0.2;
-  }
-}
-
-@keyframes paint-splash-drift {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(var(--drift-x, 20px), var(--drift-y, 15px));
-  }
-}
-
-/* =============================================
-   PARALLAX SCROLL LAYERS
-   ============================================= */
-
-.parallax-slow {
-  will-change: transform;
-  transition: transform 0.1s linear;
-}
-
-.parallax-fast {
-  will-change: transform;
-  transition: transform 0.1s linear;
-}
-
-/* =============================================
-   ENHANCED WATERCOLOR BLOB ANIMATIONS
-   ============================================= */
-
-@keyframes watercolor-blob-breathe {
-  0%, 100% {
-    transform: scale(1) rotate(0deg);
-    opacity: 0.12;
-    filter: blur(35px);
-  }
-  25% {
-    transform: scale(1.12) rotate(5deg);
-    opacity: 0.22;
-    filter: blur(40px);
-  }
-  50% {
-    transform: scale(0.95) rotate(-3deg);
-    opacity: 0.18;
-    filter: blur(30px);
-  }
-  75% {
-    transform: scale(1.08) rotate(4deg);
-    opacity: 0.25;
-    filter: blur(38px);
-  }
-}
-
-/* =============================================
-   FLOATING PARTICLES — CSS-only rising dots
-   ============================================= */
-
-.floating-particles {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
+.gb-screen {
+  position: relative;
+  background: #060807;
+  border-radius: 4px;
+  border: 12px solid #1a1a1a;
+  box-shadow:
+    inset 0 0 40px rgba(0, 0, 0, 0.9),
+    inset 0 0 4px rgba(168, 194, 182, 0.15),
+    0 4px 0 rgba(0, 0, 0, 0.25);
+  padding: 24px 28px;
+  min-height: 440px;
   overflow: hidden;
 }
-
-.floating-particles::before,
-.floating-particles::after {
-  content: "";
+.gb-screen::after {
+  content: "EGOERA \00B7  COLOR";
   position: absolute;
-  width: 100%;
-  height: 200%;
-  bottom: -100%;
-  background-image:
-    radial-gradient(circle 2px, rgba(107,163,190,0.25) 100%, transparent 100%),
-    radial-gradient(circle 1.5px, rgba(168,213,200,0.2) 100%, transparent 100%),
-    radial-gradient(circle 2.5px, rgba(127,181,160,0.22) 100%, transparent 100%),
-    radial-gradient(circle 1px, rgba(184,169,201,0.2) 100%, transparent 100%),
-    radial-gradient(circle 2px, rgba(232,168,124,0.18) 100%, transparent 100%),
-    radial-gradient(circle 1.5px, rgba(107,163,190,0.2) 100%, transparent 100%),
-    radial-gradient(circle 2px, rgba(168,213,200,0.22) 100%, transparent 100%),
-    radial-gradient(circle 1px, rgba(127,181,160,0.18) 100%, transparent 100%),
-    radial-gradient(circle 2.5px, rgba(184,169,201,0.2) 100%, transparent 100%),
-    radial-gradient(circle 1.5px, rgba(232,168,124,0.15) 100%, transparent 100%),
-    radial-gradient(circle 2px, rgba(107,163,190,0.18) 100%, transparent 100%),
-    radial-gradient(circle 1px, rgba(168,213,200,0.2) 100%, transparent 100%);
-  background-size:
-    3px 3px, 3px 3px, 3px 3px, 3px 3px, 3px 3px, 3px 3px,
-    3px 3px, 3px 3px, 3px 3px, 3px 3px, 3px 3px, 3px 3px;
-  background-position:
-    8% 15%, 22% 35%, 35% 55%, 48% 75%, 62% 20%, 75% 45%,
-    12% 65%, 88% 30%, 42% 85%, 55% 10%, 68% 60%, 95% 50%;
-  background-repeat: no-repeat;
-  animation: particles-rise 30s linear infinite;
+  bottom: -28px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-serif, "Fraunces", serif);
+  font-size: 11px;
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.55);
+  letter-spacing: 0.06em;
+  z-index: 2;
 }
 
-.floating-particles::after {
-  animation-delay: -15s;
-  background-position:
-    5% 25%, 18% 50%, 32% 70%, 45% 90%, 58% 15%, 72% 40%,
-    15% 80%, 85% 20%, 38% 60%, 52% 5%, 65% 45%, 92% 70%;
+.crt-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    rgba(0, 0, 0, 0.25) 2px,
+    rgba(0, 0, 0, 0.25) 3px
+  );
+  pointer-events: none;
+  z-index: 5;
+  mix-blend-mode: multiply;
+}
+.crt-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  pointer-events: none;
+  z-index: 4;
 }
 
-@keyframes particles-rise {
-  0% {
-    transform: translateY(0);
-  }
+@keyframes gb-blink {
+  0%,
+  70%,
   100% {
-    transform: translateY(-50%);
+    opacity: 1;
   }
+  80% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes cursor-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(168, 194, 182, 0.5);
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 0 8px rgba(168, 194, 182, 0);
+  }
+}
+
+.pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE TWEAKS
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+  .gb-screen {
+    padding: 18px;
+    min-height: 520px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL REVEAL
+   ══════════════════════════════════════════════════════════════ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.85s ease,
+    transform 0.85s ease;
+}
+.reveal.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 {
+  transition-delay: 0.1s;
+}
+.reveal-delay-2 {
+  transition-delay: 0.2s;
+}
+.reveal-delay-3 {
+  transition-delay: 0.3s;
+}
+.reveal-delay-4 {
+  transition-delay: 0.4s;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BRAIN
+   ══════════════════════════════════════════════════════════════ */
+
+.brain-region {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.brain-region:hover {
+  filter: drop-shadow(0 0 12px rgba(168, 194, 182, 0.6));
+  transform: scale(1.02);
+}
+.brain-region.active {
+  filter: drop-shadow(0 0 20px rgba(168, 194, 182, 0.8));
+}
+
+/* Legacy classes kept as empty shells so old markup doesn't explode.
+   New pages do not use them. */
+.watercolor-section,
+.watercolor-deep,
+.watercolor-intense,
+.watercolor-divider,
+.paint-splatter,
+.newsletter-watercolor,
+.footer-watercolor,
+.diary-cta-watercolor,
+.floating-particles,
+.glass-card,
+.tilt-card,
+.card-color-bar,
+.paint-stroke-highlight,
+.parallax-hero,
+.parallax-slow,
+.parallax-fast,
+.hero-blob-1,
+.hero-blob-2,
+.hero-blob-3,
+.card-hover,
+.nav-scrolled,
+.emoji-btn {
+  /* no-op wrapper */
 }

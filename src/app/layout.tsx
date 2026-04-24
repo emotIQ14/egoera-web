@@ -1,56 +1,75 @@
 import type { Metadata } from "next";
-import { Inter, Cormorant_Garamond } from "next/font/google";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
+import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
+import { DarkNav } from "@/components/layout/DarkNav";
+import { DarkFooter } from "@/components/layout/DarkFooter";
 import { ExitIntentPopup } from "@/components/monetization/ExitIntentPopup";
 import "./globals.css";
+
+const fraunces = Fraunces({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
 
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
   display: "swap",
 });
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-heading",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["300", "400", "500", "600"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://egoera.es"),
   title: {
-    default: "Egoera Psikologia | Blog de Psicologia y Bienestar Emocional",
-    template: "%s | Egoera Psikologia",
+    default: "Egoera — El vlog",
+    template: "%s | Egoera",
   },
   description:
-    "Blog de psicologia con contenidos sobre regulacion emocional, ansiedad, relaciones, autoconocimiento y bienestar. Tu estado importa.",
+    "El vlog de psicologia de Ander Bilbao desde Donostia. Un espacio para detenerse, mirar hacia dentro y volver a la semana con otras preguntas.",
   keywords: [
     "psicologia",
+    "vlog",
     "salud mental",
     "bienestar emocional",
     "ansiedad",
-    "terapia",
-    "autoestima",
+    "apego",
+    "autoconocimiento",
     "regulacion emocional",
-    "psicologia positiva",
-    "diario emocional",
+    "donostia",
+    "ander bilbao",
     "egoera",
   ],
-  authors: [{ name: "Egoera Psikologia" }],
-  creator: "Egoera Psikologia",
+  authors: [{ name: "Ander Bilbao Castejon" }],
+  creator: "Ander Bilbao Castejon",
+  icons: {
+    icon: [
+      { url: "/egoera-logo.png", type: "image/png" },
+      { url: "/favicon.ico" },
+    ],
+    apple: "/egoera-logo.png",
+  },
   openGraph: {
     type: "website",
     locale: "es_ES",
-    siteName: "Egoera Psikologia",
-    title: "Egoera Psikologia | Blog de Psicologia y Bienestar Emocional",
+    siteName: "Egoera",
+    title: "Egoera — El vlog",
     description:
-      "Contenidos de psicologia para entenderte mejor. Regulacion emocional, relaciones, autoconocimiento y herramientas practicas.",
+      "Psicologia, despacio. Un vlog personal de Ander Bilbao desde Donostia.",
+    images: [{ url: "/egoera-social.png" }],
   },
   twitter: {
     card: "summary_large_image",
     creator: "@egoerapsikolog",
+    images: ["/egoera-social.png"],
   },
   robots: {
     index: true,
@@ -64,16 +83,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${inter.variable} ${cormorant.variable} h-full`}>
+    <html
+      lang="es"
+      className={`${fraunces.variable} ${inter.variable} ${jetbrainsMono.variable} h-full`}
+    >
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#6BA3BE" />
-        <link rel="icon" href="/favicon.ico" />
+        <meta name="theme-color" content="#0f1311" />
+        <link rel="icon" type="image/png" href="/egoera-logo.png" />
       </head>
       <body className="min-h-full flex flex-col antialiased overflow-x-hidden">
-        <Navbar />
+        <DarkNav />
         <main className="flex-1 overflow-x-hidden">{children}</main>
-        <Footer />
+        <DarkFooter />
         <ExitIntentPopup />
       </body>
     </html>
