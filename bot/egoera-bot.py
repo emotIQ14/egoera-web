@@ -66,6 +66,213 @@ def get_state(chat_id: int):
         return USER_STATE.get(chat_id)
 
 
+# ============ I18N (ES / EU / EN) ============
+# Per-user language is stored in the user JSON ("lang"). Default: "es".
+# For long therapy flows (grounding, breathing, weekly questions, attachment test)
+# the canonical text stays in Spanish — those need a careful translation pass later.
+# TODO: translate long therapy flows to EU / EN with clinical supervision.
+
+LANGS = ("es", "eu", "en")
+LANG_LABELS = {"es": "Español", "eu": "Euskara", "en": "English"}
+
+I18N: dict = {
+    # --- onboarding ---
+    "welcome_title": {
+        "es": "Kaixo {name}, te doy la bienvenida a Egoera",
+        "eu": "Kaixo {name}, ongi etorri Egoerara",
+        "en": "Hi {name}, welcome to Egoera",
+    },
+    "welcome_intro": {
+        "es": "Soy un acompañante de bienestar emocional. Vamos despacio, sin prisa.",
+        "eu": "Ongizate emozionaleko laguntzaile bat naiz. Astiro joango gara, presarik gabe.",
+        "en": "I’m a quiet companion for your emotional wellbeing. We’ll move slowly.",
+    },
+    "welcome_section_diary": {
+        "es": "<b>Diario</b>",
+        "eu": "<b>Egunerokoa</b>",
+        "en": "<b>Diary</b>",
+    },
+    "welcome_section_techniques": {
+        "es": "<b>Para regularte</b>",
+        "eu": "<b>Erregulatzeko</b>",
+        "en": "<b>To regulate yourself</b>",
+    },
+    "welcome_section_content": {
+        "es": "<b>Lectura y voz de Egoera</b>",
+        "eu": "<b>Egoeraren irakurketa eta ahotsa</b>",
+        "en": "<b>Reading and voice of Egoera</b>",
+    },
+    "welcome_section_other": {
+        "es": "<b>Otros</b>",
+        "eu": "<b>Besteak</b>",
+        "en": "<b>Others</b>",
+    },
+    "welcome_question": {
+        "es": "¿Por dónde te apetece empezar?",
+        "eu": "Nondik hasi nahi duzu?",
+        "en": "Where would you like to start?",
+    },
+    # --- main menu buttons ---
+    "btn_register": {"es": "📝 Registrar", "eu": "📝 Erregistratu", "en": "📝 Log mood"},
+    "btn_breathe": {"es": "🧘 Respirar", "eu": "🧘 Arnastu", "en": "🧘 Breathe"},
+    "btn_progress": {"es": "📊 Progreso", "eu": "📊 Aurrerapena", "en": "📊 Progress"},
+    "btn_tip": {"es": "💡 Una idea", "eu": "💡 Ideia bat", "en": "💡 An idea"},
+    "btn_quote": {"es": "💬 Frase", "eu": "💬 Esaldia", "en": "💬 Quote"},
+    "btn_notebook": {"es": "📓 Cuaderno", "eu": "📓 Koadernoa", "en": "📓 Notebook"},
+    "btn_newsletter": {"es": "📨 Boletín", "eu": "📨 Buletina", "en": "📨 Newsletter"},
+    "btn_manifesto": {"es": "🌿 Manifiesto", "eu": "🌿 Manifestua", "en": "🌿 Manifesto"},
+    "btn_about": {"es": "🌱 Sobre Ander", "eu": "🌱 Anderri buruz", "en": "🌱 About Ander"},
+    "btn_lang": {"es": "🌐 Idioma", "eu": "🌐 Hizkuntza", "en": "🌐 Language"},
+    # --- common ---
+    "lang_set": {
+        "es": "Idioma guardado: <b>Español</b>. Cuando quieras, puedes cambiarlo con /idioma.",
+        "eu": "Hizkuntza gordeta: <b>Euskara</b>. Nahi duzunean /idioma erabili dezakezu aldatzeko.",
+        "en": "Language saved: <b>English</b>. You can change it anytime with /idioma.",
+    },
+    "lang_picker_title": {
+        "es": "🌐 <b>Elige idioma</b>\n\nElige el idioma en el que prefieres que te escriba. Algunos textos largos seguirán en castellano por ahora.",
+        "eu": "🌐 <b>Aukeratu hizkuntza</b>\n\nAukeratu zein hizkuntzatan idatzi nahi dizudan. Testu luze batzuk gaztelaniaz egongo dira oraingoz.",
+        "en": "🌐 <b>Pick a language</b>\n\nChoose the language you’d like me to write in. Some long therapy flows are still in Spanish for now.",
+    },
+    # --- newsletter / manifesto / about / notebook ---
+    "newsletter_title": {
+        "es": "📨 <b>El boletín de Egoera</b>",
+        "eu": "📨 <b>Egoeraren buletina</b>",
+        "en": "📨 <b>Egoera’s newsletter</b>",
+    },
+    "newsletter_body": {
+        "es": (
+            "Una carta cada cierto tiempo, sin agenda comercial. Sólo psicología que se lee despacio.\n\n"
+            "Si te apetece recibirla, puedes apuntarte aquí abajo. Sin prisas, y sin ruido."
+        ),
+        "eu": (
+            "Noizean behin gutun bat, agenda komertzialik gabe. Astiro irakurtzen den psikologia, besterik ez.\n\n"
+            "Jaso nahi baduzu, behean apunta zaitezke. Presarik gabe, eta zaratarik gabe."
+        ),
+        "en": (
+            "A letter every now and then, no marketing agenda. Just psychology, read slowly.\n\n"
+            "If you’d like to receive it, you can subscribe below. No rush, no noise."
+        ),
+    },
+    "newsletter_btn": {
+        "es": "📨 Apuntarme al boletín",
+        "eu": "📨 Buletinera apuntatu",
+        "en": "📨 Subscribe to the newsletter",
+    },
+    "manifesto_title": {
+        "es": "🌿 <b>Manifiesto Egoera</b>",
+        "eu": "🌿 <b>Egoeraren manifestua</b>",
+        "en": "🌿 <b>Egoera Manifesto</b>",
+    },
+    "manifesto_body": {
+        "es": (
+            "Escribimos psicología despacio, sin recetas, sin imperativos.\n"
+            "Creemos en lo cotidiano, en lo que se nombra con cuidado y en lo que no se grita.\n"
+            "No hay listas mágicas. Hay tiempo, lectura y compañía.\n"
+            "Si quieres leer el manifiesto entero, está aquí debajo."
+        ),
+        "eu": (
+            "Astiro idazten dugu psikologia, errezetarik eta aginpiderik gabe.\n"
+            "Eguneroko bizitzari erreparatzen diogu, kontuz izendatzen denari, oihukatzen ez denari.\n"
+            "Ez dago zerrenda magikorik. Bai denbora, irakurketa eta lagungarritasuna.\n"
+            "Manifestu osoa irakurri nahi baduzu, behean duzu."
+        ),
+        "en": (
+            "We write psychology slowly, with no prescriptions, no imperatives.\n"
+            "We pay attention to the everyday, to what is named with care, to what isn’t shouted.\n"
+            "There are no magic lists. There is time, reading and company.\n"
+            "If you’d like to read the full manifesto, it’s linked below."
+        ),
+    },
+    "manifesto_btn": {
+        "es": "🌿 Leer el manifiesto",
+        "eu": "🌿 Manifestua irakurri",
+        "en": "🌿 Read the manifesto",
+    },
+    "about_title": {
+        "es": "🌱 <b>Sobre Ander</b>",
+        "eu": "🌱 <b>Anderri buruz</b>",
+        "en": "🌱 <b>About Ander</b>",
+    },
+    "about_body": {
+        "es": (
+            "Ander es psicólogo. Atiende en consulta y escribe Egoera como un cuaderno abierto.\n"
+            "Si quieres conocer cómo trabaja, leer su recorrido o pedirle hora, puedes hacerlo desde la web."
+        ),
+        "eu": (
+            "Ander psikologoa da. Kontsultan jarduten du eta Egoera koaderno ireki gisa idazten du.\n"
+            "Nola lan egiten duen ezagutu, bere ibilbidea irakurri edo hitzordua eskatu nahi badiozu, webgunetik egin dezakezu."
+        ),
+        "en": (
+            "Ander is a psychologist. He sees clients and writes Egoera as an open notebook.\n"
+            "If you’d like to know how he works, read his story or book a session, you can do it from the website."
+        ),
+    },
+    "about_btn": {
+        "es": "🌱 Conocer a Ander",
+        "eu": "🌱 Ander ezagutu",
+        "en": "🌱 Meet Ander",
+    },
+    "notebook_title": {
+        "es": "📓 <b>El cuaderno de Egoera</b>",
+        "eu": "📓 <b>Egoeraren koadernoa</b>",
+        "en": "📓 <b>Egoera’s notebook</b>",
+    },
+    "notebook_intro": {
+        "es": "Las últimas entradas del cuaderno. Léelas con tiempo, no son listas para correr.",
+        "eu": "Koadernoaren azken sarrerak. Astiro irakurri itzazu, ez dira korrika egiteko zerrendak.",
+        "en": "The latest notebook entries. Read them slowly — they aren’t lists to skim.",
+    },
+    "notebook_btn_all": {
+        "es": "📓 Ver todo el cuaderno",
+        "eu": "📓 Koaderno osoa ikusi",
+        "en": "📓 See the full notebook",
+    },
+    "notebook_empty": {
+        "es": "📓 Ahora mismo no consigo traer las últimas entradas. Puedes leer el cuaderno entero en egoera.es/cuaderno.",
+        "eu": "📓 Oraingoz ezin ditut azken sarrerak ekarri. Egoera.es/cuaderno helbidean irakur dezakezu koaderno osoa.",
+        "en": "📓 I can’t fetch the latest entries right now. You can read the full notebook at egoera.es/cuaderno.",
+    },
+    # --- weekly digest ---
+    "week_title": {
+        "es": "📅 <b>Tu semana, en voz baja</b>",
+        "eu": "📅 <b>Zure astea, ahots apalez</b>",
+        "en": "📅 <b>Your week, in a low voice</b>",
+    },
+    "week_empty": {
+        "es": "Esta semana aún no hay registros que mirar. Cuando dejes alguna huella con /registrar, podré devolverte una lectura.",
+        "eu": "Aste honetan oraindik ez dago erregistrorik. /registrar erabiltzen duzunean, irakurketa bat itzuli ahal izango dizut.",
+        "en": "There aren’t any entries this week yet. When you leave a trace with /registrar, I’ll be able to read it back to you.",
+    },
+}
+
+
+def t(key: str, lang: str = "es", **fmt) -> str:
+    """Translate. Falls back to ES if the key/lang is missing."""
+    entry = I18N.get(key, {})
+    text = entry.get(lang) or entry.get("es") or key
+    if fmt:
+        try:
+            return text.format(**fmt)
+        except Exception:
+            return text
+    return text
+
+
+def get_lang(chat_id: int) -> str:
+    user = get_user_data(chat_id)
+    lang = user.get("lang", "es")
+    return lang if lang in LANGS else "es"
+
+
+def set_lang(chat_id: int, lang: str):
+    if lang not in LANGS:
+        return
+    user = get_user_data(chat_id)
+    user["lang"] = lang
+    save_user_data(chat_id, user)
+
+
 # ============ DATA ============
 
 MOODS = {
@@ -418,27 +625,27 @@ EUSKERA = {
 }
 
 # SOS resources
-SOS_TEXT = """🆘 <b>Modo emergencia</b>
+SOS_TEXT = """🆘 <b>Si estás en un mal momento</b>
 
-Si estas pasando un momento dificil, no estas solo/a.
+No estás solo/a. Aquí van algunos números, por si los necesitas.
 
-<b>📞 Telefono de la Esperanza (24h, gratuito):</b>
+<b>📞 Teléfono de la Esperanza</b> (24 h, gratuito):
 <code>717 003 717</code>
 
-<b>📞 024 — Atencion a la conducta suicida (24h):</b>
+<b>📞 024</b> — atención a la conducta suicida (24 h):
 <code>024</code>
 
-<b>📞 112 — Emergencias</b>
+<b>📞 112</b> — emergencias.
 
-<b>📧 Sesiones con Ander (psicologia):</b>
+<b>📧 Sesiones con Ander (psicología):</b>
 <a href="mailto:hola@egoera.es">hola@egoera.es</a>
 
-<b>Tecnicas rapidas:</b>
-• /respirar — ejercicio de respiracion guiada
+<b>Y aquí, ahora:</b>
+• /respirar — respiración guiada
 • /grounding — volver al presente (5-4-3-2-1)
-• /frase — afirmacion para sostenerte ahora
+• /frase — una frase para sostenerte
 
-<i>Este bot NO sustituye la ayuda profesional. Si tu vida o la de alguien esta en riesgo, llama al 112.</i>"""
+<i>Este bot no sustituye la ayuda profesional. Si tu vida o la de alguien está en riesgo, llama al 112.</i>"""
 
 
 # ============ TELEGRAM API ============
@@ -542,26 +749,32 @@ def answer_callback(cb_id: str, text: str = None):
 def set_bot_commands():
     """Register commands in BotFather menu."""
     commands = [
-        {"command": "start", "description": "Iniciar el bot"},
-        {"command": "registrar", "description": "Registrar estado de animo"},
-        {"command": "checkin", "description": "Check-in diario (sueno, energia, estres)"},
-        {"command": "progreso", "description": "Ver progreso emocional"},
-        {"command": "stats", "description": "Estadisticas avanzadas"},
-        {"command": "journal", "description": "Escribir en el diario libre"},
-        {"command": "buscar", "description": "Buscar en tus entradas"},
-        {"command": "exportar", "description": "Exportar tu diario"},
-        {"command": "respirar", "description": "Ejercicios de respiracion"},
-        {"command": "grounding", "description": "Ejercicio 5-4-3-2-1 anti-ansiedad"},
-        {"command": "frase", "description": "Afirmacion o frase inspiradora"},
-        {"command": "pregunta", "description": "Pregunta de reflexion semanal"},
-        {"command": "test_apego", "description": "Test rapido de estilos de apego"},
-        {"command": "tip", "description": "Tip de psicologia"},
-        {"command": "blog", "description": "Articulos del blog Egoera"},
-        {"command": "recordatorio", "description": "Configurar recordatorio diario"},
-        {"command": "sos", "description": "Modo emergencia / recursos"},
+        {"command": "start", "description": "Empezar"},
+        {"command": "registrar", "description": "Anotar cómo estás ahora"},
+        {"command": "checkin", "description": "Check-in (sueño, energía, estrés)"},
+        {"command": "progreso", "description": "Ver tu evolución"},
+        {"command": "stats", "description": "Lectura más detallada"},
+        {"command": "semana", "description": "Resumen narrativo de tu semana"},
+        {"command": "journal", "description": "Diario libre"},
+        {"command": "buscar", "description": "Buscar entre tus entradas"},
+        {"command": "exportar", "description": "Exportar lo que has escrito"},
+        {"command": "respirar", "description": "Respiración guiada"},
+        {"command": "grounding", "description": "Volver al presente (5-4-3-2-1)"},
+        {"command": "frase", "description": "Una frase para sostenerte"},
+        {"command": "pregunta", "description": "Pregunta de la semana"},
+        {"command": "test_apego", "description": "Test orientativo de apego"},
+        {"command": "tip", "description": "Una idea de psicología"},
+        {"command": "cuaderno", "description": "Últimas entradas del cuaderno"},
+        {"command": "boletin", "description": "Sobre el boletín de Egoera"},
+        {"command": "manifiesto", "description": "Cómo escribimos en Egoera"},
+        {"command": "sobre", "description": "Sobre Ander"},
+        {"command": "blog", "description": "Artículos del cuaderno (alias)"},
+        {"command": "recordatorio", "description": "Recordatorio diario"},
+        {"command": "idioma", "description": "Cambiar idioma (ES / EU / EN)"},
+        {"command": "sos", "description": "Recursos para un mal momento"},
         {"command": "kaixo", "description": "Saludo en euskera"},
-        {"command": "ayuda", "description": "Ver todos los comandos"},
-        {"command": "contacto", "description": "Contacto con Egoera"},
+        {"command": "ayuda", "description": "Lista de comandos"},
+        {"command": "contacto", "description": "Cómo escribir a Egoera"},
         {"command": "web", "description": "Ir a egoera.es"},
     ]
     try:
@@ -600,6 +813,7 @@ def get_user_data(chat_id: int) -> dict:
         "first_name": "",
         "attachment_style": None,
         "last_low_mood_alert": None,
+        "lang": "es",
         "registered_at": datetime.datetime.now().isoformat(),
     }
     for k, v in defaults.items():
@@ -640,51 +854,71 @@ def compute_streak(entries: list) -> int:
 def handle_start(chat_id: int, first_name: str):
     user = get_user_data(chat_id)
     user["first_name"] = first_name
+    if "lang" not in user:
+        user["lang"] = "es"
     save_user_data(chat_id, user)
+    lang = user.get("lang", "es")
 
     # Send logo photo first (silently skip if not present)
     try:
-        send_photo(chat_id, LOGO_PATH, caption=f"<b>Egoera Psikologia</b>\n<i>Tu estado importa.</i>")
+        send_photo(
+            chat_id,
+            LOGO_PATH,
+            caption="<b>Egoera</b>\n<i>«psicología, despacio»</i>",
+        )
     except Exception as e:
         log.warning(f"Logo send failed: {e}")
 
-    text = f"""🧠 <b>Kaixo {first_name}! Bienvenido/a a Egoera</b>
+    title = t("welcome_title", lang, name=first_name or "")
+    intro = t("welcome_intro", lang)
+    sec_diary = t("welcome_section_diary", lang)
+    sec_tech = t("welcome_section_techniques", lang)
+    sec_content = t("welcome_section_content", lang)
+    sec_other = t("welcome_section_other", lang)
+    question = t("welcome_question", lang)
 
-Soy tu asistente de bienestar emocional. Estoy aqui para acompanarte.
+    text = f"""🌱 <b>{title}</b>
 
-<b>📝 Diario:</b>
-/registrar — registrar estado de animo
-/checkin — sueno, energia y estres
+{intro}
+
+{sec_diary}
+/registrar — anotar cómo estás
+/checkin — sueño, energía, estrés
 /journal — diario libre
-/progreso /stats — ver tu evolucion
-/buscar /exportar — gestionar entradas
+/progreso · /stats · /semana — leerte por dentro
+/buscar · /exportar — recuperar lo escrito
 
-<b>🧘 Tecnicas:</b>
-/respirar — respiracion guiada
-/grounding — ejercicio 5-4-3-2-1
-/frase — afirmaciones
-/pregunta — reflexion semanal
-/test_apego — test de apego
+{sec_tech}
+/respirar — respiración guiada
+/grounding — volver al presente (5-4-3-2-1)
+/frase — una frase para sostenerte
+/pregunta — pregunta de la semana
+/test_apego — test orientativo de apego
 
-<b>📚 Contenido:</b>
-/tip /blog /web
+{sec_content}
+/cuaderno — últimas entradas
+/boletin — el boletín «despacio»
+/manifiesto — cómo escribimos
+/sobre — quién es Ander
 
-<b>⚙️ Otros:</b>
-/recordatorio /sos /kaixo /ayuda /contacto
+{sec_other}
+/recordatorio · /idioma · /sos · /kaixo · /ayuda · /contacto
 
-<b>Tu estado importa.</b> Por donde empezamos?"""
+{question}"""
 
     keyboard = inline_keyboard(
-        [("📝 Registrar", "cmd_registrar"), ("🧘 Respirar", "cmd_respirar")],
-        [("📊 Progreso", "cmd_progreso"), ("💡 Tip", "cmd_tip")],
-        [("💬 Frase", "cmd_frase"), ("📚 Blog", "cmd_blog")],
+        [(t("btn_register", lang), "cmd_registrar"), (t("btn_breathe", lang), "cmd_respirar")],
+        [(t("btn_progress", lang), "cmd_progreso"), (t("btn_tip", lang), "cmd_tip")],
+        [(t("btn_quote", lang), "cmd_frase"), (t("btn_notebook", lang), "cmd_cuaderno")],
+        [(t("btn_newsletter", lang), "cmd_boletin"), (t("btn_manifesto", lang), "cmd_manifiesto")],
+        [(t("btn_about", lang), "cmd_sobre"), (t("btn_lang", lang), "cmd_idioma")],
     )
     send_message(chat_id, text, reply_markup=keyboard)
 
 
 def handle_registrar(chat_id: int):
     set_state(chat_id, None)
-    text = "📝 <b>Como te sientes ahora?</b>\n\nSelecciona tu estado de animo:"
+    text = "📝 <b>¿Cómo estás ahora mismo?</b>\n\nNo hay respuestas correctas. Elige lo que más se acerque."
     keyboard = inline_keyboard(
         [("😢 Muy mal", "mood_1"), ("😟 Mal", "mood_2"), ("😐 Normal", "mood_3")],
         [("😊 Bien", "mood_4"), ("😄 Excelente", "mood_5")],
@@ -717,31 +951,30 @@ def handle_mood_callback(chat_id: int, cb_id: str, mood_num: str):
     user["streak"] = compute_streak(user["entries"])
     save_user_data(chat_id, user)
 
-    answer_callback(cb_id, f"Registrado: {mood['label']}")
+    answer_callback(cb_id, f"Anotado: {mood['label']}")
 
-    streak_text = f"🔥 Racha: <b>{user['streak']} dia{'s' if user['streak'] != 1 else ''}</b>" if user["streak"] > 0 else ""
+    streak_text = f"🔥 Racha: <b>{user['streak']} día{'s' if user['streak'] != 1 else ''}</b>" if user["streak"] > 0 else ""
 
-    text = f"""✅ <b>Registro guardado</b>
+    text = f"""✅ <b>Anotado</b>
 
 {mood['emoji']} <b>{mood['label']}</b>
-📅 {today} a las {now}
+📅 {today}, a las {now}
 {streak_text}
 
-<b>Quieres anadir una nota?</b>
-Envia un mensaje y lo guardare con tu registro."""
+¿Quieres añadir algo? Si te apetece, escribe un mensaje y lo guardo junto a tu registro."""
 
     rows = [
-        [("💡 Tip", "cmd_tip"), ("📊 Progreso", "cmd_progreso")],
+        [("💡 Una idea", "cmd_tip"), ("📊 Progreso", "cmd_progreso")],
         [("💬 Frase", "cmd_frase")],
     ]
-    # Mood <=2 → suggest tools
+    # Mood <=2 → suggest tools (without imperative voice)
     if mood["value"] <= 2:
-        text += "\n\n<i>Veo que hoy no estas en un buen momento. Te acompano con algo?</i>"
+        text += "\n\n<i>Hoy no es un buen momento. Si te apetece, podemos ir despacio juntos.</i>"
         rows = [
             [("🧘 Respirar", "cmd_respirar"), ("🌱 Grounding", "cmd_grounding")],
-            [("📖 Journal", "cmd_journal"), ("💬 Frase", "cmd_frase")],
-            [("📚 Articulo: ansiedad", "blog_mitos-ansiedad")],
-            [("🆘 /sos", "cmd_sos")],
+            [("📖 Diario libre", "cmd_journal"), ("💬 Frase", "cmd_frase")],
+            [("📓 Una lectura: «mitos de la ansiedad»", "blog_mitos-ansiedad")],
+            [("🆘 Recursos /sos", "cmd_sos")],
         ]
 
     send_message(chat_id, text, reply_markup=inline_keyboard(*rows))
@@ -752,7 +985,7 @@ def handle_progreso(chat_id: int):
     entries = user.get("entries", [])
 
     if not entries:
-        send_message(chat_id, "📊 Aun no tienes registros. Usa /registrar para empezar tu diario emocional.")
+        send_message(chat_id, "📊 Todavía no hay registros. Cuando quieras empezar, /registrar abre el diario.")
         return
 
     total = len(entries)
@@ -788,28 +1021,29 @@ def handle_progreso(chat_id: int):
         avg_prev = sum(e["mood"] for e in prev_week) / len(prev_week)
         diff = avg_this - avg_prev
         if abs(diff) < 0.2:
-            trend = "➡️ Estable esta semana"
+            trend = "➡️ Esta semana se ha mantenido estable."
         elif diff > 0:
-            trend = f"📈 Mejorando (+{diff:.1f} vs semana pasada)"
+            trend = f"📈 Algo mejor que la semana pasada (+{diff:.1f})."
         else:
-            trend = f"📉 Bajando ({diff:.1f} vs semana pasada)"
+            trend = f"📉 Algo peor que la semana pasada ({diff:.1f})."
 
-    text = f"""📊 <b>Tu progreso emocional</b>
+    text = f"""📊 <b>Tu evolución</b>
 
-📝 Total registros: <b>{total}</b>
-🔥 Racha actual: <b>{streak} dia{'s' if streak != 1 else ''}</b>
+📝 Registros: <b>{total}</b>
+🔥 Racha: <b>{streak} día{'s' if streak != 1 else ''}</b>
 {avg_emoji} Media: <b>{avg:.1f}/5</b>
 
-<b>Ultimos {len(recent)} dias:</b>
+<b>Últimos {len(recent)} días:</b>
 {timeline}
 
-<b>Distribucion de animo:</b>
+<b>Cómo se reparte tu ánimo:</b>
 {dist_text}
 {trend}
 
-Para mas detalle usa /stats."""
+Si te apetece una lectura más detallada, /stats. Para un resumen narrativo de la semana, /semana."""
     keyboard = inline_keyboard(
-        [("📈 Estadisticas avanzadas", "cmd_stats"), ("📝 Registrar hoy", "cmd_registrar")],
+        [("📈 Más detalle", "cmd_stats"), ("📅 Resumen de la semana", "cmd_semana")],
+        [("📝 Anotar hoy", "cmd_registrar")],
     )
     send_message(chat_id, text, reply_markup=keyboard)
 
@@ -818,7 +1052,7 @@ def handle_stats(chat_id: int):
     user = get_user_data(chat_id)
     entries = user.get("entries", [])
     if len(entries) < 3:
-        send_message(chat_id, "📈 Necesitas al menos 3 registros para ver estadisticas avanzadas. Sigue registrando con /registrar.")
+        send_message(chat_id, "📈 Con menos de tres registros no hay mucho que leer todavía. Cuando haya un poco más, /stats devolverá una lectura más fina.")
         return
 
     moods = [e["mood"] for e in entries]
@@ -826,7 +1060,7 @@ def handle_stats(chat_id: int):
     stdev = statistics.pstdev(moods) if len(moods) > 1 else 0
 
     # Best / worst weekday
-    weekday_names = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"]
+    weekday_names = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
     by_weekday = defaultdict(list)
     for e in entries:
         wd = datetime.date.fromisoformat(e["date"]).weekday()
@@ -843,9 +1077,9 @@ def handle_stats(chat_id: int):
     tag_counter = Counter()
     tag_mood = defaultdict(list)
     for e in entries:
-        for t in e.get("tags", []):
-            tag_counter[t] += 1
-            tag_mood[t].append(e["mood"])
+        for tag in e.get("tags", []):
+            tag_counter[tag] += 1
+            tag_mood[tag].append(e["mood"])
     # Also scan notes for EMOTIONS keywords
     for e in entries:
         note = (e.get("note") or "").lower()
@@ -864,33 +1098,33 @@ def handle_stats(chat_id: int):
         stress_avg = statistics.fmean([c["stress"] for c in checkins])
         checkin_line = (
             f"\n<b>Check-ins ({len(checkins)}):</b>\n"
-            f"😴 Sueno: <b>{sleep_avg:.1f}/5</b>\n"
-            f"⚡ Energia: <b>{energy_avg:.1f}/5</b>\n"
-            f"🔥 Estres: <b>{stress_avg:.1f}/5</b>\n"
+            f"😴 Sueño: <b>{sleep_avg:.1f}/5</b>\n"
+            f"⚡ Energía: <b>{energy_avg:.1f}/5</b>\n"
+            f"🔥 Estrés: <b>{stress_avg:.1f}/5</b>\n"
         )
 
-    text = f"""📈 <b>Estadisticas avanzadas</b>
+    text = f"""📈 <b>Lectura más fina</b>
 
 📊 Media global: <b>{avg:.2f}/5</b>
 📉 Variabilidad (σ): <b>{stdev:.2f}</b>
-📝 Registros totales: <b>{len(entries)}</b>
-📖 Journal: <b>{len(user.get('journal', []))}</b>
+📝 Registros: <b>{len(entries)}</b>
+📖 Diario libre: <b>{len(user.get('journal', []))}</b> entradas
 
-<b>Dia mejor:</b> {weekday_names[best_wd] if best_wd is not None else '—'} ({avg_by_wd[best_wd]:.1f}/5)
-<b>Dia peor:</b> {weekday_names[worst_wd] if worst_wd is not None else '—'} ({avg_by_wd[worst_wd]:.1f}/5)
-<b>Hora mas frecuente:</b> {f'{freq_hour:02d}:00' if freq_hour is not None else '—'}
+<b>Día más amable:</b> {weekday_names[best_wd] if best_wd is not None else '—'} ({avg_by_wd[best_wd]:.1f}/5)
+<b>Día más cuesta arriba:</b> {weekday_names[worst_wd] if worst_wd is not None else '—'} ({avg_by_wd[worst_wd]:.1f}/5)
+<b>Hora a la que sueles escribirme:</b> {f'{freq_hour:02d}:00' if freq_hour is not None else '—'}
 """
     if top_tags:
-        text += "\n<b>Emociones/tags mas frecuentes:</b>\n"
-        for t, c in top_tags:
-            mood_avg = statistics.fmean(tag_mood[t])
-            text += f"• {t} — {c} veces (animo medio {mood_avg:.1f})\n"
+        text += "\n<b>Lo que más aparece en tus notas:</b>\n"
+        for tg, c in top_tags:
+            mood_avg = statistics.fmean(tag_mood[tg])
+            text += f"• «{tg}» — {c} veces (ánimo medio {mood_avg:.1f})\n"
     text += checkin_line
 
     if stdev > 1.0:
-        text += "\n<i>Tu animo varia bastante. Puede ser util observar patrones (trabajo, descanso, relaciones).</i>"
+        text += "\n<i>Tu ánimo se mueve bastante. Puede que merezca la pena mirar despacio qué hay alrededor: trabajo, descanso, vínculos.</i>"
     elif stdev < 0.5:
-        text += "\n<i>Tu animo se mantiene estable. Observa si hay emocionalidad que se queda en silencio.</i>"
+        text += "\n<i>Tu ánimo se mantiene muy plano. A veces lo que no se nombra también pesa.</i>"
 
     send_message(chat_id, text)
 
@@ -899,7 +1133,7 @@ def handle_tip(chat_id: int):
     tip = random.choice(TIPS)
     related_post = next((p for p in BLOG_POSTS if p["slug"] == tip["related"]), None)
 
-    text = f"""💡 <b>Tip de psicologia</b>
+    text = f"""💡 <b>Una idea, sin prisa</b>
 
 {tip['text']}
 
@@ -908,36 +1142,31 @@ def handle_tip(chat_id: int):
     keyboard_rows = []
     if related_post:
         keyboard_rows.append([{
-            "text": f"📚 Leer: {related_post['title']}",
+            "text": f"📓 Leer en el cuaderno: {related_post['title']}",
             "url": f"https://egoera.es/{related_post['slug']}/",
         }])
     keyboard_rows.append([
-        {"text": "💡 Otro tip", "callback_data": "cmd_tip"},
-        {"text": "📝 Registrar", "callback_data": "cmd_registrar"},
+        {"text": "💡 Otra idea", "callback_data": "cmd_tip"},
+        {"text": "📝 Anotar cómo estás", "callback_data": "cmd_registrar"},
     ])
     send_message(chat_id, text, reply_markup={"inline_keyboard": keyboard_rows})
 
 
 def handle_blog(chat_id: int):
-    picks = random.sample(BLOG_POSTS, min(5, len(BLOG_POSTS)))
-    text = "📚 <b>Articulos del blog de Egoera</b>\n\n"
-    for p in picks:
-        text += f"• <a href=\"https://egoera.es/{p['slug']}/\">{p['title']}</a>\n"
-    text += f"\n🌐 Ver todos: <a href=\"https://egoera.es/blog/\">egoera.es/blog</a>"
-    keyboard = inline_keyboard([{"text": "🌐 Ir al blog", "url": "https://egoera.es/blog/"}])
-    send_message(chat_id, text, reply_markup=keyboard)
+    """Alias semántico: en la nueva web «el blog» se llama «cuaderno»."""
+    handle_cuaderno(chat_id)
 
 
 def handle_frase(chat_id: int):
     quote, author = random.choice(AFFIRMATIONS)
-    text = f"""💬 <b>Afirmacion del momento</b>
+    text = f"""💬 <b>Una frase para sostenerte</b>
 
-"{quote}"
+«{quote}»
 
 <i>— {author}</i>"""
     keyboard = inline_keyboard([
         ("💬 Otra frase", "cmd_frase"),
-        ("📖 Journal", "cmd_journal"),
+        ("📖 Diario libre", "cmd_journal"),
     ])
     send_message(chat_id, text, reply_markup=keyboard)
 
@@ -951,7 +1180,7 @@ def handle_pregunta(chat_id: int):
 
 {question}
 
-<i>Responde con un mensaje cuando quieras. Guardare tu respuesta junto a tu diario. Escribe /cancelar para salir.</i>"""
+<i>Cuando te apetezca, responde con un mensaje. Lo guardo junto a tu diario. Si quieres salir, /cancelar.</i>"""
     send_message(chat_id, text)
 
 
@@ -965,20 +1194,20 @@ def handle_pregunta_response(chat_id: int, state: dict, text: str):
     })
     save_user_data(chat_id, user)
     set_state(chat_id, None)
-    send_message(chat_id, "🪶 <b>Respuesta guardada.</b>\n\nEsta reflexion queda en tu historial. Puedes verla con /exportar.")
+    send_message(chat_id, "🪶 <b>Guardado.</b>\n\nQueda en tu historial. Si quieres releerlo, /exportar.")
 
 
 # ----- Respirar -----
 
 def handle_respirar(chat_id: int):
     set_state(chat_id, None)
-    text = """🧘 <b>Ejercicios de respiracion</b>
+    text = """🧘 <b>Respiración guiada</b>
 
-Elige una tecnica. Te guiare paso a paso."""
+Tres caminos posibles. ¿Cuál te apetece probar ahora?"""
     keyboard = inline_keyboard(
         [("4-7-8 (Weil)", "resp_478")],
         [("Cuadrada (4-4-4-4)", "resp_box")],
-        [("Diafragmatica", "resp_diaf")],
+        [("Diafragmática", "resp_diaf")],
     )
     send_message(chat_id, text, reply_markup=keyboard)
 
@@ -989,7 +1218,7 @@ def run_breathing(chat_id: int, pattern_key: str):
         return
     send_message(
         chat_id,
-        f"🧘 <b>{pat['name']}</b>\n\n{pat['desc']}\n\nPreparate. Haremos {pat['cycles']} ciclos.",
+        f"🧘 <b>{pat['name']}</b>\n\n{pat['desc']}\n\nNos tomamos {pat['cycles']} ciclos. Sin prisa.",
     )
     time.sleep(2)
     for cycle in range(1, pat["cycles"] + 1):
@@ -1000,9 +1229,9 @@ def run_breathing(chat_id: int, pattern_key: str):
             time.sleep(max(1, secs))
     send_message(
         chat_id,
-        "✅ <b>Ejercicio completado.</b>\n\nObserva tu cuerpo. Notas algun cambio?\n\nPuedes repetir o registrarlo con /registrar.",
+        "✅ <b>Hecho.</b>\n\n¿Notas algo en el cuerpo? Si te apetece, lo dejamos por escrito con /registrar.",
         reply_markup=inline_keyboard(
-            [("🔁 Repetir", f"resp_{pattern_key}"), ("📝 Registrar", "cmd_registrar")],
+            [("🔁 Otra vez", f"resp_{pattern_key}"), ("📝 Anotar cómo estás", "cmd_registrar")],
         ),
     )
 
@@ -1010,11 +1239,11 @@ def run_breathing(chat_id: int, pattern_key: str):
 # ----- Grounding 5-4-3-2-1 -----
 
 GROUNDING_STEPS = [
-    ("visto", 5, "👀 <b>5 cosas que ves</b>\n\nMira alrededor y escribe 5 cosas que veas ahora mismo. Pueden ser detalles pequenos (un reflejo, una textura). Envialas separadas por comas o en un mensaje."),
-    ("tocado", 4, "✋ <b>4 cosas que puedes tocar</b>\n\nTocalas realmente. Siente la temperatura, textura, peso. Escribe 4."),
-    ("oido", 3, "👂 <b>3 cosas que oyes</b>\n\nEscucha 10 segundos con atencion. Escribe 3 sonidos (aunque sean sutiles)."),
-    ("olido", 2, "👃 <b>2 cosas que hueles</b>\n\nSi no hueles nada obvio, acerca la nariz a tu ropa, cafe, mano... Escribe 2."),
-    ("saboreado", 1, "👅 <b>1 cosa que saboreas</b>\n\nPuede ser el sabor residual en tu boca, un sorbo de agua. Escribe 1."),
+    ("visto", 5, "👀 <b>Cinco cosas que ves</b>\n\nSi te apetece, mira alrededor y escribe cinco cosas que veas ahora mismo. Pueden ser detalles pequeños: un reflejo, una textura. Envíalas en un mensaje, juntas o separadas por comas."),
+    ("tocado", 4, "✋ <b>Cuatro cosas que puedes tocar</b>\n\nTócalas de verdad. ¿Qué temperatura tienen? ¿Qué textura? Escribe cuatro."),
+    ("oido", 3, "👂 <b>Tres cosas que oyes</b>\n\nDiez segundos de escucha. Tres sonidos, aunque sean sutiles."),
+    ("olido", 2, "👃 <b>Dos cosas que hueles</b>\n\nSi no hueles nada obvio, acerca la nariz a tu ropa, a un café, a tu propia mano. Dos."),
+    ("saboreado", 1, "👅 <b>Una cosa que saboreas</b>\n\nPuede ser el sabor que queda en tu boca, un sorbo de agua. Solo una."),
 ]
 
 
@@ -1022,7 +1251,7 @@ def handle_grounding(chat_id: int):
     set_state(chat_id, {"flow": "grounding", "step": 0, "answers": {}})
     send_message(
         chat_id,
-        "🌱 <b>Grounding 5-4-3-2-1</b>\n\nEjercicio DBT para volver al presente cuando la ansiedad sube.\nTe guiare paso a paso. Puedes escribir /cancelar para salir.\n",
+        "🌱 <b>Volver al presente: 5-4-3-2-1</b>\n\nUn ejercicio breve para cuando la ansiedad sube. Vamos paso a paso, sin prisa. Si en algún momento quieres parar, /cancelar.\n",
     )
     send_message(chat_id, GROUNDING_STEPS[0][2])
 
@@ -1048,23 +1277,23 @@ def handle_grounding_response(chat_id: int, state: dict, text: str):
         summary = "\n".join([f"• <b>{k}:</b> {v[:80]}" for k, v in state["answers"].items()])
         send_message(
             chat_id,
-            f"✅ <b>Grounding completado</b>\n\n{summary}\n\nCentrate en tu respiracion unos segundos mas. Estas aqui, estas a salvo.",
-            reply_markup=inline_keyboard([("🧘 Respirar", "cmd_respirar"), ("📝 Registrar animo", "cmd_registrar")]),
+            f"✅ <b>Hecho</b>\n\n{summary}\n\nUnos segundos más con la respiración. Estás aquí. Estás a salvo.",
+            reply_markup=inline_keyboard([("🧘 Respirar", "cmd_respirar"), ("📝 Anotar cómo estás", "cmd_registrar")]),
         )
 
 
 # ----- Check-in diario -----
 
 CHECKIN_STEPS = [
-    ("sleep", "😴 <b>Como has dormido?</b> (1 = fatal, 5 = perfecto)"),
-    ("energy", "⚡ <b>Nivel de energia</b> (1 = agotado/a, 5 = lleno/a)"),
-    ("stress", "🔥 <b>Nivel de estres</b> (1 = muy calmado/a, 5 = desbordado/a)"),
+    ("sleep", "😴 <b>¿Cómo has dormido?</b>\n<i>(1 = fatal · 5 = perfecto)</i>"),
+    ("energy", "⚡ <b>¿Cómo está tu energía?</b>\n<i>(1 = agotado/a · 5 = lleno/a)</i>"),
+    ("stress", "🔥 <b>¿Cómo está tu estrés?</b>\n<i>(1 = muy calmado/a · 5 = desbordado/a)</i>"),
 ]
 
 
 def handle_checkin(chat_id: int):
     set_state(chat_id, {"flow": "checkin", "step": 0, "answers": {}})
-    send_message(chat_id, "🩺 <b>Check-in diario</b>\n\nTres preguntas rapidas.")
+    send_message(chat_id, "🩺 <b>Check-in</b>\n\nTres preguntas breves. Sin nota.")
     send_message(
         chat_id,
         CHECKIN_STEPS[0][1],
@@ -1075,7 +1304,7 @@ def handle_checkin(chat_id: int):
 def handle_checkin_callback(chat_id: int, cb_id: str, data: str):
     state = get_state(chat_id)
     if not state or state.get("flow") != "checkin":
-        answer_callback(cb_id, "Sesion expirada. Usa /checkin de nuevo.")
+        answer_callback(cb_id, "Sesión expirada. Si te apetece, /checkin la abre de nuevo.")
         return
     _, key, val = data.split("_")
     state["answers"][key] = int(val)
@@ -1103,13 +1332,13 @@ def handle_checkin_callback(chat_id: int, cb_id: str, data: str):
         s, e, st = state["answers"]["sleep"], state["answers"]["energy"], state["answers"]["stress"]
         send_message(
             chat_id,
-            f"""✅ <b>Check-in guardado</b>
+            f"""✅ <b>Anotado</b>
 
-😴 Sueno: <b>{s}/5</b>
-⚡ Energia: <b>{e}/5</b>
-🔥 Estres: <b>{st}/5</b>
+😴 Sueño: <b>{s}/5</b>
+⚡ Energía: <b>{e}/5</b>
+🔥 Estrés: <b>{st}/5</b>
 
-Veremos correlaciones en /stats cuando tengas mas datos.""",
+Cuando haya un poco más de historial, /stats irá devolviéndote correlaciones.""",
         )
 
 
@@ -1119,7 +1348,7 @@ def handle_journal(chat_id: int):
     set_state(chat_id, {"flow": "journal"})
     send_message(
         chat_id,
-        "📖 <b>Journal libre</b>\n\nEscribe lo que necesites. Se guardara con fecha y hora.\nEscribe /cancelar para salir.",
+        "📖 <b>Diario libre</b>\n\nEscribe lo que necesites soltar. Lo guardo con su fecha y hora.\nSi quieres salir, /cancelar.",
     )
 
 
@@ -1136,7 +1365,7 @@ def handle_journal_entry(chat_id: int, text: str):
     set_state(chat_id, None)
     send_message(
         chat_id,
-        f"✅ <b>Entrada guardada</b> ({entry['date']} {entry['time']})\n\nTienes <b>{len(user['journal'])}</b> entradas en tu diario libre.",
+        f"✅ <b>Guardado</b> ({entry['date']} {entry['time']})\n\nLlevas <b>{len(user['journal'])}</b> entradas en el diario libre.",
         reply_markup=inline_keyboard(
             [("🔎 Buscar", "cmd_buscar"), ("📤 Exportar", "cmd_exportar"), ("📖 Otra entrada", "cmd_journal")],
         ),
@@ -1149,7 +1378,7 @@ def handle_buscar(chat_id: int):
     set_state(chat_id, {"flow": "buscar"})
     send_message(
         chat_id,
-        "🔎 <b>Buscar en tu diario</b>\n\nEnvia una palabra clave o una fecha (YYYY-MM-DD). Escribe /cancelar para salir.",
+        "🔎 <b>Buscar en tu diario</b>\n\nEnvía una palabra clave o una fecha (YYYY-MM-DD). Si quieres salir, /cancelar.",
     )
 
 
@@ -1184,19 +1413,19 @@ def handle_buscar_query(chat_id: int, query: str):
             results.append(("weekly", w))
 
     if not results:
-        send_message(chat_id, f"🔎 Sin resultados para <b>{query}</b>.")
+        send_message(chat_id, f"🔎 Nada encontrado para «{query}».")
         return
 
-    lines = [f"🔎 <b>{len(results)} resultado(s) para {query}</b>\n"]
+    lines = [f"🔎 <b>{len(results)} resultado(s) para «{query}»</b>\n"]
     for kind, r in results[:15]:
         if kind == "journal":
             lines.append(f"📖 {r['date']} {r['time']} — {r['text'][:120]}")
         elif kind == "mood":
             lines.append(f"📝 {r['date']} {r.get('time','')} — {r['emoji']} {r['mood_label']} {('— ' + r['note'][:100]) if r.get('note') else ''}")
         elif kind == "weekly":
-            lines.append(f"🧘 {r['date'][:10]} (sem {r['week']}) — {r['answer'][:120]}")
+            lines.append(f"🧘 {r['date'][:10]} (sem. {r['week']}) — {r['answer'][:120]}")
     if len(results) > 15:
-        lines.append(f"\n<i>Mostrando primeros 15 de {len(results)}. Usa /exportar para el listado completo.</i>")
+        lines.append(f"\n<i>Te muestro los primeros 15 de {len(results)}. Para tenerlo todo, /exportar.</i>")
     send_message(chat_id, "\n\n".join(lines))
 
 
@@ -1209,7 +1438,7 @@ def handle_exportar(chat_id: int):
 
     entries = sorted(user.get("entries", []), key=lambda e: (e["date"], e.get("time", "")))
     if entries:
-        lines.append("## Registros de animo\n")
+        lines.append("## Registros de ánimo\n")
         for e in entries:
             lines.append(f"- **{e['date']} {e.get('time','')}** — {e['emoji']} {e['mood_label']} ({e['mood']}/5)")
             if e.get("note"):
@@ -1218,7 +1447,7 @@ def handle_exportar(chat_id: int):
 
     journal = sorted(user.get("journal", []), key=lambda j: (j["date"], j["time"]))
     if journal:
-        lines.append("## Journal libre\n")
+        lines.append("## Diario libre\n")
         for j in journal:
             lines.append(f"### {j['date']} {j['time']}")
             lines.append(j["text"])
@@ -1226,9 +1455,9 @@ def handle_exportar(chat_id: int):
 
     checkins = sorted(user.get("checkins", []), key=lambda c: (c["date"], c.get("time", "")))
     if checkins:
-        lines.append("## Check-ins (sueno / energia / estres)\n")
+        lines.append("## Check-ins (sueño / energía / estrés)\n")
         for c in checkins:
-            lines.append(f"- {c['date']} {c.get('time','')} — sueno {c['sleep']}/5 · energia {c['energy']}/5 · estres {c['stress']}/5")
+            lines.append(f"- {c['date']} {c.get('time','')} — sueño {c['sleep']}/5 · energía {c['energy']}/5 · estrés {c['stress']}/5")
         lines.append("")
 
     groundings = sorted(user.get("groundings", []), key=lambda g: (g["date"], g.get("time", "")))
@@ -1252,12 +1481,12 @@ def handle_exportar(chat_id: int):
             lines.append("")
 
     if len(lines) <= 3:
-        send_message(chat_id, "📤 Aun no tienes contenido para exportar. Usa /registrar, /journal, /checkin o /pregunta.")
+        send_message(chat_id, "📤 Aún no hay nada que exportar. Cuando dejes alguna huella en /registrar, /journal, /checkin o /pregunta, podré devolvértela.")
         return
 
     content = "\n".join(lines).encode("utf-8")
     fname = f"egoera-diario-{datetime.date.today().isoformat()}.md"
-    send_document(chat_id, fname, content, caption=f"📤 Tu diario completo ({len(entries)} registros, {len(journal)} journals, {len(checkins)} check-ins).")
+    send_document(chat_id, fname, content, caption=f"📤 Tu diario completo: {len(entries)} registros, {len(journal)} entradas libres, {len(checkins)} check-ins.")
 
 
 # ----- Test apego -----
@@ -1266,7 +1495,7 @@ def handle_test_apego(chat_id: int):
     set_state(chat_id, {"flow": "test_apego", "step": 0, "scores": {"A": 0, "B": 0, "C": 0, "D": 0}})
     send_message(
         chat_id,
-        "💞 <b>Test rapido de estilos de apego</b>\n\n5 preguntas. Responde con la opcion que mas se ajuste a ti. No hay opciones correctas. Escribe /cancelar para salir.",
+        "💞 <b>Un test orientativo de apego</b>\n\nCinco preguntas. No hay respuestas correctas: elige la opción que más se acerque a ti. Es orientativo, no diagnóstico. Si quieres salir, /cancelar.",
     )
     send_apego_question(chat_id, 0)
 
@@ -1283,7 +1512,7 @@ def send_apego_question(chat_id: int, step: int):
 def handle_apego_callback(chat_id: int, cb_id: str, data: str):
     state = get_state(chat_id)
     if not state or state.get("flow") != "test_apego":
-        answer_callback(cb_id, "Sesion expirada. Usa /test_apego.")
+        answer_callback(cb_id, "Sesión expirada. Si te apetece, /test_apego empieza de nuevo.")
         return
     _, step_str, code = data.split("_")
     step = int(step_str)
@@ -1304,9 +1533,9 @@ def handle_apego_callback(chat_id: int, cb_id: str, data: str):
 
 {prof['text']}
 
-<i>Este test es orientativo y no sustituye una evaluacion profesional.</i>"""
+<i>Es un test orientativo. No sustituye una evaluación profesional.</i>"""
         keyboard = inline_keyboard([{
-            "text": "📚 Leer: Los 4 estilos de apego",
+            "text": "📓 Leer en el cuaderno: Los 4 estilos de apego",
             "url": "https://egoera.es/estilos-de-apego/",
         }])
         send_message(chat_id, text, reply_markup=keyboard)
@@ -1320,13 +1549,13 @@ def handle_recordatorio(chat_id: int):
     hr = user.get("reminder_time", "20:00")
     text = f"""🔔 <b>Recordatorio diario</b>
 
-Estado: <b>{status}</b>
+Estado actual: <b>{status}</b>
 Hora: <b>{hr}</b>
 
-Que quieres hacer?"""
+¿Qué te apetece hacer?"""
     rows = [
-        [("🔔 Activar/Desactivar", "rem_toggle")],
-        [("⏰ Cambiar hora", "rem_sethour")],
+        [("🔔 Activar / desactivar", "rem_toggle")],
+        [("⏰ Cambiar la hora", "rem_sethour")],
     ]
     send_message(chat_id, text, reply_markup=inline_keyboard(*rows))
 
@@ -1337,15 +1566,15 @@ def handle_recordatorio_toggle(chat_id: int, cb_id: str):
     save_user_data(chat_id, user)
     answer_callback(cb_id, "Recordatorio " + ("activado" if user["reminders"] else "desactivado"))
     if user["reminders"]:
-        send_message(chat_id, f"🔔 Recordatorios <b>activados</b>. Te escribire cada dia a las <b>{user['reminder_time']}</b>.")
+        send_message(chat_id, f"🔔 Recordatorios <b>activados</b>. Te escribiré cada día a las <b>{user['reminder_time']}</b>, sin agobio.")
     else:
-        send_message(chat_id, "🔕 Recordatorios <b>desactivados</b>.")
+        send_message(chat_id, "🔕 Recordatorios <b>desactivados</b>. Cuando los quieras de vuelta, /recordatorio.")
 
 
 def handle_recordatorio_sethour(chat_id: int, cb_id: str):
     answer_callback(cb_id)
     set_state(chat_id, {"flow": "set_hour"})
-    send_message(chat_id, "⏰ Envia la hora en formato <b>HH:MM</b> (24h). Ej: <code>20:00</code> o <code>08:30</code>.\n\n/cancelar para salir.")
+    send_message(chat_id, "⏰ Envía la hora en formato <b>HH:MM</b> (24 h). Por ejemplo: <code>20:00</code> o <code>08:30</code>.\n\nSi quieres salir, /cancelar.")
 
 
 def handle_sethour_response(chat_id: int, text: str):
@@ -1356,14 +1585,14 @@ def handle_sethour_response(chat_id: int, text: str):
         if not (0 <= hh <= 23 and 0 <= mm <= 59):
             raise ValueError
     except Exception:
-        send_message(chat_id, "❌ Formato no valido. Usa HH:MM (24h). Ej: 20:00.")
+        send_message(chat_id, "❌ El formato no me cuadra. Probemos con HH:MM (24 h), por ejemplo 20:00.")
         return
     user = get_user_data(chat_id)
     user["reminder_time"] = f"{hh:02d}:{mm:02d}"
     user["reminders"] = True
     save_user_data(chat_id, user)
     set_state(chat_id, None)
-    send_message(chat_id, f"✅ Hora de recordatorio guardada: <b>{user['reminder_time']}</b>. Recordatorios <b>activados</b>.")
+    send_message(chat_id, f"✅ Guardado. Te escribiré cada día a las <b>{user['reminder_time']}</b>. Recordatorios <b>activados</b>.")
 
 
 # ----- SOS -----
@@ -1382,68 +1611,73 @@ def handle_sos(chat_id: int):
 def handle_kaixo(chat_id: int):
     user = get_user_data(chat_id)
     name = user.get("first_name", "")
-    text = f"""🇪🇺 <b>{EUSKERA['hello']}{', ' + name if name else ''}!</b>
+    text = f"""🇪🇺 <b>{EUSKERA['hello']}{', ' + name if name else ''}.</b>
 
-{EUSKERA['welcome']} Egoera-ra. {EUSKERA['thanks']} hemen egoteagatik.
+{EUSKERA['welcome']} Egoerara. {EUSKERA['thanks']} hemen egoteagatik.
 
 <b>Mini hiztegia:</b>
 • Kaixo — Hola
-• Egun on — Buenos dias
+• Egun on — Buenos días
 • Gabon — Buenas noches
 • Eskerrik asko — Muchas gracias
-• Agur — Adios
+• Agur — Adiós
 
-<i>Egoera tambien trabaja en euskera. Contacta con Ander si prefieres sesiones en euskera.</i>"""
+<i>Egoera también trabaja en euskera. Si prefieres sesiones en euskera, escribe a Ander.</i>"""
     send_message(chat_id, text)
 
 
 # ----- Ayuda / contacto / web -----
 
 def handle_ayuda(chat_id: int):
-    text = """ℹ️ <b>Comandos disponibles</b>
+    text = """ℹ️ <b>Lo que puedo hacer</b>
 
-<b>📝 Diario:</b>
-/registrar — nuevo registro de animo
-/checkin — sueno, energia, estres
+<b>📝 Diario</b>
+/registrar — anotar cómo estás ahora
+/checkin — sueño, energía, estrés
 /journal — diario libre
-/progreso — estadisticas basicas
-/stats — estadisticas avanzadas
-/buscar — buscar entradas
-/exportar — exportar todo (markdown)
+/progreso — tu evolución
+/stats — lectura más fina
+/semana — resumen narrativo de la semana
+/buscar — buscar entre tus entradas
+/exportar — descargar todo en Markdown
 
-<b>🧘 Tecnicas:</b>
-/respirar — respiracion guiada (4-7-8, cuadrada, diafragmatica)
-/grounding — ejercicio 5-4-3-2-1 para la ansiedad
-/frase — afirmacion inspiradora
-/pregunta — pregunta de reflexion semanal
-/test_apego — test rapido de estilos de apego
+<b>🧘 Para regularte</b>
+/respirar — respiración guiada (4-7-8, cuadrada, diafragmática)
+/grounding — volver al presente (5-4-3-2-1)
+/frase — una frase para sostenerte
+/pregunta — pregunta de la semana
+/test_apego — test orientativo de apego
 
-<b>📚 Contenido:</b>
-/tip — tip de psicologia
-/blog — articulos del blog
+<b>📓 Lectura y voz de Egoera</b>
+/cuaderno — últimas entradas del cuaderno
+/boletin — el boletín «despacio»
+/manifiesto — cómo escribimos
+/sobre — sobre Ander
+/tip — una idea de psicología
 /web — egoera.es
 
-<b>⚙️ Otros:</b>
-/recordatorio — recordatorio diario personalizable
-/sos — modo emergencia
+<b>⚙️ Otros</b>
+/recordatorio — recordatorio diario
+/idioma — cambiar idioma (ES / EU / EN)
+/sos — recursos para un mal momento
 /kaixo — saludo en euskera
-/contacto — contacto
-/cancelar — salir de cualquier flujo en curso
+/contacto — cómo escribir
+/cancelar — salir de cualquier flujo
 
-<b>Texto libre:</b> si escribes cualquier mensaje fuera de un flujo y tienes registro hoy, lo guardo como nota."""
+<b>Texto libre:</b> si me escribes algo fuera de un flujo y tienes un registro de hoy, lo guardo como nota tuya."""
     send_message(chat_id, text, disable_preview=True)
 
 
 def handle_contacto(chat_id: int):
-    text = """📞 <b>Contacto — Egoera Psikologia</b>
+    text = """📞 <b>Cómo escribir a Egoera</b>
 
 📧 Email: <a href="mailto:hola@egoera.es">hola@egoera.es</a>
 🌐 Web: <a href="https://egoera.es">egoera.es</a>
+📓 Cuaderno: <a href="https://egoera.es/cuaderno/">egoera.es/cuaderno</a>
+📨 Boletín: <a href="https://egoera.es/boletin/">egoera.es/boletin</a>
 📸 Instagram: @egoera.psikologia
 🎵 TikTok: @egoera.psikologia
-🎬 YouTube: @egoerapsikologia
-
-<b>Tu estado importa.</b>"""
+🎬 YouTube: @egoerapsikologia"""
     send_message(chat_id, text, disable_preview=True)
 
 
@@ -1451,9 +1685,209 @@ def handle_cancelar(chat_id: int):
     state = get_state(chat_id)
     set_state(chat_id, None)
     if state:
-        send_message(chat_id, f"✅ Cancelado el flujo: <b>{state.get('flow')}</b>.")
+        send_message(chat_id, f"✅ Salimos del flujo: <b>{state.get('flow')}</b>.")
     else:
-        send_message(chat_id, "No tenias ningun flujo abierto.")
+        send_message(chat_id, "No tenías ningún flujo abierto.")
+
+
+# ----- Cuaderno (pulls latest WP posts) -----
+
+def fetch_latest_posts(per_page: int = 3) -> list:
+    """Pull the latest published posts from egoera.es WP REST API.
+    Returns [] on any failure — callers must handle the empty case gracefully."""
+    url = f"https://egoera.es/wp-json/wp/v2/posts?per_page={per_page}&_fields=id,date,link,title,excerpt"
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "egoera-bot/1.0"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read())
+        out = []
+        for p in data:
+            title = (p.get("title", {}) or {}).get("rendered", "Sin título")
+            link = p.get("link", "https://egoera.es/cuaderno/")
+            # crude HTML strip on title (decode entities is rarely needed for post titles)
+            title = (title.replace("&#8217;", "’").replace("&amp;", "&")
+                          .replace("&#8211;", "–").replace("&nbsp;", " ").strip())
+            out.append({"title": title, "link": link})
+        return out
+    except Exception as e:
+        log.warning(f"WP fetch failed: {e}")
+        return []
+
+
+def handle_cuaderno(chat_id: int):
+    lang = get_lang(chat_id)
+    posts = fetch_latest_posts(3)
+    title = t("notebook_title", lang)
+    intro = t("notebook_intro", lang)
+
+    if not posts:
+        # Fallback: short curated picks from the local catalogue
+        send_message(
+            chat_id,
+            f"{title}\n\n{t('notebook_empty', lang)}",
+            reply_markup=inline_keyboard([{
+                "text": t("notebook_btn_all", lang),
+                "url": "https://egoera.es/cuaderno/",
+            }]),
+            disable_preview=True,
+        )
+        return
+
+    body = "\n".join([f"• <a href=\"{p['link']}\">{p['title']}</a>" for p in posts])
+    text = f"{title}\n\n{intro}\n\n{body}"
+    keyboard = inline_keyboard([{
+        "text": t("notebook_btn_all", lang),
+        "url": "https://egoera.es/cuaderno/",
+    }])
+    send_message(chat_id, text, reply_markup=keyboard, disable_preview=True)
+
+
+# ----- Boletín -----
+
+def handle_boletin(chat_id: int):
+    lang = get_lang(chat_id)
+    text = f"{t('newsletter_title', lang)}\n\n{t('newsletter_body', lang)}"
+    keyboard = inline_keyboard([{
+        "text": t("newsletter_btn", lang),
+        "url": "https://egoera.es/boletin/",
+    }])
+    send_message(chat_id, text, reply_markup=keyboard, disable_preview=True)
+
+
+# ----- Manifiesto -----
+
+def handle_manifiesto(chat_id: int):
+    lang = get_lang(chat_id)
+    text = f"{t('manifesto_title', lang)}\n\n{t('manifesto_body', lang)}"
+    keyboard = inline_keyboard([{
+        "text": t("manifesto_btn", lang),
+        "url": "https://egoera.es/manifiesto/",
+    }])
+    send_message(chat_id, text, reply_markup=keyboard, disable_preview=True)
+
+
+# ----- Sobre Ander -----
+
+def handle_sobre(chat_id: int):
+    lang = get_lang(chat_id)
+    text = f"{t('about_title', lang)}\n\n{t('about_body', lang)}"
+    keyboard = inline_keyboard([{
+        "text": t("about_btn", lang),
+        "url": "https://egoera.es/sobre-nosotros/",
+    }])
+    send_message(chat_id, text, reply_markup=keyboard, disable_preview=True)
+
+
+# ----- Idioma -----
+
+def handle_idioma(chat_id: int):
+    lang = get_lang(chat_id)
+    text = t("lang_picker_title", lang)
+    keyboard = inline_keyboard(
+        [(LANG_LABELS["es"] + (" ✓" if lang == "es" else ""), "lang_es"),
+         (LANG_LABELS["eu"] + (" ✓" if lang == "eu" else ""), "lang_eu"),
+         (LANG_LABELS["en"] + (" ✓" if lang == "en" else ""), "lang_en")],
+    )
+    send_message(chat_id, text, reply_markup=keyboard)
+
+
+def handle_lang_callback(chat_id: int, cb_id: str, code: str):
+    if code not in LANGS:
+        answer_callback(cb_id, "?")
+        return
+    set_lang(chat_id, code)
+    answer_callback(cb_id, LANG_LABELS[code])
+    send_message(chat_id, t("lang_set", code))
+
+
+# ----- Semana (weekly digest, narrative) -----
+
+def _weekly_narrative(user: dict, lang: str = "es") -> str:
+    """Build a narrative, anti-clinical 2-3 paragraph summary of the last 7 days.
+    Only Spanish for now; English/Euskara fall back to ES too (TODO: localize)."""
+    today = datetime.date.today()
+    week_ago = today - datetime.timedelta(days=7)
+
+    entries = [e for e in user.get("entries", [])
+               if datetime.date.fromisoformat(e["date"]) >= week_ago]
+    journals = [j for j in user.get("journal", [])
+                if datetime.date.fromisoformat(j["date"]) >= week_ago]
+    checkins = [c for c in user.get("checkins", [])
+                if datetime.date.fromisoformat(c["date"]) >= week_ago]
+
+    if not entries and not journals and not checkins:
+        return ""
+
+    # Numbers — used as anchors, never as the main voice
+    n = len(entries)
+    avg = statistics.fmean([e["mood"] for e in entries]) if entries else None
+    days_logged = len({e["date"] for e in entries})
+
+    # Texture: look at notes + journals for emotional language
+    text_blob = " ".join(
+        [e.get("note", "") or "" for e in entries] +
+        [j.get("text", "") or "" for j in journals]
+    ).lower()
+    emo_hits = [emo for emo in EMOTIONS if emo.lower() in text_blob]
+    top_emo = emo_hits[:3]
+
+    # Trend vs previous week (if any)
+    two_weeks_ago = today - datetime.timedelta(days=14)
+    prev_entries = [e for e in user.get("entries", [])
+                    if week_ago > datetime.date.fromisoformat(e["date"]) >= two_weeks_ago]
+    prev_avg = statistics.fmean([e["mood"] for e in prev_entries]) if prev_entries else None
+
+    # Paragraph 1: a quiet opening
+    if days_logged >= 5:
+        p1 = f"Esta semana te has dejado leer en {days_logged} días. No es poco: hay constancia, y la constancia, en lo emocional, ya es cuidado."
+    elif days_logged >= 2:
+        p1 = f"Esta semana hay {days_logged} días con huella. Algunos días estuviste cerca, otros no. Es lo que hay, y no es poco."
+    else:
+        p1 = "Esta semana apenas has pasado por aquí. No te lo cuento como un reproche; lo cuento como un dato. A veces el ánimo no encuentra palabras."
+
+    # Paragraph 2: the texture
+    if avg is not None:
+        if avg >= 4.0:
+            tone = f"La media ha estado por encima de la línea de flotación ({avg:.1f}/5). Hay cierta luz."
+        elif avg >= 3.0:
+            tone = f"La media se ha sostenido en el «normal» ({avg:.1f}/5). Ni rally ni caída."
+        elif avg >= 2.0:
+            tone = f"La media ha estado por debajo de lo cómodo ({avg:.1f}/5). Habrá tenido sus razones."
+        else:
+            tone = f"Ha sido una semana cuesta arriba ({avg:.1f}/5). Conviene mirarla con suavidad."
+        p2 = tone
+        if top_emo:
+            emos_es = ", ".join(f"«{e.lower()}»" for e in top_emo)
+            p2 += f" En tus notas asomaron, sobre todo, {emos_es}."
+    else:
+        p2 = "No hay registros de ánimo, pero sí trazos en lo que has escrito."
+
+    # Paragraph 3: trend + closing, no imperatives
+    if prev_avg is not None and avg is not None:
+        diff = avg - prev_avg
+        if diff >= 0.5:
+            p3 = f"Comparada con la semana anterior, esta queda algo mejor (+{diff:.1f}). Algo se mueve en buena dirección, aunque no haga falta celebrarlo en alto."
+        elif diff <= -0.5:
+            p3 = f"Comparada con la semana anterior, esta queda más abajo ({diff:.1f}). Si te apetece, podemos ir despacio: /respirar, /grounding, o leer algo en /cuaderno."
+        else:
+            p3 = "Comparada con la semana anterior, está más o menos en el mismo lugar. Tampoco hay que correr a moverlo."
+    else:
+        p3 = "Aún no tengo semana previa con la que comparar; lo iré ajustando."
+
+    closing = "Si quieres, /pregunta tiene la pregunta de la semana. Y si necesitas un ratito tranquilo, /respirar o /grounding están aquí."
+
+    return f"{p1}\n\n{p2}\n\n{p3}\n\n<i>{closing}</i>"
+
+
+def handle_semana(chat_id: int):
+    lang = get_lang(chat_id)
+    user = get_user_data(chat_id)
+    body = _weekly_narrative(user, lang)
+    title = t("week_title", lang)
+    if not body:
+        send_message(chat_id, f"{title}\n\n{t('week_empty', lang)}")
+        return
+    send_message(chat_id, f"{title}\n\n{body}", disable_preview=True)
 
 
 # ============ TEXT ROUTER (notes / flows) ============
@@ -1467,7 +1901,7 @@ def handle_text_note(chat_id: int, text: str):
     if not today_entries:
         send_message(
             chat_id,
-            "📝 No tienes registro de hoy todavia.\n\nUsa /registrar o /journal para escribir libre.",
+            "📝 Hoy todavía no hay registro. Si te apetece, /registrar abre uno y /journal el diario libre.",
         )
         return
 
@@ -1481,7 +1915,7 @@ def handle_text_note(chat_id: int, text: str):
     save_user_data(chat_id, user)
     send_message(
         chat_id,
-        f"📝 Nota anadida a tu registro de hoy ({last['emoji']} {last['mood_label']}).\n\n<i>{text[:200]}{'...' if len(text) > 200 else ''}</i>\n\n/progreso para ver tu historial.",
+        f"📝 Anotado junto a tu registro de hoy ({last['emoji']} {last['mood_label']}).\n\n<i>«{text[:200]}{'…' if len(text) > 200 else ''}»</i>\n\nSi quieres ver tu historial, /progreso.",
     )
 
 
@@ -1536,8 +1970,22 @@ def process_update(update: dict):
             answer_callback(cb_id); handle_exportar(chat_id)
         elif data == "cmd_sos":
             answer_callback(cb_id); handle_sos(chat_id)
+        elif data == "cmd_cuaderno":
+            answer_callback(cb_id); handle_cuaderno(chat_id)
+        elif data == "cmd_boletin":
+            answer_callback(cb_id); handle_boletin(chat_id)
+        elif data == "cmd_manifiesto":
+            answer_callback(cb_id); handle_manifiesto(chat_id)
+        elif data == "cmd_sobre":
+            answer_callback(cb_id); handle_sobre(chat_id)
+        elif data == "cmd_idioma":
+            answer_callback(cb_id); handle_idioma(chat_id)
+        elif data == "cmd_semana":
+            answer_callback(cb_id); handle_semana(chat_id)
+        elif data.startswith("lang_"):
+            handle_lang_callback(chat_id, cb_id, data.split("_", 1)[1])
         else:
-            answer_callback(cb_id, "Accion desconocida")
+            answer_callback(cb_id, "Acción desconocida")
         return
 
     msg = update.get("message")
@@ -1567,8 +2015,18 @@ def process_update(update: dict):
             handle_stats(chat_id)
         elif cmd == "tip":
             handle_tip(chat_id)
-        elif cmd == "blog":
-            handle_blog(chat_id)
+        elif cmd in ("blog", "cuaderno"):
+            handle_cuaderno(chat_id)
+        elif cmd in ("boletin", "boletín", "newsletter"):
+            handle_boletin(chat_id)
+        elif cmd in ("manifiesto", "manifesto"):
+            handle_manifiesto(chat_id)
+        elif cmd in ("sobre", "ander", "about"):
+            handle_sobre(chat_id)
+        elif cmd in ("idioma", "lang", "language"):
+            handle_idioma(chat_id)
+        elif cmd in ("semana", "weekly", "week"):
+            handle_semana(chat_id)
         elif cmd == "frase":
             handle_frase(chat_id)
         elif cmd == "pregunta":
@@ -1598,9 +2056,9 @@ def process_update(update: dict):
         elif cmd == "contacto":
             handle_contacto(chat_id)
         elif cmd == "web":
-            send_message(chat_id, "🌐 <b>egoera.es</b>\n\nBlog de psicologia y diario emocional.\n\n<a href=\"https://egoera.es\">Visitar la web →</a>")
+            send_message(chat_id, "🌐 <b>egoera.es</b>\n\nPsicología, despacio. Cuaderno, boletín y diario emocional.\n\n<a href=\"https://egoera.es\">Ir a la web →</a>")
         else:
-            send_message(chat_id, "No reconozco ese comando. Usa /ayuda para ver los disponibles.")
+            send_message(chat_id, "No reconozco ese comando. /ayuda los lista todos.")
         return
 
     if not text:
@@ -1644,8 +2102,8 @@ def send_daily_reminders():
         try:
             send_message(
                 chat_id,
-                "🌙 <b>Recordatorio</b>\n\nHola. Aun no has registrado como te sientes hoy.\nUsa /registrar para anotar tu animo.",
-                reply_markup=inline_keyboard([("📝 Registrar ahora", "cmd_registrar")]),
+                "🌙 <b>Un momento, despacio</b>\n\nHoy todavía no has dejado huella aquí. Si te apetece, /registrar abre el diario.\nY si no es buen día para escribir, no pasa nada.",
+                reply_markup=inline_keyboard([("📝 Anotar ahora", "cmd_registrar")]),
             )
             sent += 1
         except Exception as e:
@@ -1654,6 +2112,7 @@ def send_daily_reminders():
 
 
 def send_weekly_summary():
+    """Sunday-morning narrative digest. Uses the new editorial voice."""
     for chat_id in list_all_users():
         user = get_user_data(chat_id)
         entries = user.get("entries", [])
@@ -1663,23 +2122,12 @@ def send_weekly_summary():
         this_week = [e for e in entries if datetime.date.fromisoformat(e["date"]) >= week_ago]
         if not this_week:
             continue
-        avg = sum(e["mood"] for e in this_week) / len(this_week)
-        avg_emoji = MOODS[str(max(1, min(5, round(avg))))]["emoji"]
-        tip = random.choice(TIPS)
-        text = f"""📅 <b>Tu semana en Egoera</b>
-
-Esta semana has registrado {len(this_week)} dias.
-{avg_emoji} Media semanal: <b>{avg:.1f}/5</b>
-🔥 Racha actual: <b>{user.get('streak', 0)} dias</b>
-
-💡 <b>Tip de la semana:</b>
-{tip['text']}
-
-— <i>{tip['source']}</i>
-
-Sigue cuidandote. 🧠"""
+        lang = user.get("lang", "es")
+        title = t("week_title", lang)
+        narrative = _weekly_narrative(user, lang)
+        text = f"{title}\n\n{narrative}" if narrative else f"{title}\n\n{t('week_empty', lang)}"
         try:
-            send_message(chat_id, text)
+            send_message(chat_id, text, disable_preview=True)
         except Exception as e:
             log.warning(f"Weekly summary failed for {chat_id}: {e}")
 
@@ -1706,18 +2154,18 @@ def check_low_mood_trend():
             try:
                 send_message(
                     chat_id,
-                    f"""🤍 <b>Solo queria escribirte</b>
+                    f"""🤍 <b>Solo quería escribirte</b>
 
-He notado que esta semana te has sentido peor que la anterior (media {statistics.fmean(this_week):.1f} vs {statistics.fmean(prev_week):.1f}).
+Esta semana te he leído algo más cuesta arriba que la anterior (media {statistics.fmean(this_week):.1f} frente a {statistics.fmean(prev_week):.1f}). No pasa nada por estar así.
 
-No pasa nada por estar asi. Puedo acompanarte con:
-• /respirar — respiracion guiada
+Si te apetece, podemos ir despacio:
+• /respirar — respiración guiada
 • /grounding — volver al presente
-• /journal — desahogarte por escrito
+• /journal — soltar por escrito
 
-Si lo necesitas: /sos. Y recuerda que Ander atiende en <a href=\"mailto:hola@egoera.es\">hola@egoera.es</a>.
+Y si lo necesitas, /sos. Ander también atiende en <a href=\"mailto:hola@egoera.es\">hola@egoera.es</a>.
 
-Cuidate. 🌱""",
+Cuídate. 🌱""",
                     disable_preview=True,
                 )
                 user["last_low_mood_alert"] = today_iso

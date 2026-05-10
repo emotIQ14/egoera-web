@@ -1,0 +1,206 @@
+/* =====================================================================
+   V5Hud · sticky bar gamificado (progress + 5 estrellas + saltar)
+   ---------------------------------------------------------------------
+   Tokens scoped al .hud para no contaminar globals. Replica de la HUD
+   del template V4 gamified pero responsive a fondo (versión compacta
+   en móvil: solo back arrow + barra + porcentaje, sin estrellas).
+   ===================================================================== */
+
+.hud {
+  --blue: #1d2bdb;
+  --blue-mid: #2a3aff;
+  --cream: #f1ead8;
+  --ink: #1d2bdb;
+  --ink-soft: rgba(29, 43, 219, 0.82);
+  --tone: #1d2bdb;
+  --serif: var(--font-serif), "Fraunces", serif;
+  --display: var(--font-display), "Caveat", cursive;
+  --sans: var(--font-sans), "Inter", sans-serif;
+  --mono: var(--font-mono), "JetBrains Mono", monospace;
+
+  position: sticky;
+  top: 0;
+  z-index: 200;
+
+  background: rgba(243, 236, 222, 0.94);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1.5px solid var(--blue);
+  padding: 14px 32px;
+
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 28px;
+  align-items: center;
+
+  font-family: var(--sans);
+  color: var(--ink);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  min-height: 44px;
+}
+
+.back:hover {
+  color: var(--blue-mid);
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.progress .lbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.track {
+  flex: 1;
+  height: 18px;
+  border: 1.5px solid var(--blue);
+  border-radius: 999px;
+  background: var(--cream);
+  position: relative;
+  overflow: hidden;
+  min-width: 120px;
+}
+
+.fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, var(--blue), var(--tone));
+  width: 0%;
+  transition: width 0.25s ease;
+}
+
+.marks {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  pointer-events: none;
+}
+
+.mark {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 1.5px solid var(--blue);
+  transition: all 0.2s;
+  z-index: 2;
+}
+
+.markDone {
+  background: var(--cream);
+  border-color: var(--cream);
+  box-shadow: 0 0 0 2px var(--blue);
+}
+
+.pct {
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--blue);
+  line-height: 1;
+  min-width: 48px;
+  text-align: right;
+}
+
+.stars {
+  display: flex;
+  gap: 6px;
+}
+
+.star {
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid var(--blue);
+  border-radius: 50%;
+  background: var(--cream);
+  color: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.starEarned {
+  background: var(--blue);
+  color: var(--cream);
+  transform: scale(1.05);
+}
+
+.cta {
+  background: var(--blue);
+  color: var(--cream);
+  border: none;
+  padding: 10px 18px;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 999px;
+  white-space: nowrap;
+  min-height: 44px;
+}
+
+.cta:hover {
+  background: var(--blue-mid);
+}
+
+@media (max-width: 1100px) {
+  .hud {
+    padding: 12px 18px;
+    grid-template-columns: auto 1fr auto;
+    gap: 14px;
+  }
+  .stars {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .hud {
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    padding: 10px 14px;
+  }
+  .back span {
+    display: none;
+  }
+  .back::before {
+    content: "◀";
+    font-size: 14px;
+  }
+  .progress .lbl {
+    display: none;
+  }
+  .pct {
+    font-size: 22px;
+    min-width: 38px;
+  }
+  .cta {
+    display: none;
+  }
+}

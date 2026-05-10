@@ -1,0 +1,85 @@
+{
+  "_meta": {
+    "locale": "en",
+    "label": "English",
+    "isBase": false,
+    "todo": [
+      "Confirm 'Cuaderno' translation: 'Notebook' (literal) vs 'Journal' (closer in editorial context).",
+      "Hero copy of /boletin currently translated literally — Ander may want a more idiomatic version."
+    ]
+  },
+  "nav": {
+    "home": "Home",
+    "cuaderno": "Notebook",
+    "sobre": "About Ander",
+    "boletin": "Newsletter",
+    "manifiesto": "Manifesto",
+    "diario": "Diary",
+    "consulta": "Book a session",
+    "ariaPrincipal": "Main navigation",
+    "ariaIdiomas": "Change language"
+  },
+  "footer": {
+    "rights": "© {year} · Egoera · Bilbao",
+    "tagline": "psychology, slowly",
+    "handle": "@egoera",
+    "publishedSundays": "published on Sundays",
+    "legal": "Legal notice",
+    "privacy": "Privacy",
+    "cookies": "Cookies",
+    "ariaLegal": "Legal links"
+  },
+  "cta": {
+    "subscribe": "Subscribe",
+    "readMore": "Read more",
+    "back": "← back",
+    "send": "Send",
+    "viewAll": "View all",
+    "discover": "Discover"
+  },
+  "form": {
+    "name": "Your name",
+    "namePlaceholder": "how you'd like to be greeted",
+    "email": "Your email",
+    "emailPlaceholder": "hi@domain.com",
+    "language": "Which language",
+    "languageOptions": {
+      "es": "Spanish",
+      "eu": "Basque",
+      "both": "both versions"
+    },
+    "legal": "By subscribing you accept the privacy policy. Egoera uses no trackers or pixels.",
+    "submit": "Send the letter"
+  },
+  "boletin": {
+    "title": "A letter, every Sunday",
+    "tagline": "Ten minutes of reading, Sundays at eleven.",
+    "stats": {
+      "readers": "readers",
+      "editions": "editions",
+      "openRate": "% open rate"
+    }
+  },
+  "manifiesto": {
+    "title": "Manifesto",
+    "tagline": "What we believe, in a low voice."
+  },
+  "sobre": {
+    "title": "About Ander",
+    "tagline": "Psychologist in Bilbao."
+  },
+  "blog": {
+    "title": "Notebook",
+    "tagline": "Long writing, weekly."
+  },
+  "home": {
+    "title": "Egoera — psychology, slowly",
+    "tagline": "A place to feel slowly."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong.",
+    "minutes": "min",
+    "comingSoon": "coming soon"
+  }
+}

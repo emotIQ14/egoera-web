@@ -8,6 +8,20 @@ import { BRAIN_REGIONS } from "@/lib/egoera-data";
 export function DarkFooter() {
   const pathname = usePathname();
   if (pathname.startsWith("/diario")) return null;
+  // En la home (/) la nueva home-client renderiza su propio <EgoeraFooter />.
+  if (pathname === "/") return null;
+  // Rutas con tema cream — cada página renderiza su footer cream propio
+  // (o el shared EgoeraFooter cuando se migre).
+  const isCreamRoute =
+    pathname === "/blog" ||
+    pathname.startsWith("/blog/") ||
+    pathname === "/sobre-nosotros" ||
+    pathname.startsWith("/sobre-nosotros/") ||
+    pathname === "/manifiesto" ||
+    pathname.startsWith("/manifiesto/") ||
+    pathname === "/boletin" ||
+    pathname.startsWith("/boletin/");
+  if (isCreamRoute) return null;
 
   return (
     <footer

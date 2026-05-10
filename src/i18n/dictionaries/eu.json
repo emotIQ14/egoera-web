@@ -1,0 +1,87 @@
+{
+  "_meta": {
+    "locale": "eu",
+    "label": "Euskara",
+    "isBase": false,
+    "todo": [
+      "Revisar 'Cargando' / 'Loading' por hablante nativo (uso 'Kargatzen...').",
+      "Confirmar 'Reservar consulta' → 'Kontsulta erreserbatu' vs 'Hitzordua hartu' (preferencia de Ander).",
+      "Validar 'Suscribirme' → 'Harpidetu' (forma imperativa, podría ser 'Harpidetu nahi dut').",
+      "El boletín se publica también en euskara — pendiente de confirmar copy definitivo de hero/stats."
+    ]
+  },
+  "nav": {
+    "home": "Hasiera",
+    "cuaderno": "Koadernoa",
+    "sobre": "Anderri buruz",
+    "boletin": "Buletina",
+    "manifiesto": "Manifestua",
+    "diario": "Egunerokoa",
+    "consulta": "Kontsulta erreserbatu",
+    "ariaPrincipal": "Nabigazio nagusia",
+    "ariaIdiomas": "Hizkuntza aldatu"
+  },
+  "footer": {
+    "rights": "© {year} · Egoera · Bilbo",
+    "tagline": "psikologia, astiro",
+    "handle": "@egoera",
+    "publishedSundays": "igandeetan argitaratua",
+    "legal": "Lege oharra",
+    "privacy": "Pribatutasuna",
+    "cookies": "Cookieak",
+    "ariaLegal": "Lege estekak"
+  },
+  "cta": {
+    "subscribe": "Harpidetu",
+    "readMore": "Gehiago irakurri",
+    "back": "← itzuli",
+    "send": "Bidali",
+    "viewAll": "Dena ikusi",
+    "discover": "Aurkitu"
+  },
+  "form": {
+    "name": "Zure izena",
+    "namePlaceholder": "nola agurtzea nahi duzun",
+    "email": "Zure emaila",
+    "emailPlaceholder": "kaixo@domeinua.eus",
+    "language": "Zein hizkuntzatan",
+    "languageOptions": {
+      "es": "gaztelania",
+      "eu": "euskara",
+      "both": "biak"
+    },
+    "legal": "Harpidetzean pribatutasun politika onartzen duzu. Egoerak ez du trackerrik ez pixelik erabiltzen.",
+    "submit": "Gutuna bidali"
+  },
+  "boletin": {
+    "title": "Gutun bat, igandero",
+    "tagline": "Hamar minutuko irakurketa, igandeetan hamaiketan.",
+    "stats": {
+      "readers": "irakurle",
+      "editions": "argitaratutako",
+      "openRate": "% irekiera"
+    }
+  },
+  "manifiesto": {
+    "title": "Manifestua",
+    "tagline": "Sinesten duguna, ahopeka."
+  },
+  "sobre": {
+    "title": "Anderri buruz",
+    "tagline": "Psikologoa Bilbon."
+  },
+  "blog": {
+    "title": "Koadernoa",
+    "tagline": "Idatzi luzeak, astero."
+  },
+  "home": {
+    "title": "Egoera — psikologia, astiro",
+    "tagline": "Astiro sentitzeko leku bat."
+  },
+  "common": {
+    "loading": "Kargatzen...",
+    "error": "Errore bat gertatu da.",
+    "minutes": "min",
+    "comingSoon": "laster"
+  }
+}

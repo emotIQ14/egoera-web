@@ -1,30 +1,57 @@
 {
-  "name": "Egoera — El vlog",
+  "name": "Egoera — Diario Emocional",
   "short_name": "Egoera",
-  "description": "Psicologia, despacio. El vlog personal de Ander Bilbao desde Donostia.",
-  "start_url": "/",
+  "description": "Diario emocional para registrar como te sientes, descubrir tus patrones y volver a la semana con otras preguntas. Sin algoritmos, sin notificaciones agresivas.",
+  "id": "es.egoera.diario",
+  "start_url": "/diario",
+  "scope": "/diario",
   "display": "standalone",
-  "background_color": "#0f1311",
-  "theme_color": "#0f1311",
+  "background_color": "#f1ead8",
+  "theme_color": "#1d2bdb",
   "orientation": "portrait",
-  "categories": ["health", "lifestyle", "education"],
+  "categories": ["health", "lifestyle", "education", "productivity"],
   "lang": "es",
+  "dir": "ltr",
+  "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/egoera-logo.png",
+      "src": "/icons/logo-brain-tree-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/egoera-logo.png",
+      "src": "/icons/logo-brain-tree-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/egoera-logo.png",
+      "src": "/icons/logo-brain-tree-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    },
+    {
+      "src": "/icons/logo-brain-tree-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Hacer check-in",
+      "short_name": "Check-in",
+      "description": "Registrar como te sientes ahora mismo",
+      "url": "/diario/check-in",
+      "icons": [{ "src": "/icons/logo-brain-tree-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Revision semanal",
+      "short_name": "Semanal",
+      "description": "Mira como ha sido tu semana",
+      "url": "/diario/semanal",
+      "icons": [{ "src": "/icons/logo-brain-tree-192.png", "sizes": "192x192" }]
     }
   ]
 }

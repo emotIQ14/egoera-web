@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
+import { Caveat, Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 import { DarkNav } from "@/components/layout/DarkNav";
 import { DarkFooter } from "@/components/layout/DarkFooter";
 import { ExitIntentPopup } from "@/components/monetization/ExitIntentPopup";
@@ -24,6 +24,13 @@ const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
+  display: "swap",
+});
+
+const caveat = Caveat({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -52,10 +59,10 @@ export const metadata: Metadata = {
   creator: "Ander Bilbao Castejon",
   icons: {
     icon: [
-      { url: "/egoera-logo.png", type: "image/png" },
+      { url: "/icons/logo-brain-tree-512.png", type: "image/png" },
       { url: "/favicon.ico" },
     ],
-    apple: "/egoera-logo.png",
+    apple: "/icons/logo-brain-tree-512.png",
   },
   openGraph: {
     type: "website",
@@ -64,12 +71,12 @@ export const metadata: Metadata = {
     title: "Egoera — El vlog",
     description:
       "Psicologia, despacio. Un vlog personal de Ander Bilbao desde Donostia.",
-    images: [{ url: "/egoera-social.png" }],
+    images: [{ url: "/icons/logo-brain-tree-512.png" }],
   },
   twitter: {
     card: "summary_large_image",
     creator: "@egoerapsikolog",
-    images: ["/egoera-social.png"],
+    images: ["/icons/logo-brain-tree-512.png"],
   },
   robots: {
     index: true,
@@ -85,21 +92,43 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${fraunces.variable} ${inter.variable} ${jetbrainsMono.variable} h-full`}
-      style={{ backgroundColor: "#141815" }}
+      className={`${fraunces.variable} ${inter.variable} ${jetbrainsMono.variable} ${caveat.variable} h-full`}
+      style={{ backgroundColor: "#f1ead8" }}
     >
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#141815" />
+        <meta name="theme-color" content="#1d2bdb" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Egoera",
+              url: "https://egoera.es",
+              logo: "https://egoera.es/wp-content/uploads/2026/04/egoera-logo-brain-tree.png",
+              founder: { "@type": "Person", name: "Ander Bilbao Castejón" },
+              sameAs: [
+                "https://www.instagram.com/egoera.psikologia/",
+                "https://www.linkedin.com/in/anderbilbaoc/",
+              ],
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Bilbao",
+                addressCountry: "ES",
+              },
+            }),
+          }}
+        />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover"
         />
-        <link rel="icon" type="image/png" href="/egoera-logo.png" />
+        <link rel="icon" type="image/png" href="/icons/logo-brain-tree-512.png" />
       </head>
       <body
         className="min-h-full flex flex-col antialiased overflow-x-hidden"
-        style={{ backgroundColor: "#141815" }}
+        style={{ backgroundColor: "#f1ead8" }}
       >
         <DarkNav />
         <main className="flex-1 overflow-x-hidden">{children}</main>

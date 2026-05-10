@@ -42,3 +42,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# bot runtime data + logs (user data, ephemeral)
+bot/data/
+bot/logs/
+bot/__pycache__/
+
+# misc generated
+.data/

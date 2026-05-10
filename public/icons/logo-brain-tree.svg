@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Egoera brain-tree logo
+       Brain hemisphere (left) + tree top (right) + shared trunk + roots -->
+  <g stroke="#1d2bdb" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none">
+
+    <!-- Brain hemisphere (left) — outline -->
+    <path d="M 218 100
+             Q 178 96, 152 124
+             Q 130 150, 134 184
+             Q 110 192, 110 220
+             Q 110 244, 130 256
+             Q 122 274, 134 290
+             Q 124 310, 144 322
+             Q 144 342, 168 348
+             Q 188 364, 222 358
+             Q 232 356, 240 348
+             L 240 250
+             L 240 100
+             Z"/>
+    <!-- Brain inner gyri / curves -->
+    <path d="M 168 142 Q 188 152, 202 166" />
+    <path d="M 144 188 Q 168 196, 188 188 Q 200 184, 210 192" />
+    <path d="M 138 232 Q 162 226, 186 240 Q 198 248, 218 240" />
+    <path d="M 156 280 Q 178 270, 196 286 Q 210 296, 226 290" />
+    <path d="M 174 322 Q 196 318, 216 332" />
+    <path d="M 200 142 L 200 350" stroke-dasharray="2 6" stroke-width="4"/>
+
+    <!-- Tree top (right) — central trunk -->
+    <path d="M 240 360 L 240 100" stroke="none"/>
+
+    <!-- Tree branches -->
+    <path d="M 244 200 Q 268 178, 300 168
+             Q 332 160, 360 168" />
+    <path d="M 248 232 Q 282 218, 322 222
+             Q 360 226, 380 244" />
+    <path d="M 252 168 Q 280 144, 312 138
+             Q 340 134, 358 142" />
+    <path d="M 244 130 Q 268 110, 300 108" />
+    <path d="M 250 270 Q 290 260, 326 274
+             Q 358 286, 374 282" />
+
+    <!-- Leaves -->
+    <ellipse cx="318" cy="146" rx="14" ry="22" transform="rotate(20 318 146)"/>
+    <ellipse cx="350" cy="138" rx="12" ry="20" transform="rotate(-15 350 138)"/>
+    <ellipse cx="370" cy="160" rx="14" ry="22" transform="rotate(35 370 160)"/>
+    <ellipse cx="338" cy="180" rx="12" ry="20" transform="rotate(0 338 180)"/>
+    <ellipse cx="296" cy="178" rx="11" ry="18" transform="rotate(-30 296 178)"/>
+    <ellipse cx="362" cy="206" rx="14" ry="22" transform="rotate(45 362 206)"/>
+    <ellipse cx="392" cy="220" rx="12" ry="22" transform="rotate(20 392 220)"/>
+    <ellipse cx="334" cy="218" rx="13" ry="20" transform="rotate(-10 334 218)"/>
+    <ellipse cx="298" cy="246" rx="14" ry="22" transform="rotate(-25 298 246)"/>
+    <ellipse cx="346" cy="252" rx="13" ry="20" transform="rotate(0 346 252)"/>
+    <ellipse cx="380" cy="260" rx="11" ry="18" transform="rotate(40 380 260)"/>
+    <ellipse cx="324" cy="280" rx="13" ry="22" transform="rotate(-15 324 280)"/>
+    <ellipse cx="362" cy="290" rx="14" ry="20" transform="rotate(20 362 290)"/>
+    <!-- Big leaf with veins (decorative) -->
+    <path d="M 300 320 Q 320 300, 348 304 Q 372 308, 376 332
+             Q 372 354, 348 358 Q 322 358, 302 348 Q 290 336, 300 320 Z"/>
+    <path d="M 308 332 L 368 336 M 314 346 L 358 346" stroke-width="4"/>
+
+    <!-- Trunk -->
+    <path d="M 240 360 L 240 414" />
+    <path d="M 240 360 L 252 360" />
+
+    <!-- Roots -->
+    <path d="M 240 414
+             Q 220 432, 198 440
+             Q 178 444, 162 458
+             Q 152 466, 142 478" />
+    <path d="M 240 414
+             Q 224 426, 208 440
+             Q 196 452, 192 470" />
+    <path d="M 240 414
+             Q 244 432, 240 454
+             Q 234 472, 228 488" />
+    <path d="M 240 414
+             Q 250 432, 268 446
+             Q 282 458, 290 478" />
+    <path d="M 240 414
+             Q 264 430, 286 440
+             Q 308 450, 326 466
+             Q 340 478, 350 488" />
+    <path d="M 240 414
+             Q 232 430, 222 444
+             Q 218 458, 212 472" />
+  </g>
+</svg>

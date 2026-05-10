@@ -1,0 +1,252 @@
+/* =====================================================================
+   EgoeraNav · barra superior compartida (cobalto + crema)
+   ---------------------------------------------------------------------
+   Tokens redefinidos en .nav para no contaminar el resto del sitio
+   (que usa el dark mode bosque). Replica eg-nav del mockup.
+   ===================================================================== */
+
+.nav {
+  --blue: #1d2bdb;
+  --blue-deep: #0f1baa;
+  --cream: #f1ead8;
+  --cream-2: #e6dec9;
+  --rule-cream: rgba(241, 234, 216, 0.32);
+  --serif: var(--font-serif), "Fraunces", Georgia, serif;
+  --display: var(--font-display), "Caveat", cursive;
+  --sans: var(--font-sans), "Inter", system-ui, sans-serif;
+  --mono: var(--font-mono), "JetBrains Mono", monospace;
+
+  position: sticky;
+  top: 0;
+  z-index: 60;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+
+  background: rgba(15, 27, 170, 0.92);
+  border-bottom: 1.5px solid var(--cream);
+  color: var(--cream);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  padding: 14px 32px;
+  font-family: var(--sans);
+}
+
+@media (max-width: 768px) {
+  .nav {
+    padding: 12px 18px;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav {
+    padding: 11px 16px;
+    gap: 10px;
+  }
+}
+
+/* ─── badge / logo ─────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+
+  color: var(--cream);
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.badge:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 4px;
+}
+
+@media (max-width: 480px) {
+  .badge { font-size: 22px; gap: 6px; }
+  .badge em { font-size: 10px; letter-spacing: 0.18em; }
+  .star { width: 18px; height: 18px; }
+}
+
+.badge em {
+  font-family: var(--mono);
+  font-style: normal;
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.78;
+  margin-left: 4px;
+}
+
+.star {
+  width: 22px;
+  height: 22px;
+  color: var(--cream);
+}
+
+/* ─── links ────────────────────────────────────────────────── */
+.links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.links a {
+  position: relative;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
+  color: var(--cream);
+  text-decoration: none;
+  opacity: 0.82;
+  transition: opacity 0.15s;
+  padding: 4px 2px;
+  border-radius: 4px;
+}
+
+.links a:hover {
+  opacity: 1;
+}
+
+.links a:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--cream);
+  outline-offset: 4px;
+}
+
+.links a.active {
+  opacity: 1;
+  border-bottom: 1.5px solid var(--cream);
+  border-radius: 0;
+}
+
+@media (max-width: 900px) {
+  .links {
+    display: none;
+  }
+}
+
+/* ─── tools (lang switcher + CTA) ─────────────────────────── */
+.tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .tools {
+    gap: 10px;
+  }
+}
+
+/* ─── CTA ──────────────────────────────────────────────────── */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 9px 18px;
+  border-radius: 999px;
+
+  background: var(--cream);
+  color: var(--blue);
+  text-decoration: none;
+
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+
+  transition: background 0.15s;
+}
+
+.cta:hover {
+  background: var(--cream-2);
+}
+
+.cta:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+  .cta {
+    padding: 8px 14px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cta {
+    padding: 8px 12px;
+    font-size: 10.5px;
+    letter-spacing: 0.02em;
+  }
+}
+
+/* ─── menú móvil minimalista ──────────────────────────────── */
+.mobile {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .mobile {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-top: 4px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--rule-cream);
+  }
+  .mobile a {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cream);
+    text-decoration: none;
+    opacity: 0.78;
+    /* tap target ≥ 44px tall */
+    padding: 8px 4px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 4px;
+  }
+  .mobile a:focus-visible {
+    outline: 2px solid var(--cream);
+    outline-offset: 2px;
+    opacity: 1;
+  }
+  .mobile a.active {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile {
+    gap: 10px 16px;
+  }
+  .mobile a {
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+  }
+}

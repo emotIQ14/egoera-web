@@ -1,0 +1,123 @@
+/* =====================================================================
+   EgoeraFooter · pie de página minimal compartido
+   ---------------------------------------------------------------------
+   Tokens locales en .foot. Cobalto deep + crema. Se queda corto a
+   propósito: handle, año, dos enlaces legales.
+   ===================================================================== */
+
+.foot {
+  --blue: #1d2bdb;
+  --blue-deep: #0f1baa;
+  --cream: #f1ead8;
+  --cream-2: #e6dec9;
+  --rule-cream: rgba(241, 234, 216, 0.32);
+  --serif: var(--font-serif), "Fraunces", Georgia, serif;
+  --display: var(--font-display), "Caveat", cursive;
+  --sans: var(--font-sans), "Inter", system-ui, sans-serif;
+  --mono: var(--font-mono), "JetBrains Mono", monospace;
+
+  background: var(--blue-deep);
+  color: var(--cream);
+  border-top: 1.5px solid var(--cream);
+  font-family: var(--sans);
+  padding: 32px 0 28px;
+}
+
+.wrap {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.handle {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--cream);
+  letter-spacing: -0.005em;
+}
+
+.tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(241, 234, 216, 0.7);
+}
+
+.links {
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(241, 234, 216, 0.7);
+}
+
+.links a {
+  color: var(--cream);
+  text-decoration: none;
+  opacity: 0.78;
+  transition: opacity 0.15s;
+  padding: 6px 2px;
+  border-radius: 4px;
+}
+
+.links a:hover {
+  opacity: 1;
+}
+
+.links a:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--cream);
+  outline-offset: 3px;
+}
+
+.year {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--rule-cream);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(241, 234, 216, 0.55);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .foot { padding: 26px 0 22px; }
+  .wrap { padding: 0 22px; }
+  .handle { font-size: 22px; }
+  .row { gap: 14px; }
+  .links { gap: 14px 18px; font-size: 10.5px; letter-spacing: 0.18em; }
+}
+
+@media (max-width: 480px) {
+  .wrap { padding: 0 18px; }
+  .handle { font-size: 20px; }
+  .tag { font-size: 9.5px; letter-spacing: 0.18em; }
+  .year { font-size: 9.5px; letter-spacing: 0.18em; gap: 8px; }
+}

@@ -1,0 +1,771 @@
+/* =====================================================================
+   V5ArticleShell · cobalto + crema, tokens scoped (no contaminan globals)
+   ---------------------------------------------------------------------
+   Toda regla cuelga de .v5 para que el sistema de colores cobalto/crema
+   solo afecte a las páginas /blog/[slug] y no se filtre al resto del
+   sitio (que sigue en dark-mode bosque).
+   ===================================================================== */
+
+.v5 {
+  --blue: #1d2bdb;
+  --blue-deep: #0f1baa;
+  --blue-mid: #2a3aff;
+  --cream: #f1ead8;
+  --cream-2: #e6dec9;
+  --cream-3: #d8cfb6;
+  --ink: #1d2bdb;
+  --ink-soft: rgba(29, 43, 219, 0.82);
+  --rule: rgba(29, 43, 219, 0.32);
+  --rule-soft: rgba(29, 43, 219, 0.14);
+  --tone: #1d2bdb;
+
+  --serif: var(--font-serif), "Fraunces", Georgia, serif;
+  --display: var(--font-display), "Caveat", cursive;
+  --sans: var(--font-sans), "Inter", system-ui, sans-serif;
+  --mono: var(--font-mono), "JetBrains Mono", monospace;
+
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 80px;
+  position: relative;
+  min-height: 100vh;
+}
+
+.v5 ::selection {
+  background: var(--blue);
+  color: var(--cream);
+}
+
+.wrap {
+  max-width: 1340px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+@media (max-width: 1100px) {
+  .wrap {
+    padding: 0 24px;
+  }
+}
+
+/* ─── HERO ───────────────────────────────────────────────── */
+.hero {
+  padding: 48px 0 32px;
+  position: relative;
+}
+
+.crumbs {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 36px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.crumbs a {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.crumbs a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.crumbs :global(.sep) {
+  opacity: 0.5;
+}
+
+.crumbs :global(.here) {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 0;
+  border: 1.5px solid var(--blue);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.heroText {
+  padding: 44px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-right: 1.5px solid var(--blue);
+  background: var(--cream);
+}
+
+.heroCat {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--blue);
+  align-self: flex-start;
+}
+
+.heroCat::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: var(--tone);
+  border: 1.5px solid var(--blue);
+  border-radius: 50%;
+}
+
+.heroTitle {
+  font-family: var(--display);
+  font-size: clamp(54px, 9vw, 140px);
+  line-height: 0.86;
+  font-weight: 600;
+  color: var(--blue);
+  letter-spacing: -0.012em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.heroTitle em {
+  font-style: italic;
+}
+
+.heroSub {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(17px, 1.6vw, 22px);
+  line-height: 1.5;
+  color: var(--ink);
+  max-width: 560px;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.heroMeta {
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px dashed var(--blue);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.heroMeta :global(.author) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--blue);
+}
+
+.heroMeta :global(.author .av) {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.heroIllu {
+  background: var(--tone);
+  color: var(--cream);
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  min-height: 480px;
+}
+
+.heroIllu :global(.top) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.heroIllu :global(.stamp) {
+  border: 1px solid rgba(243, 236, 222, 0.6);
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+
+.heroIllu :global(.svgwrap) {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 14px 0;
+}
+
+.heroIllu :global(.svgwrap svg) {
+  width: 70%;
+  max-width: 280px;
+}
+
+.heroIllu :global(.cap) {
+  font-family: var(--display);
+  font-size: clamp(40px, 5vw, 60px);
+  line-height: 0.92;
+  font-weight: 600;
+}
+
+.heroIllu :global(.cap em) {
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.heroIllu :global(.foot) {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(243, 236, 222, 0.35);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ─── READING SHELL: TOC + body ─────────────────────────── */
+.shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 60px;
+  margin-top: 56px;
+  align-items: start;
+}
+
+.toc {
+  position: sticky;
+  top: 88px;
+  border-left: 1.5px solid var(--blue);
+  padding: 6px 0 6px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tocEye {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+}
+
+.toc a {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  text-decoration: none;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--rule);
+  transition: color 0.15s, padding 0.15s;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.toc a :global(.n) {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: var(--blue);
+  opacity: 0.7;
+}
+
+.toc a:hover {
+  color: var(--blue);
+  padding-left: 4px;
+}
+
+.tocMobile {
+  display: none;
+}
+
+/* artículo */
+.body {
+  max-width: 740px;
+}
+
+/* Estilos del HTML inyectado (el contenido viene de WP via dangerouslySetInnerHTML).
+   Los wrappers .body y .body * apuntan a etiquetas estándar — h2, p, ul, etc. */
+.body :global(h2) {
+  font-family: var(--display);
+  font-size: clamp(44px, 5vw, 72px);
+  line-height: 0.95;
+  font-weight: 600;
+  color: var(--blue);
+  letter-spacing: -0.005em;
+  margin: 64px 0 18px;
+  scroll-margin-top: 100px;
+  text-wrap: balance;
+}
+
+.body :global(h2 em) {
+  font-style: italic;
+}
+
+.body :global(h2:first-child) {
+  margin-top: 0;
+}
+
+.body :global(h3) {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 500;
+  font-style: italic;
+  margin: 36px 0 12px;
+  color: var(--blue);
+}
+
+.body :global(p) {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 19px;
+  line-height: 1.7;
+  color: var(--ink);
+  margin-bottom: 24px;
+  text-wrap: pretty;
+}
+
+.body :global(em) {
+  font-style: italic;
+  color: var(--blue);
+  font-weight: 500;
+}
+
+.body :global(strong) {
+  font-weight: 600;
+  color: var(--blue);
+}
+
+.body :global(blockquote) {
+  margin: 40px 0;
+  padding: 28px 32px;
+  background: var(--blue);
+  color: var(--cream);
+  border-radius: 4px;
+  position: relative;
+}
+
+.body :global(blockquote p) {
+  font-family: var(--display);
+  font-size: clamp(28px, 3vw, 38px);
+  font-weight: 600;
+  line-height: 1.05;
+  color: var(--cream);
+  margin: 0;
+}
+
+.body :global(blockquote em) {
+  color: var(--cream);
+  opacity: 0.8;
+}
+
+.body :global(blockquote cite),
+.body :global(blockquote .cite) {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-top: 14px;
+  opacity: 0.8;
+  font-style: normal;
+}
+
+.body :global(ul) {
+  list-style: none;
+  margin: 24px 0;
+  padding: 0;
+}
+
+.body :global(ul li) {
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.6;
+  padding: 14px 0 14px 32px;
+  border-bottom: 1px dashed var(--rule);
+  position: relative;
+  font-weight: 300;
+}
+
+.body :global(ul li::before) {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.body :global(ul li:last-child) {
+  border-bottom: none;
+}
+
+.body :global(ol) {
+  margin: 24px 0;
+  padding-left: 24px;
+}
+
+.body :global(ol li) {
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.6;
+  padding: 6px 0;
+  font-weight: 300;
+}
+
+.body :global(a) {
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.body :global(a:hover) {
+  text-decoration-thickness: 2px;
+}
+
+.body :global(figure) {
+  margin: 32px 0;
+}
+
+.body :global(img) {
+  max-width: 100%;
+  height: auto;
+  border: 1.5px solid var(--blue);
+  border-radius: 4px;
+  display: block;
+}
+
+.body :global(figcaption) {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-top: 10px;
+  text-align: center;
+}
+
+.body :global(hr) {
+  border: none;
+  border-top: 1.5px solid var(--blue);
+  margin: 48px 0;
+}
+
+.body :global(code) {
+  font-family: var(--mono);
+  font-size: 14px;
+  background: var(--cream-2);
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: var(--blue);
+}
+
+.body :global(pre) {
+  background: var(--blue);
+  color: var(--cream);
+  padding: 18px 22px;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 24px 0;
+}
+
+.body :global(pre code) {
+  background: transparent;
+  padding: 0;
+  color: var(--cream);
+}
+
+/* ─── FOOTER del artículo (sello + mood-out + related) ─── */
+.footer {
+  padding: 80px 0 0;
+}
+
+.related {
+  padding: 60px 0 0;
+}
+
+.relatedHead {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  padding-bottom: 18px;
+  margin-bottom: 24px;
+  border-bottom: 1.5px solid var(--blue);
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.relatedHead .h {
+  font-family: var(--display);
+  font-size: clamp(44px, 5vw, 72px);
+  font-weight: 600;
+  line-height: 0.95;
+  color: var(--blue);
+  margin: 0;
+}
+
+.relatedHead .h em {
+  font-style: italic;
+}
+
+.lbl {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+  border: 1.5px solid var(--blue);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.relatedCard {
+  padding: 32px 36px;
+  background: var(--cream);
+  border-right: 1.5px solid var(--blue);
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 240px;
+  transition: background 0.15s;
+}
+
+.relatedCard:last-child {
+  border-right: none;
+  background: var(--blue);
+  color: var(--cream);
+}
+
+.relatedCard:hover {
+  background: var(--cream-2);
+}
+
+.relatedCard:last-child:hover {
+  background: var(--ink);
+}
+
+.relatedCard :global(.ncat) {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.relatedCard :global(.nt) {
+  font-family: var(--display);
+  font-size: clamp(28px, 3vw, 44px);
+  font-weight: 600;
+  line-height: 0.95;
+  margin: 0;
+}
+
+.relatedCard :global(.nt em) {
+  font-style: italic;
+}
+
+.relatedCard :global(.ns) {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.5;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.relatedCard :global(.nfoot) {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px dashed currentColor;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* ─── Mobile responsive ─────────────────────────────────── */
+@media (max-width: 1100px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+  }
+  .heroText {
+    border-right: none;
+    border-bottom: 1.5px solid var(--blue);
+    padding: 32px;
+  }
+  .heroIllu {
+    padding: 28px;
+    min-height: 360px;
+  }
+  .shell {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-top: 36px;
+  }
+  .toc {
+    display: none;
+  }
+  .tocMobile {
+    display: block;
+    border: 1.5px solid var(--blue);
+    border-radius: 4px;
+    background: var(--cream);
+    padding: 0;
+  }
+  .tocMobile summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 18px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--blue);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .tocMobile summary::-webkit-details-marker {
+    display: none;
+  }
+  .tocMobile summary::after {
+    content: "▾";
+    font-family: var(--sans);
+    font-size: 14px;
+    transition: transform 0.2s;
+  }
+  .tocMobile[open] summary::after {
+    transform: rotate(180deg);
+  }
+  .tocMobile ol {
+    margin: 0;
+    padding: 6px 18px 16px;
+    list-style: none;
+    border-top: 1px dashed var(--blue);
+  }
+  .tocMobile ol li {
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .tocMobile ol li:last-child {
+    border-bottom: none;
+  }
+  .tocMobile a {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+  .tocMobile a :global(.n) {
+    color: var(--blue);
+    opacity: 0.7;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+  .relatedGrid {
+    grid-template-columns: 1fr;
+  }
+  .relatedCard {
+    border-right: none;
+    border-bottom: 1.5px solid var(--blue);
+  }
+  .relatedCard:last-child {
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero {
+    padding: 32px 0 24px;
+  }
+  .heroText {
+    padding: 26px 22px;
+    gap: 14px;
+  }
+  .heroTitle {
+    font-size: clamp(48px, 13vw, 76px);
+  }
+  .heroSub {
+    font-size: 16px;
+  }
+  .heroIllu {
+    padding: 22px;
+    min-height: 280px;
+  }
+  .heroIllu .cap {
+    font-size: 36px;
+  }
+  .body {
+    max-width: 100%;
+  }
+  .body :global(p) {
+    font-size: 17px;
+  }
+  .body :global(h2) {
+    margin: 44px 0 12px;
+  }
+  .crumbs {
+    margin-bottom: 22px;
+    font-size: 10px;
+  }
+  .footer {
+    padding: 56px 0 0;
+  }
+  .related {
+    padding: 40px 0 0;
+  }
+  .relatedCard {
+    padding: 22px 22px;
+    min-height: 180px;
+  }
+}

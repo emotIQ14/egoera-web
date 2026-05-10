@@ -1,18 +1,21 @@
 import type { Metadata, Viewport } from "next";
+import { BottomNav } from "@/components/diary/cobalt/BottomNav";
+import "./diario.css";
 
 export const metadata: Metadata = {
-  title: "Diario Emocional | Egoera",
+  title: "Diario · Egoera",
   description:
-    "Registra tu estado de animo diario, detecta patrones emocionales y entiende mejor como te sientes. Tu herramienta personal de bienestar.",
+    "Diario emocional Egoera. Registra como te sientes, descubre tus patrones y vuelve a la semana con otras preguntas. Sin prisa, sin algoritmos.",
   manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#6BA3BE",
+  themeColor: "#f1ead8",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  viewportFit: "cover",
 };
 
 export default function DiarioLayout({
@@ -21,8 +24,9 @@ export default function DiarioLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-warm-bg">
-      {children}
+    <div className="diario-shell">
+      <main className="diario-main">{children}</main>
+      <BottomNav />
     </div>
   );
 }

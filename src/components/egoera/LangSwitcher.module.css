@@ -1,0 +1,71 @@
+/* =====================================================================
+   LangSwitcher · selector ES / EU / EN dentro de EgoeraNav
+   ---------------------------------------------------------------------
+   Tres botones tipográficos (mono uppercase, como el "·psicología" del
+   badge) sobre el cobalto del nav. El locale activo destaca con la
+   misma "underline cream" que ya usan los enlaces .active.
+   ===================================================================== */
+
+.wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: 2px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-cream, rgba(241, 234, 216, 0.32));
+  background: rgba(241, 234, 216, 0.06);
+
+  font-family: var(--mono, "JetBrains Mono", monospace);
+}
+
+.btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+
+  padding: 5px 10px;
+  border-radius: 999px;
+
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+
+  color: var(--cream, #f1ead8);
+  opacity: 0.66;
+  cursor: pointer;
+  transition: opacity 0.15s, background 0.15s;
+
+  /* Romper el botón en una sola línea */
+  white-space: nowrap;
+}
+
+.btn:hover:not(.active) {
+  opacity: 0.95;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--cream, #f1ead8);
+  outline-offset: 2px;
+}
+
+.btn.active {
+  opacity: 1;
+  background: var(--cream, #f1ead8);
+  color: var(--blue, #1d2bdb);
+}
+
+/* Una pequeña tira separadora visual entre botones cuando ninguno está
+   activo (para que no parezcan una sola palabra). Se anula vía .active. */
+.btn + .btn {
+  position: relative;
+}
+
+@media (max-width: 700px) {
+  .btn {
+    padding: 4px 8px;
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+  }
+}

@@ -1,0 +1,177 @@
+/* =====================================================================
+   V5BreathingTimer · respiración 4-6 guiada (3 minutos)
+   ---------------------------------------------------------------------
+   Tarjeta cobalto con un círculo central que escala con el ciclo.
+   El círculo cambia de tamaño con transition de 4s/1s/6s para que el
+   ojo siga el ritmo sin esfuerzo. Tokens scoped en .timer.
+   ===================================================================== */
+
+.timer {
+  --blue: #1d2bdb;
+  --cream: #f1ead8;
+  --serif: var(--font-serif), "Fraunces", serif;
+  --display: var(--font-display), "Caveat", cursive;
+  --sans: var(--font-sans), "Inter", sans-serif;
+  --mono: var(--font-mono), "JetBrains Mono", monospace;
+
+  margin-top: 32px;
+  padding: 36px;
+  border: 1.5px solid var(--cream);
+  border-radius: 4px;
+  background: var(--blue);
+  color: var(--cream);
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 36px;
+  align-items: center;
+  font-family: var(--sans);
+}
+
+.text h4 {
+  font-family: var(--display);
+  font-size: clamp(40px, 5vw, 56px);
+  line-height: 0.95;
+  font-weight: 600;
+  color: var(--cream);
+  margin: 0;
+}
+
+.text h4 em {
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.text p {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--cream);
+  opacity: 0.9;
+  margin-top: 12px;
+  line-height: 1.5;
+}
+
+.eye {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.eye::before {
+  content: "";
+  width: 32px;
+  height: 1.5px;
+  background: var(--cream);
+}
+
+.controls {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.controls button {
+  background: var(--cream);
+  color: var(--blue);
+  border: none;
+  padding: 12px 20px;
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.controls .ghost {
+  background: transparent;
+  color: var(--cream);
+  border: 1.5px solid var(--cream);
+}
+
+.vis {
+  aspect-ratio: 1;
+  max-width: 320px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid var(--cream);
+  background: radial-gradient(
+    circle,
+    rgba(241, 234, 216, 0.18),
+    transparent 70%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cream);
+  font-family: var(--display);
+  font-size: 56px;
+  font-weight: 600;
+  line-height: 1;
+  flex-direction: column;
+}
+
+.circle.inhale {
+  transform: scale(1);
+  transition: transform 4s ease-in-out;
+}
+
+.circle.hold {
+  transform: scale(1.18);
+  transition: transform 1s ease-in-out;
+}
+
+.circle.exhale {
+  transform: scale(0.7);
+  transition: transform 6s ease-in-out;
+}
+
+.circle.idle {
+  transform: scale(0.85);
+  transition: transform 0.4s ease-out;
+}
+
+.circle small {
+  display: block;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-top: 6px;
+  opacity: 0.8;
+}
+
+.cycle {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cream);
+  opacity: 0.8;
+  margin-top: 14px;
+}
+
+@media (max-width: 1100px) {
+  .timer {
+    grid-template-columns: 1fr;
+    padding: 28px 22px;
+    gap: 26px;
+  }
+  .vis {
+    max-width: 240px;
+  }
+}

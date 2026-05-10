@@ -20,6 +20,18 @@ export function DarkNav() {
   const [scrolled, setScrolled] = useState(false);
 
   const isDiario = pathname.startsWith("/diario");
+  // Rutas con tema cream + EgoeraNav propio. Escondemos la dark-mode legada
+  // para evitar dobles navs durante la transición al diseño editorial cobalto.
+  const isEditorialHome = pathname === "/";
+  const isCreamRoute =
+    pathname === "/blog" ||
+    pathname.startsWith("/blog/") ||
+    pathname === "/sobre-nosotros" ||
+    pathname.startsWith("/sobre-nosotros/") ||
+    pathname === "/manifiesto" ||
+    pathname.startsWith("/manifiesto/") ||
+    pathname === "/boletin" ||
+    pathname.startsWith("/boletin/");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -32,6 +44,8 @@ export function DarkNav() {
   }, [pathname]);
 
   if (isDiario) return null;
+  if (isEditorialHome) return null;
+  if (isCreamRoute) return null;
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";

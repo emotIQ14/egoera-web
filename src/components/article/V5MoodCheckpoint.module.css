@@ -1,0 +1,198 @@
+/* =====================================================================
+   V5MoodCheckpoint · selector de 8 emociones (entrada y salida)
+   ---------------------------------------------------------------------
+   Tokens scoped en .mood. Comparte estética con el resto del módulo
+   article (cobalto + crema). En "out" se añade la comparativa visual
+   de barras antes/ahora con la diferencia numérica.
+   ===================================================================== */
+
+.mood {
+  --blue: #1d2bdb;
+  --cream: #f1ead8;
+  --cream-2: #e6dec9;
+  --ink: #1d2bdb;
+  --ink-soft: rgba(29, 43, 219, 0.82);
+  --rule: rgba(29, 43, 219, 0.32);
+  --tone: #1d2bdb;
+  --serif: var(--font-serif), "Fraunces", serif;
+  --display: var(--font-display), "Caveat", cursive;
+  --sans: var(--font-sans), "Inter", sans-serif;
+  --mono: var(--font-mono), "JetBrains Mono", monospace;
+
+  margin: 36px 0;
+  padding: 32px 36px;
+  border: 2px dashed var(--blue);
+  border-radius: 4px;
+  background: var(--cream);
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 32px;
+  align-items: center;
+  font-family: var(--sans);
+}
+
+.intro h3 {
+  font-family: var(--display);
+  font-size: clamp(36px, 4vw, 56px);
+  line-height: 0.92;
+  font-weight: 600;
+  color: var(--blue);
+  margin: 0;
+}
+
+.intro h3 em {
+  font-style: italic;
+}
+
+.intro p {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 8px 0 0;
+}
+
+.picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.picker button {
+  padding: 12px 18px;
+  border: 1.5px solid var(--blue);
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--blue);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-height: 44px;
+}
+
+.picker button:hover {
+  background: var(--cream-2);
+}
+
+.picker button.active {
+  background: var(--blue);
+  color: var(--cream);
+  transform: scale(1.04);
+}
+
+.confirm {
+  margin-top: 18px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  min-height: 18px;
+}
+
+.confirm strong {
+  color: var(--blue);
+  font-weight: 500;
+  font-family: var(--display);
+  font-size: 22px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* ─── compare bars (solo variante "out") ─────────────────── */
+.compare {
+  margin-top: 16px;
+  border: 1px dashed var(--blue);
+  border-radius: 4px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--cream);
+}
+
+.compareRow {
+  display: grid;
+  grid-template-columns: 80px 1fr 90px;
+  gap: 14px;
+  align-items: center;
+}
+
+.compareRow .lbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.compareRow .bar {
+  height: 14px;
+  border-radius: 999px;
+  background: var(--cream-2);
+  border: 1px solid var(--rule);
+  position: relative;
+  overflow: hidden;
+}
+
+.compareRow .barFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--blue);
+  width: 0%;
+  transition: width 0.6s ease;
+}
+
+.compareRow.now .barFill {
+  background: var(--tone);
+}
+
+.compareRow .val {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--blue);
+  line-height: 1;
+  text-align: right;
+  text-transform: lowercase;
+  letter-spacing: 0;
+}
+
+.delta {
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--blue);
+  margin-top: 8px;
+  line-height: 1.1;
+}
+
+.delta em {
+  font-style: italic;
+}
+
+@media (max-width: 1100px) {
+  .mood {
+    grid-template-columns: 1fr;
+    padding: 26px 22px;
+    gap: 22px;
+  }
+  .compareRow {
+    grid-template-columns: 70px 1fr 70px;
+  }
+}
+
+@media (max-width: 700px) {
+  .picker button {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+  .intro h3 {
+    font-size: 36px;
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "_meta": {
+    "locale": "es",
+    "label": "Castellano",
+    "isBase": true,
+    "note": "Diccionario base. Toda traducción nueva (eu, en) parte de aquí."
+  },
+  "nav": {
+    "home": "Inicio",
+    "cuaderno": "Cuaderno",
+    "sobre": "Sobre Ander",
+    "boletin": "Boletín",
+    "manifiesto": "Manifiesto",
+    "diario": "Diario",
+    "consulta": "Reservar consulta",
+    "ariaPrincipal": "Navegación principal",
+    "ariaIdiomas": "Cambiar idioma"
+  },
+  "footer": {
+    "rights": "© {year} · Egoera · Bilbao",
+    "tagline": "psicología, despacio",
+    "handle": "@egoera",
+    "publishedSundays": "publicado los domingos",
+    "legal": "Aviso legal",
+    "privacy": "Privacidad",
+    "cookies": "Cookies",
+    "ariaLegal": "Enlaces legales"
+  },
+  "cta": {
+    "subscribe": "Suscribirme",
+    "readMore": "Leer más",
+    "back": "← volver",
+    "send": "Enviar",
+    "viewAll": "Ver todo",
+    "discover": "Descubrir"
+  },
+  "form": {
+    "name": "Tu nombre",
+    "namePlaceholder": "cómo quieres que te salude",
+    "email": "Tu email",
+    "emailPlaceholder": "hola@dominio.com",
+    "language": "En qué idioma",
+    "languageOptions": {
+      "es": "castellano",
+      "eu": "euskara",
+      "both": "las dos versiones"
+    },
+    "legal": "Al suscribirte aceptas la política de privacidad. Egoera no usa trackers ni píxeles.",
+    "submit": "Enviar la carta"
+  },
+  "boletin": {
+    "title": "Una carta, cada domingo",
+    "tagline": "Diez minutos de lectura, los domingos a las once.",
+    "stats": {
+      "readers": "lectoras",
+      "editions": "ediciones",
+      "openRate": "% apertura"
+    }
+  },
+  "manifiesto": {
+    "title": "Manifiesto",
+    "tagline": "Lo que creemos, en voz baja."
+  },
+  "sobre": {
+    "title": "Sobre Ander",
+    "tagline": "Psicólogo en Bilbao."
+  },
+  "blog": {
+    "title": "Cuaderno",
+    "tagline": "Escritos largos, semanales."
+  },
+  "home": {
+    "title": "Egoera — psicología, despacio",
+    "tagline": "Un sitio para sentir despacio."
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ha ocurrido un error.",
+    "minutes": "min",
+    "comingSoon": "próximamente"
+  }
+}
