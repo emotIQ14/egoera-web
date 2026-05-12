@@ -106,15 +106,15 @@ export default function ManifiestoPage() {
                 capítulo 01 — la contradicción
               </span>
               <h2 className={styles.chHeadline}>
-                en consulta tengo el lujo del <em>tiempo</em>
+                leer también necesita <em>tiempo</em>
               </h2>
               <p>
                 Egoera nació de una contradicción que llevaba años
-                incomodándome. En consulta, todo el mundo entiende que un
-                proceso lleva su tiempo: que no se cura una ansiedad de doce
-                años en una sesión, que un duelo no se acelera, que el cuerpo
-                tarda lo que tarda. Y al salir a la calle, mi profesión se
-                reduce a píldoras de tres minutos, listas de diez trucos y
+                incomodándome. En los procesos lentos, todo el mundo entiende
+                que las cosas llevan su tiempo: que no se desarma una ansiedad
+                de doce años en una tarde, que un duelo no se acelera, que el
+                cuerpo tarda lo que tarda. Y al salir a la calle, la psicología
+                se reduce a píldoras de tres minutos, listas de diez trucos y
                 reels que te explican el apego en quince segundos.
               </p>
               <p>Algo no encajaba. Y como no encajaba, abrí esto.</p>
@@ -191,12 +191,12 @@ export default function ManifiestoPage() {
                 la entrada principal por una razón.
               </p>
               <p>
-                Egoera no es gratis del todo, pero casi. Todo lo público —
-                vlog, biblioteca, archivo, boletín — es accesible sin pagar
-                nada y sin dar email obligatorio. Lo único que cuesta dinero
-                es la consulta privada, porque ahí cambia el contrato: ya no
-                eres lectora, eres paciente, y eso requiere un compromiso que
-                sólo se sostiene con tarifa.
+                Egoera es enteramente gratis. Todo lo que ves aquí —
+                cuaderno, biblioteca, brújula, boletín, diario emocional —
+                es accesible sin pagar nada y sin dar email obligatorio.
+                Esto no sustituye un proceso terapéutico, pero es una
+                compañía para los días en los que no sabes por dónde, sin
+                inscripción, sin embudo, sin agenda.
               </p>
             </article>
 
@@ -313,10 +313,10 @@ export default function ManifiestoPage() {
           </div>
           <div className={styles.signActions}>
             <Link href="/" className={styles.btnPrimary}>
-              Empezar por el vlog
+              Empezar por el cuaderno
             </Link>
-            <Link href="/contacto" className={styles.btnOutline}>
-              Reservar primera sesión
+            <Link href="/boletin" className={styles.btnOutline}>
+              Suscríbete al boletín
             </Link>
           </div>
         </div>

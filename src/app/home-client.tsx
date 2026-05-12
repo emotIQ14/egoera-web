@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { BlogPost } from "@/lib/blog";
+import { levelFor, liveStreak, loadState, type SentirState } from "@/lib/sentir-streak";
+import { CinematicHero } from "@/components/home/cinematic/CinematicHero";
 import styles from "./home.module.css";
 
 // EgoeraNav y EgoeraFooter (server components async) los renderiza el
@@ -25,8 +27,11 @@ export default function HomeClient({ posts }: Props) {
 
   return (
     <div className={styles.page}>
-      {/* ============ COSMIC HERO ============ */}
-      <CosmicHero />
+      {/* ============ CINEMATIC HERO (Velorah-style sunset) ============ */}
+      <CinematicHero />
+
+      {/* ============ BRÚJULA EMOCIONAL (CTA) ============ */}
+      <BrujulaSection />
 
       {/* ============ CUATRO FRENTES ============ */}
       <FrentesSection />
@@ -46,270 +51,122 @@ export default function HomeClient({ posts }: Props) {
   );
 }
 
+
 /* =========================================================================
- * COSMIC HERO — fondo radial profundo, estrellas CSS, partículas canvas
- * y la chica mascota (SVG copiado tal cual del mockup).
+ * CUATRO FRENTES — grid 2x2 de entradas editoriales
  * ===================================================================== */
-function CosmicHero() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
+/* =========================================================================
+ * BRÚJULA EMOCIONAL — banda CTA hacia /sentir. Una mini-pila de cartas
+ * decorativas a la derecha + título grande a la izquierda. Cobalto
+ * profundo sobre crema para destacar dentro del flujo home.
+ * ===================================================================== */
+function BrujulaSection() {
+  // Racha viva (cliente). Se hidrata después del mount, así evitamos
+  // mismatches de SSR.
+  const [state, setState] = useState<SentirState | null>(null);
   useEffect(() => {
-    const c = canvasRef.current;
-    if (!c) return;
-    const ctx = c.getContext("2d");
-    if (!ctx) return;
-
-    let w = 0;
-    let h = 0;
-    let dpr = 1;
-    let raf = 0;
-    let stopped = false;
-
-    const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const parent = c.parentElement;
-      if (!parent) return;
-      const r = parent.getBoundingClientRect();
-      w = r.width;
-      h = r.height;
-      c.width = w * dpr;
-      c.height = h * dpr;
-      c.style.width = `${w}px`;
-      c.style.height = `${h}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-
-    resize();
-    window.addEventListener("resize", resize);
-
-    interface Particle {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      r: number;
-      life: number;
-      max: number;
-      col: string;
-      tw: number;
-    }
-
-    const ps: Particle[] = [];
-    const COL = ["#f5e6b6", "#d6bd7f", "#b48b3a", "#fff7e0", "#e7c87a", "#f1ead8"];
-
-    const spawn = () => {
-      const cx = w / 2;
-      const cy = h - h * 0.18;
-      const sp = Math.min(w * 0.06, 90);
-      ps.push({
-        x: cx + (Math.random() - 0.5) * sp,
-        y: cy + (Math.random() - 0.3) * 30,
-        vx: (Math.random() - 0.5) * 0.6,
-        vy: -0.4 - Math.random() * 1.6,
-        r: 0.6 + Math.random() * 1.8,
-        life: 0,
-        max: 200 + Math.random() * 260,
-        col: COL[(Math.random() * COL.length) | 0],
-        tw: Math.random() * Math.PI * 2,
-      });
-    };
-
-    const loop = () => {
-      if (stopped) return;
-      ctx.clearRect(0, 0, w, h);
-      for (let i = 0; i < 5; i++) spawn();
-      for (let i = ps.length - 1; i >= 0; i--) {
-        const p = ps[i];
-        p.life++;
-        p.x += p.vx + Math.sin((p.life + p.tw) * 0.04) * 0.4;
-        p.y += p.vy;
-        p.vy *= 0.998;
-        const t = p.life / p.max;
-        const fi = Math.min(1, t * 4);
-        const fo = 1 - Math.pow(Math.max(0, t - 0.4) / 0.6, 1.4);
-        const a = Math.max(0, fi * fo);
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = p.col;
-        ctx.globalAlpha = a * 0.95;
-        ctx.shadowColor = p.col;
-        ctx.shadowBlur = 10;
-        ctx.fill();
-        if (p.life > p.max || p.y < -20) ps.splice(i, 1);
-      }
-      ctx.globalAlpha = 1;
-      ctx.shadowBlur = 0;
-      raf = requestAnimationFrame(loop);
-    };
-
-    loop();
-
-    return () => {
-      stopped = true;
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", resize);
-    };
+    setState(loadState());
   }, []);
+  const streakDays = state ? liveStreak(state) : 0;
+  const level = state ? levelFor(state.points).current : null;
+  const showChip = !!state && state.totalSessions > 0;
 
   return (
-    <section className={styles.hero}>
-      <div className={styles.stars} />
-      <div className={styles.cosmos}>
-        <canvas ref={canvasRef} />
-      </div>
+    <section className={styles.brujula}>
+      <div className={styles.wrap}>
+        <div className={styles.brujulaWrap}>
+          <div>
+            <span className={styles.brujulaEyebrow}>brújula emocional · nuevo</span>
+            <h2 className={styles.brujulaH}>
+              antes de leer, <em>mírate</em>.
+            </h2>
+            <p className={styles.brujulaLead}>
+              Catorce cartas para preguntarte cómo estás, sin diagnósticos.
+              Al terminar te ofrecemos un artículo, un ejercicio y un
+              sentimiento al que volver. Tres minutos contigo.
+            </p>
+            {showChip && state && level && (
+              <div className={styles.streakChip}>
+                <span className={styles.streakChipFlame} aria-hidden>↑</span>
+                <span className={styles.streakChipNum}>{streakDays}</span>
+                <span className={styles.streakChipLabel}>
+                  {streakDays === 1 ? "día contigo" : "días contigo"}
+                </span>
+                <span className={styles.streakChipDot} aria-hidden>·</span>
+                <span className={styles.streakChipLevel}>
+                  <em>{level.glyph}</em> {level.name}
+                </span>
+                <span className={styles.streakChipDot} aria-hidden>·</span>
+                <span className={styles.streakChipPts}>{state.points} pts</span>
+              </div>
+            )}
+            <div className={styles.brujulaCtas}>
+              <Link href="/sentir" className={styles.brujulaPrimary}>
+                {showChip ? "Volver al mazo" : "Empezar el mazo"}
+                <span aria-hidden>→</span>
+              </Link>
+              <Link href="/diario" className={styles.brujulaSecondary}>
+                ir al diario
+              </Link>
+            </div>
+          </div>
 
-      <div className={styles.cosmicTop}>
-        <span className={styles.left}>
-          <span className={styles.dot} /> Bilbao · psicología, despacio
-        </span>
-        <span>
-          {EDITION_NO} · {TODAY_HUMAN}
-        </span>
-      </div>
-
-      <div className={styles.cosmicStage}>
-        <span className={styles.cosmicEye}>
-          — un cuaderno sobre lo que sentimos —
-        </span>
-        <h1 className={styles.cosmicH}>
-          Hold on, <em>we&apos;re</em> here.
-        </h1>
-
-        <form
-          className={styles.cosmicForm}
-          onSubmit={async (e) => {
-            e.preventDefault();
-            const form = e.currentTarget;
-            const emailInput = form.querySelector<HTMLInputElement>(
-              "input[type='email']"
-            );
-            const button = form.querySelector<HTMLButtonElement>("button");
-            if (!emailInput || !button) return;
-            button.disabled = true;
-            const original = button.innerHTML;
-            button.textContent = "…";
-            try {
-              const res = await fetch("/api/subscribe", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  email: emailInput.value,
-                  source: "home-cosmic",
-                }),
-              });
-              if (res.ok) {
-                button.textContent = "✓";
-              } else {
-                button.innerHTML = original;
-                button.disabled = false;
-              }
-            } catch {
-              button.innerHTML = original;
-              button.disabled = false;
-            }
-          }}
-        >
-          <input
-            type="email"
-            required
-            placeholder="Tu correo, sin prisa…"
-            aria-label="Correo electrónico"
-          />
-          <button type="submit" aria-label="Suscribirse">
-            →
-          </button>
-        </form>
-
-        <p className={styles.cosmicSub}>
-          Una carta cada domingo sobre tristeza, ansiedad, apego y todo lo demás.
-          Sin titulares. Sin atajos.
-        </p>
-
-        <Link href="/manifiesto" className={styles.cosmicCta}>
-          Manifiesto →
-        </Link>
-
-        <CosmicMascot />
-      </div>
-
-      <div className={styles.cosmicScroll}>
-        <span>scroll</span>
-        <span className={styles.line} />
+          <div className={styles.brujulaDeck} aria-hidden>
+            <div className={`${styles.brujulaCard} ${styles.brujulaCard1}`}>
+              <div className={styles.brujulaCardCorner}>
+                <span>vinculo</span>
+                <span>❋</span>
+              </div>
+              <div>
+                <div className={styles.brujulaCardGlyph}>❋</div>
+                <p className={styles.brujulaCardPrompt}>
+                  Vuelvo a la misma persona aunque no me hace bien.
+                </p>
+              </div>
+              <div className={styles.brujulaCardFoot}>
+                <span>n. accumbens</span>
+                <span>egoera</span>
+              </div>
+            </div>
+            <div className={`${styles.brujulaCard} ${styles.brujulaCard2}`}>
+              <div className={styles.brujulaCardCorner}>
+                <span>alerta</span>
+                <span>◌</span>
+              </div>
+              <div>
+                <div className={styles.brujulaCardGlyph}>◌</div>
+                <p className={styles.brujulaCardPrompt}>
+                  El pecho se cierra antes de que entienda por qué.
+                </p>
+              </div>
+              <div className={styles.brujulaCardFoot}>
+                <span>amígdala</span>
+                <span>egoera</span>
+              </div>
+            </div>
+            <div className={`${styles.brujulaCard} ${styles.brujulaCard3}`}>
+              <div className={styles.brujulaCardCorner}>
+                <span>identidad</span>
+                <span>◈</span>
+              </div>
+              <div>
+                <div className={styles.brujulaCardGlyph}>◈</div>
+                <p className={styles.brujulaCardPrompt}>
+                  Me siento un fraude la mayoría de las veces.
+                </p>
+              </div>
+              <div className={styles.brujulaCardFoot}>
+                <span>c. prefrontal</span>
+                <span>egoera</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-/* SVG copiado LITERALMENTE del mockup Egoera Home.html (líneas ~715-757)
-   — la chica inclinada mirando hacia arriba. NO simplificar. */
-function CosmicMascot() {
-  return (
-    <div className={styles.cosmicMascot}>
-      <svg
-        viewBox="0 0 400 560"
-        fill="none"
-        stroke="#f1ead8"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden
-      >
-        {/* pelo (volumen detrás de la cabeza) */}
-        <path
-          d="M 130 215 C 110 175, 120 110, 175 88 C 230 70, 290 95, 295 165 C 300 215, 285 250, 270 268"
-          fill="rgba(241,234,216,.06)"
-        />
-        {/* cara (perfil 3/4 mirando arriba) */}
-        <path
-          d="M 175 200
-             C 168 175, 178 145, 200 138
-             C 230 130, 258 148, 262 178
-             C 264 200, 256 220, 245 232
-             C 240 240, 235 250, 240 258
-             C 246 268, 244 278, 232 282
-             L 200 285
-             C 185 282, 175 270, 173 252
-             C 172 240, 175 225, 175 200 Z"
-        />
-        {/* ojo (cerrado, mirando arriba) */}
-        <path d="M 210 198 Q 222 192, 234 200" strokeWidth="2.5" />
-        {/* ceja sutil */}
-        <path d="M 212 188 Q 224 182, 236 188" strokeWidth="2" />
-        {/* nariz */}
-        <path d="M 240 218 Q 248 232, 244 244" strokeWidth="2" />
-        {/* labios */}
-        <path d="M 218 258 Q 228 262, 238 258" strokeWidth="2.5" />
-        {/* mandíbula a cuello */}
-        <path d="M 200 285 L 195 320 L 188 360" />
-        <path d="M 232 282 L 240 320 L 248 360" />
-        {/* hombros / cazadora */}
-        <path
-          d="M 188 360
-             C 150 372, 100 400, 80 460
-             L 80 560"
-        />
-        <path
-          d="M 248 360
-             C 290 372, 340 400, 360 460
-             L 360 560"
-        />
-        {/* cuello camisa */}
-        <path d="M 188 360 L 220 380 L 248 360" />
-        <path d="M 220 380 L 220 440" />
-        {/* detalle cazadora · solapa */}
-        <path d="M 178 392 L 168 460" strokeWidth="2" />
-        <path d="M 258 392 L 268 460" strokeWidth="2" />
-        {/* cremallera bolsillo */}
-        <path d="M 130 460 L 170 460" strokeWidth="2" strokeDasharray="2 4" />
-        <path d="M 270 460 L 310 460" strokeWidth="2" strokeDasharray="2 4" />
-      </svg>
-    </div>
-  );
-}
-
-/* =========================================================================
- * CUATRO FRENTES — grid 2x2 de entradas editoriales
- * ===================================================================== */
 function FrentesSection() {
   const frentes = [
     {

@@ -12,6 +12,7 @@
     "@base-ui/react": "^1.4.0",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.0",
+    "@react-three/postprocessing": "^3.0.4",
     "@types/d3": "^7.4.3",
     "@types/three": "^0.183.1",
     "class-variance-authority": "^0.7.1",

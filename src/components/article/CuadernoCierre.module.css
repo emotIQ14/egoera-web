@@ -1,0 +1,482 @@
+/* ───────────────────────────────────────────────────────────────────────
+ * CuadernoCierre.module.css
+ *
+ * Bloque visual de cierre tipo "cuaderno de campo" inspirado en el post
+ * `Bidaiatzen Post Hiljainen Kansa.html` (sección `.notebook-section`).
+ *
+ * Filosofía:
+ *  - Rompe con el cobalto+crema del resto del artículo metiendo papel
+ *    sepia. Es el "te llevas algo a casa" del post.
+ *  - 4 post-its rotados con los 4 tipos de aprendizaje (idea, cuerpo,
+ *    pregunta, práctica), 4 colores washi distintos.
+ *  - Sello rotado abajo a la derecha con la edición y la fecha.
+ *  - Washi tape arriba a la izquierda.
+ *  - Cross-link al diario emocional como CTA secundario.
+ *
+ * Variables locales del módulo (sólo este componente las consume):
+ *  - --paper:        gradient base del papel
+ *  - --paper-shadow: sombra interior del papel
+ *  - --gold:         dorado de líneas decorativas
+ *  - --ink, --ink-soft: tintas oscuras
+ *  - --washi-amarillo / verde / azul / salmon: 4 colores de post-it
+ * ─────────────────────────────────────────────────────────────────────── */
+
+.section {
+  /* fondo cobalto profundo, contrasta con el papel sepia */
+  --paper: linear-gradient(135deg, #f0e6d0 0%, #e8dcbe 100%);
+  --paper-shadow: rgba(60, 40, 20, 0.18);
+  --gold: #b8893f;
+  --gold-soft: #d2a86b;
+  --ink: #1a1410;
+  --ink-soft: #4a3828;
+  --washi-amarillo: rgba(247, 219, 116, 0.72);
+  --washi-verde: rgba(180, 210, 180, 0.62);
+  --washi-azul: rgba(180, 200, 220, 0.68);
+  --washi-salmon: rgba(220, 180, 170, 0.66);
+  --washi-tape: #d2a86b;
+
+  position: relative;
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(184, 137, 63, 0.16) 0%,
+      transparent 60%
+    ),
+    #0f1baa;
+  padding: clamp(64px, 9vh, 110px) clamp(20px, 5vw, 56px);
+  margin-top: 64px;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Línea dorada decorativa superior */
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--gold-soft) 20%,
+    var(--gold) 50%,
+    var(--gold-soft) 80%,
+    transparent 100%
+  );
+  opacity: 0.85;
+}
+
+/* Grain SVG sobre todo el bloque (textura papel).
+   `mix-blend-mode` se descarta porque genera artefactos de rasterización
+   en algunos motores headless; la opacidad sola ya da suficiente
+   textura sin colapsar el cobalto a transparencia. */
+.section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.12;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/></svg>");
+}
+
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: center;
+}
+
+/* ─── COLUMNA IZQUIERDA — texto persuasivo ─── */
+
+.text {
+  color: var(--cream, #f1ead8);
+}
+
+.eyebrow {
+  font-family: "Special Elite", "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+}
+.eyebrow::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.h2 {
+  font-family: "Caveat", "Fraunces", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  margin: 0 0 24px;
+  color: var(--cream, #f1ead8);
+  text-wrap: balance;
+}
+.h2 em {
+  font-style: italic;
+  color: var(--gold-soft);
+  font-weight: 600;
+}
+
+.lede {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(16px, 1.5vw, 18px);
+  line-height: 1.55;
+  color: rgba(241, 234, 216, 0.82);
+  max-width: 480px;
+  margin: 0 0 28px;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  background: var(--gold);
+  color: var(--ink);
+  text-decoration: none;
+  border-radius: 999px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
+  letter-spacing: 0.02em;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.cta:hover {
+  background: var(--gold-soft);
+  transform: translateY(-1px);
+}
+.cta::after {
+  content: "→";
+  font-family: "JetBrains Mono", monospace;
+  margin-left: 2px;
+}
+
+.ctaSecondary {
+  display: inline-block;
+  margin-top: 14px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(241, 234, 216, 0.62);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(241, 234, 216, 0.34);
+  padding-bottom: 3px;
+}
+.ctaSecondary:hover {
+  color: var(--cream, #f1ead8);
+  border-color: var(--cream, #f1ead8);
+}
+
+.ctaRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+/* ─── COLUMNA DERECHA — página de cuaderno ─── */
+
+.book {
+  position: relative;
+  perspective: 1800px;
+  width: 100%;
+  aspect-ratio: 1.05 / 1;
+}
+
+.page {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  border-radius: 4px 8px 8px 4px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.45),
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    inset 0 0 0 1px rgba(60, 40, 20, 0.06);
+  transform: rotateY(-6deg) rotateX(3deg) rotateZ(-1deg);
+  transform-origin: left center;
+  padding: clamp(28px, 4vw, 44px);
+  overflow: hidden;
+  transition: transform 0.6s cubic-bezier(0.16, 0.84, 0.44, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.book:hover .page {
+  transform: rotateY(-3deg) rotateX(1deg) rotateZ(0deg);
+}
+
+/* Spine shadow izquierdo */
+.page::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 28px;
+  background: linear-gradient(
+    90deg,
+    rgba(60, 40, 20, 0.18) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* Ruido SVG sobre el papel (sin mix-blend-mode por el mismo motivo
+   que en `.section::after`). */
+.page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.15;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.3'/></svg>");
+}
+
+.pgnum {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  font-family: "Special Elite", "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+  opacity: 0.7;
+  text-transform: uppercase;
+}
+
+.pgEye {
+  font-family: "Special Elite", "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: #a02e2e;
+  margin-top: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.pgTitle {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(22px, 2.5vw, 28px);
+  line-height: 1.15;
+  color: var(--ink);
+  margin: 0 0 4px;
+  position: relative;
+  z-index: 1;
+}
+.pgTitle em {
+  font-style: italic;
+  color: #a02e2e;
+}
+
+/* Washi tape decorativo */
+.tape {
+  position: absolute;
+  top: 12px;
+  left: 32px;
+  width: 84px;
+  height: 22px;
+  background: var(--washi-tape);
+  transform: rotate(-3deg);
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+  /* bordes dashed izq/dcha simulando lá rasgado del washi */
+  background-image:
+    linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 4px,
+      rgba(60, 40, 20, 0.18) 4px,
+      rgba(60, 40, 20, 0.18) 6px,
+      transparent 6px
+    ),
+    linear-gradient(
+      -90deg,
+      transparent 0px,
+      transparent 4px,
+      rgba(60, 40, 20, 0.18) 4px,
+      rgba(60, 40, 20, 0.18) 6px,
+      transparent 6px
+    );
+}
+
+/* ─── POST-ITS ─── */
+
+.notes {
+  position: relative;
+  z-index: 1;
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 12px;
+  flex: 1;
+}
+
+.note {
+  position: relative;
+  padding: 14px 14px 16px;
+  min-height: 102px;
+  font-family: "Caveat", "Fraunces", Georgia, serif;
+  font-weight: 500;
+  font-size: 16.5px;
+  line-height: 1.28;
+  color: var(--ink);
+  box-shadow:
+    0 4px 12px rgba(60, 40, 20, 0.18),
+    0 1px 3px rgba(60, 40, 20, 0.12);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: default;
+  break-inside: avoid;
+}
+.note:hover {
+  transform: translateY(-2px) rotate(0deg) !important;
+  box-shadow:
+    0 8px 18px rgba(60, 40, 20, 0.28),
+    0 2px 5px rgba(60, 40, 20, 0.14);
+  z-index: 3;
+}
+.note:nth-child(1) { transform: rotate(-2deg); }
+.note:nth-child(2) { transform: rotate(1.5deg); }
+.note:nth-child(3) { transform: rotate(2deg); }
+.note:nth-child(4) { transform: rotate(-1.2deg); }
+
+.note.idea     { background: var(--washi-amarillo); }
+.note.cuerpo   { background: var(--washi-verde); }
+.note.pregunta { background: var(--washi-azul); }
+.note.practica { background: var(--washi-salmon); }
+
+.noteLab {
+  display: block;
+  font-family: "Special Elite", "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+
+.noteText {
+  display: block;
+}
+
+/* ─── SELLO ─── */
+
+.stamp {
+  position: absolute;
+  bottom: 18px;
+  right: 22px;
+  padding: 8px 12px;
+  border: 2px solid #a02e2e;
+  color: #a02e2e;
+  font-family: "Special Elite", "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transform: rotate(-7deg);
+  z-index: 2;
+  background: rgba(240, 230, 208, 0.6);
+}
+.stamp .stampBig {
+  font-family: "Fraunces", Georgia, serif;
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  display: block;
+  margin: 1px 0 1px;
+}
+
+/* ─── SOUVENIRS (accent floating fuera del libro) ─── */
+
+.souvenirs {
+  position: absolute;
+  bottom: -24px;
+  left: 8%;
+  display: flex;
+  gap: 8px;
+  transform: rotate(-3deg);
+  z-index: 3;
+  pointer-events: none;
+}
+.souvenir {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  background: var(--paper);
+  border: 1.5px solid var(--gold);
+  border-radius: 4px;
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.32),
+    inset 0 0 0 1px rgba(60, 40, 20, 0.08);
+  font-size: 18px;
+  filter: saturate(0.85);
+}
+.souvenir:nth-child(1) { transform: rotate(-4deg); }
+.souvenir:nth-child(2) { transform: rotate(2deg); }
+.souvenir:nth-child(3) { transform: rotate(-2deg); }
+.souvenir:nth-child(4) { transform: rotate(3deg); }
+
+/* ─── RESPONSIVE ─── */
+
+@media (max-width: 880px) {
+  .wrap {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .book {
+    aspect-ratio: 1 / 1.05;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .page {
+    transform: rotateY(-3deg) rotateX(1deg);
+  }
+  .souvenirs {
+    bottom: -18px;
+    left: 4%;
+  }
+}
+
+@media (max-width: 520px) {
+  .notes {
+    grid-template-columns: 1fr;
+  }
+  .note {
+    min-height: 80px;
+  }
+  .page {
+    transform: none;
+    padding: 24px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .page,
+  .note {
+    transition: none;
+  }
+  .book:hover .page {
+    transform: rotateY(-6deg) rotateX(3deg) rotateZ(-1deg);
+  }
+}

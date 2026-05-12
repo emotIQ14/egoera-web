@@ -9,6 +9,7 @@ import styles from "./EgoeraNav.module.css";
 export type EgoeraNavActive =
   | "home"
   | "cuaderno"
+  | "sentir"
   | "sobre"
   | "boletin"
   | "manifiesto";
@@ -34,6 +35,7 @@ export async function EgoeraNav({ active }: Props) {
   const NAV_LINKS: { href: string; label: string; key: EgoeraNavActive }[] = [
     { href: "/", label: dict.nav.home, key: "home" },
     { href: "/blog", label: dict.nav.cuaderno, key: "cuaderno" },
+    { href: "/sentir", label: dict.nav.sentir, key: "sentir" },
     { href: "/sobre-nosotros", label: dict.nav.sobre, key: "sobre" },
     { href: "/boletin", label: dict.nav.boletin, key: "boletin" },
     { href: "/manifiesto", label: dict.nav.manifiesto, key: "manifiesto" },
@@ -72,9 +74,17 @@ export async function EgoeraNav({ active }: Props) {
 
       <div className={styles.tools}>
         <LangSwitcher current={locale} ariaLabel={dict.nav.ariaIdiomas} />
-        <Link href="/contacto" className={styles.cta}>
+        {/* CTA del nav: ahora apunta al diario emocional (no a
+            calendly de consulta). Egoera ya no ofrece consulta
+            presencial — el CTA principal es la herramienta. */}
+        <a
+          href="https://diario.egoera.es"
+          className={styles.cta}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           {dict.nav.consulta}
-        </Link>
+        </a>
       </div>
 
       {/* Variante compacta para móvil — los links principales del header

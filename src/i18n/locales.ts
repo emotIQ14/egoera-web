@@ -56,3 +56,27 @@ export function isLocale(value: unknown): value is Locale {
     typeof value === "string" && (locales as readonly string[]).includes(value)
   );
 }
+
+/**
+ * Resultado del parser de prefijo de locale en una URL.
+ *  - `locale`: el locale detectado en el primer segmento del path, o `null`.
+ *  - `rest`: el path sin el prefijo (siempre empieza por "/").
+ *
+ * Para indexar ES y EU como páginas distintas, el sitemap emite URLs con
+ * prefijo (`/es/blog/...`, `/eu/blog/...`) y el middleware las reescribe
+ * internamente al path sin prefijo + setea el header de locale forzado.
+ * Esto permite a Google ver dos URLs distintas con contenido distinto sin
+ * migrar toda la app a sub-path routing.
+ */
+export function parseLocaleFromPath(pathname: string): {
+  locale: Locale | null;
+  rest: string;
+} {
+  if (!pathname || pathname === "/") return { locale: null, rest: "/" };
+  const match = pathname.match(/^\/([a-z]{2})(\/.*)?$/);
+  if (!match) return { locale: null, rest: pathname };
+  const candidate = match[1];
+  if (!isLocale(candidate)) return { locale: null, rest: pathname };
+  const rest = match[2] || "/";
+  return { locale: candidate, rest };
+}

@@ -6,6 +6,17 @@ import { V5Hud } from "./V5Hud";
 import { V5MoodCheckpoint } from "./V5MoodCheckpoint";
 import { V5BreathingTimer } from "./V5BreathingTimer";
 import { V5Schema } from "./V5Schema";
+import {
+  CuadernoCierre,
+  CUADERNO_DICT_ES,
+  CUADERNO_DICT_EU,
+  CUADERNO_DICT_EN,
+  type CuadernoDict,
+} from "./CuadernoCierre";
+import {
+  extractLearnings,
+  type Learning,
+} from "@/lib/article/extract-learnings";
 import styles from "./V5ArticleShell.module.css";
 
 interface RelatedPost {
@@ -29,6 +40,17 @@ interface Props {
   toc: { id: string; label: string }[];
   /** Word count calculado a partir del HTML limpio. */
   wordCount: number;
+  /**
+   * Locale del request — `es` por defecto. Determina el diccionario
+   * del CuadernoCierre y futuros bloques internacionalizados.
+   */
+  locale?: "es" | "eu" | "en";
+  /**
+   * Aprendizajes precalculados para el CuadernoCierre. Si no se pasa,
+   * el shell los extrae con `extractLearnings()` sobre el bodyHtml.
+   * Pasarlos por arriba es útil cuando el page los curó manualmente.
+   */
+  learnings?: Learning[] | null;
 }
 
 const SITE_URL = "https://egoera.es";
@@ -57,6 +79,8 @@ export function V5ArticleShell({
   faqs,
   toc,
   wordCount,
+  locale = "es",
+  learnings,
 }: Props) {
   const canonicalUrl = `${SITE_URL}/blog/${post.slug}`;
   // Edición: número derivado del slug (estable y reproducible).
@@ -66,6 +90,26 @@ export function V5ArticleShell({
   );
   const editionLabel = `n.º ${editionNumber}`;
   const year = new Date(post.dateISO).getFullYear() || new Date().getFullYear();
+
+  // Aprendizajes para el cuaderno de cierre. Si el page no los curó,
+  // los extraemos aquí del bodyHtml ya limpio (server-side).
+  const finalLearnings: Learning[] | null =
+    learnings ?? extractLearnings(bodyHtml);
+
+  // Diccionario del cuaderno según el locale del request.
+  const cuadernoDict: CuadernoDict =
+    locale === "eu"
+      ? CUADERNO_DICT_EU
+      : locale === "en"
+        ? CUADERNO_DICT_EN
+        : CUADERNO_DICT_ES;
+
+  // Próxima pieza para el CTA secundario del cuaderno (la primera
+  // relacionada si existe — refuerza internal linking del cluster).
+  const proximaPieza =
+    related.length > 0
+      ? { slug: related[0].slug, title: related[0].title }
+      : undefined;
 
   return (
     <>
@@ -211,6 +255,24 @@ export function V5ArticleShell({
           <V5MoodCheckpoint slug={post.slug} variant="out" />
         </section>
 
+        {/* ===== CUADERNO DE CIERRE (estética papel sepia) =====
+            Bloque de "lo que te llevas" — 4 post-its rotados con los
+            aprendizajes extraídos heurísticamente del cuerpo, sello
+            rojo + washi tape. Server-rendered (sin JS) para que
+            Googlebot lo lea como contenido propio del artículo y
+            sume riqueza léxica al SEO sin penalizar Core Web Vitals.
+            Si no hay material para 2+ post-its, el componente
+            devuelve null y no se renderiza. */}
+        <CuadernoCierre
+          editionNumber={editionNumber}
+          slug={post.slug}
+          tema={post.category}
+          fechaLectura={post.date}
+          learnings={finalLearnings}
+          proximaPieza={proximaPieza}
+          dict={cuadernoDict}
+        />
+
         {/* ===== RELATED ===== */}
         {related.length > 0 && (
           <section className={`${styles.related} ${styles.wrap}`}>
@@ -223,7 +285,10 @@ export function V5ArticleShell({
               </span>
             </div>
             <div className={styles.relatedGrid}>
-              {related.slice(0, 2).map((r) => (
+              {/* Internal linking SEO: hasta 3 sugerencias relacionadas
+                  del mismo cluster temático (categorySlug). Distribuye
+                  link equity al silo y prolonga la sesión. */}
+              {related.slice(0, 3).map((r) => (
                 <Link
                   key={r.slug}
                   href={`/blog/${r.slug}`}

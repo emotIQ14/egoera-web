@@ -14,3 +14,17 @@ export { V5Hud } from "./V5Hud";
 export { V5MoodCheckpoint } from "./V5MoodCheckpoint";
 export { V5BreathingTimer } from "./V5BreathingTimer";
 export { V5Schema } from "./V5Schema";
+export { ArticleV6 } from "./ArticleV6";
+export { prepareArticleHtml } from "./article-v6-transform";
+export type { TocEntry } from "./article-v6-transform";
+export type {
+  ArticleV6Step,
+  ArticleV6NextSuggestion,
+} from "./ArticleV6";
+export {
+  CuadernoCierre,
+  CUADERNO_DICT_ES,
+  CUADERNO_DICT_EU,
+  CUADERNO_DICT_EN,
+} from "./CuadernoCierre";
+export type { CuadernoDict } from "./CuadernoCierre";

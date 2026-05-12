@@ -31,7 +31,13 @@ export function DarkNav() {
     pathname === "/manifiesto" ||
     pathname.startsWith("/manifiesto/") ||
     pathname === "/boletin" ||
-    pathname.startsWith("/boletin/");
+    pathname.startsWith("/boletin/") ||
+    pathname === "/sentir" ||
+    pathname.startsWith("/sentir/") ||
+    pathname === "/contacto" ||
+    pathname.startsWith("/contacto/") ||
+    pathname === "/recursos" ||
+    pathname.startsWith("/recursos/");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);

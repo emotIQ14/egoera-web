@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { EgoeraNav } from "@/components/egoera/EgoeraNav";
+import { EgoeraFooter } from "@/components/egoera/EgoeraFooter";
+// Reusamos el monigote Egoera ya creado en /sentir (figura sentada
+// con flor mostaza creciendo de la cabeza). Es la mascota canónica.
+import { Mascot } from "@/app/sentir/illustrations";
+
 export const metadata: Metadata = {
   title: "Ander Bilbao Castejón · Sobre · Egoera",
   description:
-    "Psicólogo colegiado en Bilbao (BI-04567). Práctica clínica + escritura editorial sobre psicología en egoera.es. Apego, ansiedad, autoconocimiento.",
+    "Psicólogo general sanitario colegiado en Bilbao (B-04122). Más de una década entre academia, hospital y Egoera. Trayectoria, manifiesto y respuestas a las dudas más frecuentes.",
   openGraph: {
     title: "Sobre Ander · Egoera",
     description:
-      "Psicólogo colegiado en Bilbao (BI-04567). Práctica clínica + escritura editorial sobre psicología en egoera.es.",
+      "Psicólogo general sanitario en Bilbao. Trayectoria, manifiesto y por qué Egoera escribe despacio.",
     type: "profile",
   },
 };
@@ -43,60 +49,6 @@ const css = `
   @media (max-width: 768px) { .sobre-page .wrap { padding: 0 20px; } }
   @media (max-width: 480px) { .sobre-page .wrap { padding: 0 18px; } }
 
-  /* NAV inlined (until EgoeraNav component lands) */
-  .eg-nav {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 32px; padding: 22px 32px;
-    border-bottom: 1.5px solid var(--blue);
-    background: var(--cream);
-    font-family: var(--sans);
-  }
-  .eg-badge {
-    display: inline-flex; align-items: center; gap: 10px;
-    font-family: var(--display); font-weight: 600;
-    color: var(--blue); font-size: 28px; line-height: 1;
-    text-decoration: none;
-  }
-  .eg-badge em { font-style: italic; font-size: 16px; color: var(--ink-soft); }
-  .eg-badge .star { width: 22px; height: 22px; }
-  .eg-nav-links {
-    display: flex; gap: 28px; align-items: center;
-    font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
-  }
-  .eg-nav-links a {
-    color: var(--ink-soft); text-decoration: none;
-    padding: 6px 2px; border-bottom: 1.5px solid transparent;
-    transition: color .2s, border-color .2s; border-radius: 4px;
-  }
-  .eg-nav-links a:hover { color: var(--blue); }
-  .eg-nav-links a:focus-visible {
-    outline: 2px solid var(--blue); outline-offset: 4px; color: var(--blue);
-  }
-  .eg-nav-links a.active { color: var(--blue); border-bottom-color: var(--blue); border-radius: 0; }
-  .eg-nav-cta {
-    font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
-    background: var(--blue); color: var(--cream);
-    min-height: 44px; display: inline-flex; align-items: center;
-    padding: 12px 18px; text-decoration: none;
-    border: 1.5px solid var(--blue);
-    transition: background .2s, color .2s;
-  }
-  .eg-nav-cta:hover { background: var(--cream); color: var(--blue); }
-  .eg-nav-cta:focus-visible {
-    outline: 2px solid var(--blue); outline-offset: 3px;
-  }
-  @media (max-width: 900px) {
-    .eg-nav { flex-wrap: wrap; gap: 16px; padding: 18px 22px; }
-    .eg-nav-links { order: 3; width: 100%; flex-wrap: wrap; gap: 14px 18px; padding-top: 12px; border-top: 1px dashed var(--rule); }
-    .eg-nav-links a { padding: 8px 4px; min-height: 44px; display: inline-flex; align-items: center; }
-  }
-  @media (max-width: 480px) {
-    .eg-nav { padding: 16px 18px; }
-    .eg-badge { font-size: 22px; }
-    .eg-badge em { font-size: 12px; }
-    .eg-nav-cta { padding: 10px 14px; font-size: 10.5px; letter-spacing: 0.18em; }
-  }
-
   /* HERO BIO */
   .bio-hero {
     padding: 64px 0 96px;
@@ -121,7 +73,7 @@ const css = `
   .bio-eyebrow::before { content: ""; width: 36px; height: 1.5px; background: currentColor; }
   .bio-h {
     font-family: var(--display);
-    font-size: clamp(48px, 10vw, 152px);
+    font-size: clamp(72px, 11vw, 168px);
     line-height: 0.85; font-weight: 600;
     color: var(--blue); letter-spacing: -0.01em;
     margin: 0;
@@ -131,8 +83,8 @@ const css = `
   .bio-h .role {
     display: block;
     font-family: var(--serif); font-style: italic;
-    font-size: clamp(15px, 1.4vw, 20px); line-height: 1.4;
-    color: var(--ink-soft); margin-top: 18px; max-width: 28em;
+    font-size: clamp(16px, 1.5vw, 22px); line-height: 1.4;
+    color: var(--ink-soft); margin-top: 18px; max-width: 26em;
     font-weight: 400; letter-spacing: normal;
   }
   .bio-meta {
@@ -152,12 +104,31 @@ const css = `
   }
   .portrait-frame {
     flex: 1;
-    border: 1px dashed rgba(241, 234, 216, 0.45);
-    background: repeating-linear-gradient(135deg, rgba(241, 234, 216, 0.04) 0 12px, transparent 12px 24px);
+    border: 1.5px dashed rgba(247, 224, 122, 0.85);
+    background:
+      repeating-linear-gradient(135deg, rgba(241, 234, 216, 0.06) 0 12px, transparent 12px 24px),
+      repeating-linear-gradient(45deg, rgba(247, 224, 122, 0.04) 0 18px, transparent 18px 36px);
     display: flex; align-items: center; justify-content: center;
     position: relative; overflow: hidden;
   }
   .portrait-frame svg { width: 70%; height: 70%; }
+  /* Mascot Egoera (figura sentada + flor mostaza). El trazo usa
+     currentColor del padre → cream contra el fondo cobalto.
+     La mancha mostaza interior está pintada por color fijo (#f4c842). */
+  .portrait-frame .portrait-mascot {
+    color: rgba(241, 234, 216, 0.92);
+    width: auto;
+    height: 78%;
+    animation: portrait-breath 7s ease-in-out infinite;
+    transform-origin: 50% 60%;
+  }
+  @keyframes portrait-breath {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.025); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .portrait-frame .portrait-mascot { animation: none; }
+  }
   .portrait-frame .placeholder-tag {
     position: absolute; top: 14px; left: 14px;
     font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
@@ -184,8 +155,8 @@ const css = `
   @media (max-width: 480px) {
     .bio-hero { padding: 36px 0 56px; }
     .bio-text { padding: 26px 22px; gap: 18px; }
-    .bio-h { font-size: clamp(44px, 13vw, 64px); }
-    .bio-h .role { font-size: 14.5px; margin-top: 14px; }
+    .bio-h { font-size: clamp(48px, 14vw, 72px); }
+    .bio-h .role { font-size: 15px; margin-top: 14px; }
     .bio-meta { gap: 14px 22px; padding-top: 14px; font-size: 9.5px; letter-spacing: 0.18em; }
     .bio-portrait { min-height: 360px; padding: 22px; gap: 16px; }
     .portrait-cap { font-size: 36px; }
@@ -209,7 +180,7 @@ const css = `
   .section.alt .head { border-bottom-color: var(--cream); }
   .head h2 {
     font-family: var(--display);
-    font-size: clamp(40px, 7vw, 110px);
+    font-size: clamp(48px, 7vw, 110px);
     line-height: 0.92; font-weight: 600;
     color: var(--blue); letter-spacing: -0.01em;
     margin: 0;
@@ -294,90 +265,83 @@ const css = `
     .tl-body { font-size: 15px; }
   }
 
-  /* MANIFIESTO TILES (sobre cream) */
-  .manifest-tiles {
+  /* MANIFIESTO TILES (sobre cobalto alt) */
+  .tiles {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    border: 1.5px solid var(--blue);
+    border: 1.5px solid var(--cream);
   }
-  .m-tile {
+  .tile {
     padding: 40px;
-    border-right: 1.5px solid var(--blue);
+    border-right: 1.5px solid var(--cream);
     display: flex; flex-direction: column; gap: 16px;
-    min-height: 280px;
+    min-height: 320px;
   }
-  .m-tile:last-child { border-right: none; }
-  .m-tile .num {
+  .tile:last-child { border-right: none; }
+  .tile .num {
     font-family: var(--display);
-    font-size: 96px; font-weight: 600; line-height: 0.85;
-    color: var(--blue); opacity: .85;
+    font-size: 100px; font-weight: 600; line-height: 0.85;
+    color: var(--cream); opacity: .85;
   }
-  .m-tile .num em { font-style: italic; }
-  .m-tile h4 {
+  .tile .num em { font-style: italic; }
+  .tile h4 {
+    font-family: var(--display);
+    font-size: 38px; font-weight: 600; line-height: 1;
+    color: var(--cream);
+    margin: 0;
+  }
+  .tile p {
+    font-family: var(--serif); font-size: 16px; line-height: 1.55;
+    color: rgba(241, 234, 216, 0.92);
+    margin: 0;
+  }
+  @media (max-width: 900px) {
+    .tiles { grid-template-columns: 1fr; }
+    .tile { border-right: none; border-bottom: 1.5px solid var(--cream); }
+    .tile:last-child { border-bottom: none; }
+  }
+  @media (max-width: 480px) {
+    .tile { padding: 28px 22px; min-height: auto; gap: 12px; }
+    .tile .num { font-size: 72px; }
+    .tile h4 { font-size: 32px; }
+    .tile p { font-size: 15px; }
+  }
+
+  /* FAQ */
+  .qa { border: 1.5px solid var(--blue); }
+  .qa-row {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 0;
+    border-bottom: 1.5px solid var(--blue);
+  }
+  .qa-row:last-child { border-bottom: none; }
+  .qa-q {
+    padding: 32px;
+    border-right: 1.5px solid var(--blue);
     font-family: var(--display);
     font-size: 36px; font-weight: 600; line-height: 1;
     color: var(--blue);
-    margin: 0;
   }
-  .m-tile p {
-    font-family: var(--serif); font-size: 16px; line-height: 1.55;
-    color: var(--ink);
-    margin: 0;
-  }
-  @media (max-width: 900px) {
-    .manifest-tiles { grid-template-columns: 1fr; }
-    .m-tile { border-right: none; border-bottom: 1.5px solid var(--blue); }
-    .m-tile:last-child { border-bottom: none; }
-  }
-  @media (max-width: 480px) {
-    .m-tile { padding: 28px 22px; min-height: auto; gap: 12px; }
-    .m-tile .num { font-size: 72px; }
-    .m-tile h4 { font-size: 30px; }
-    .m-tile p { font-size: 15px; }
-  }
-
-  /* LECTURAS (sobre alt cobalto) */
-  .reads {
-    border: 1.5px solid var(--cream);
-  }
-  .reads-row {
-    display: grid;
-    grid-template-columns: 1fr 1.6fr;
-    gap: 0;
-    border-bottom: 1.5px solid var(--cream);
-  }
-  .reads-row:last-child { border-bottom: none; }
-  .reads-name {
+  .qa-q em { font-style: italic; }
+  .qa-a {
     padding: 32px;
-    border-right: 1.5px solid var(--cream);
-    font-family: var(--display);
-    font-size: 44px; font-weight: 600; line-height: 1;
-    color: var(--cream);
-  }
-  .reads-name em { font-style: italic; }
-  .reads-name .where {
-    display: block; margin-top: 8px;
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
-    color: rgba(241, 234, 216, 0.7); font-weight: 400;
-  }
-  .reads-body {
-    padding: 32px;
-    font-family: var(--serif); font-style: italic;
+    font-family: var(--serif);
     font-size: 17px; line-height: 1.6;
-    color: rgba(241, 234, 216, 0.92);
+    color: var(--ink);
   }
   @media (max-width: 900px) {
-    .reads-row { grid-template-columns: 1fr; }
-    .reads-name { border-right: none; border-bottom: 1px dashed rgba(241, 234, 216, 0.35); }
+    .qa-row { grid-template-columns: 1fr; }
+    .qa-q { border-right: none; border-bottom: 1px dashed var(--blue); }
   }
   @media (max-width: 480px) {
-    .reads-name { padding: 24px 22px; font-size: 36px; }
-    .reads-body { padding: 22px; font-size: 15.5px; }
+    .qa-q { padding: 22px; font-size: 30px; }
+    .qa-a { padding: 22px; font-size: 16px; }
   }
 
-  /* CIERRE / Hablamos */
+  /* CIERRE */
   .closer {
-    margin-top: 0;
+    margin-top: 80px;
     padding: 64px;
     border: 1.5px solid var(--blue);
     background: var(--cream);
@@ -388,7 +352,7 @@ const css = `
   }
   .closer h3 {
     font-family: var(--display);
-    font-size: clamp(40px, 6vw, 92px);
+    font-size: clamp(48px, 6vw, 92px);
     line-height: 0.95; font-weight: 600;
     color: var(--blue); letter-spacing: -0.01em;
     margin: 0;
@@ -416,76 +380,18 @@ const css = `
     outline: 2px solid var(--blue); outline-offset: 3px;
   }
   @media (max-width: 900px) {
-    .closer { grid-template-columns: 1fr; padding: 36px; gap: 28px; }
+    .closer { grid-template-columns: 1fr; padding: 36px; gap: 28px; margin-top: 56px; }
   }
   @media (max-width: 480px) {
-    .closer { padding: 26px 22px; gap: 22px; }
+    .closer { padding: 26px 22px; gap: 22px; margin-top: 40px; }
     .closer p { font-size: 15.5px; margin-top: 14px; }
     .closer-actions { width: 100%; gap: 10px; }
     .closer-actions .eg-btn { width: 100%; justify-content: center; padding: 14px 18px; }
   }
 
-  /* FOOTER inlined */
-  .eg-foot {
-    background: var(--cream);
-    border-top: 1.5px solid var(--blue);
-    padding: 64px 0 28px;
-    color: var(--ink);
-  }
-  .eg-foot-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 48px;
-    padding-bottom: 48px;
-    border-bottom: 1px dashed var(--blue);
-  }
-  .eg-foot-tag {
-    font-family: var(--serif); font-style: italic;
-    font-size: 16px; line-height: 1.55;
-    margin-top: 12px; color: var(--ink-soft);
-  }
-  .eg-foot-tag em { font-style: italic; }
-  .eg-foot-col h5 {
-    font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--blue); margin: 0 0 16px;
-    font-weight: 500;
-  }
-  .eg-foot-col a {
-    display: block;
-    font-family: var(--serif);
-    font-size: 16px; line-height: 1.7;
-    color: var(--ink-soft);
-    text-decoration: none;
-  }
-  .eg-foot-col a:hover { color: var(--blue); text-decoration: underline; }
-  .eg-foot-col a:focus-visible {
-    outline: 2px solid var(--blue); outline-offset: 3px;
-    color: var(--blue); border-radius: 2px;
-  }
-  .eg-foot-bot {
-    display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap;
-    padding-top: 24px;
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--ink-soft);
-  }
-  @media (max-width: 900px) {
-    .eg-foot { padding: 48px 0 26px; }
-    .eg-foot-grid { grid-template-columns: 1fr 1fr; gap: 32px; padding-bottom: 36px; }
-  }
-  @media (max-width: 540px) {
-    .eg-foot-grid { grid-template-columns: 1fr; gap: 28px; }
-  }
-  @media (max-width: 480px) {
-    .eg-foot { padding: 36px 0 22px; }
-    .eg-foot-tag { font-size: 15px; }
-    .eg-foot-bot { font-size: 9.5px; letter-spacing: 0.18em; gap: 10px; padding-top: 18px; }
-  }
-
-  /* Reduced motion: disable transitions */
+  /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
-    .eg-nav-cta, .eg-nav-links a, .eg-btn, .eg-foot-col a {
-      transition: none;
-    }
+    .eg-btn { transition: none; }
   }
 `;
 
@@ -494,32 +400,7 @@ export default function SobreNosotrosPage() {
     <div className="sobre-page">
       <style>{css}</style>
 
-      {/* NAV (inline; sustituir por <EgoeraNav active="sobre" /> cuando exista) */}
-      <nav className="eg-nav" aria-label="Navegación principal Egoera">
-        <Link href="/" className="eg-badge">
-          <svg
-            className="star"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            aria-hidden="true"
-          >
-            <path d="M12 3 L13.5 10.5 L21 12 L13.5 13.5 L12 21 L10.5 13.5 L3 12 L10.5 10.5 Z" />
-          </svg>
-          egoera <em>· psicología</em>
-        </Link>
-        <div className="eg-nav-links">
-          <Link href="/">Inicio</Link>
-          <Link href="/blog">Vlog</Link>
-          <Link href="/sobre-nosotros" className="active">Sobre Ander</Link>
-          <Link href="/servicios">Consulta</Link>
-          <Link href="/contacto">Contacto</Link>
-        </div>
-        <Link href="/contacto" className="eg-nav-cta">
-          Reservar consulta
-        </Link>
-      </nav>
+      <EgoeraNav active="sobre" />
 
       {/* HERO BIO */}
       <section className="bio-hero">
@@ -528,56 +409,44 @@ export default function SobreNosotrosPage() {
             <div className="bio-text">
               <span className="bio-eyebrow">Quién está detrás · sobre 01</span>
               <h1 className="bio-h" style={{ textWrap: "balance" }}>
-                Ander <em>Bilbao</em> Castejón.
+                Ander <em>Bilbao</em>
+                <br />
+                Castejón
                 <span className="role">
-                  Psicólogo colegiado · BI-04567 · Bilbao. Llevo más de una década
-                  escuchando lo que el cuerpo no se atreve a decir en voz alta.
+                  Psicólogo general sanitario. Llevo más de una década escuchando
+                  lo que el cuerpo no se atreve a decir en voz alta.
                 </span>
               </h1>
               <div className="bio-meta">
                 <span>
-                  Col. <strong>nº BI-04567</strong>
+                  Col. <strong>nº B-04122</strong>
                 </span>
                 <span>
-                  Bilbao · <strong>presencial / online</strong>
+                  Bilbao · <strong>BBK / online</strong>
                 </span>
                 <span>
-                  Idiomas · <strong>ES · EU</strong>
+                  Idiomas · <strong>ES · EU · EN</strong>
                 </span>
                 <span>
-                  Desde · <strong>2018</strong>
+                  Desde · <strong>2014</strong>
                 </span>
               </div>
             </div>
             <div className="bio-portrait">
               <div className="portrait-frame">
                 <span className="placeholder-tag">retrato · 4:5</span>
-                <svg
-                  viewBox="0 0 200 250"
-                  fill="none"
-                  stroke="rgba(241,234,216,.35)"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <circle cx="100" cy="80" r="38" />
-                  <path d="M 40 230 C 40 170, 70 140, 100 140 C 130 140, 160 170, 160 230" />
-                  <path d="M 80 75 C 86 80, 94 80, 100 75" />
-                  <path d="M 100 75 C 106 80, 114 80, 120 75" />
-                  <path d="M 92 95 Q 100 100, 108 95" />
-                  <line x1="20" y1="20" x2="40" y2="20" strokeDasharray="2 4" />
-                  <line x1="20" y1="20" x2="20" y2="40" strokeDasharray="2 4" />
-                  <line x1="180" y1="20" x2="160" y2="20" strokeDasharray="2 4" />
-                  <line x1="180" y1="20" x2="180" y2="40" strokeDasharray="2 4" />
-                </svg>
+                {/* El monigote canónico de Egoera (figura sentada
+                    con flor mostaza creciendo de la cabeza). Es la
+                    misma mascota que aparece en /sentir, así marca
+                    continuidad de identidad visual a través del sitio. */}
+                <Mascot size={240} className="portrait-mascot" />
               </div>
               <div className="portrait-cap">
-                Despacio. <em>Bilbaíno.</em>
+                &ldquo;escuchar es <em>resistirse a arreglar</em>&rdquo;
               </div>
               <div className="portrait-meta">
                 <span>Bilbao · 2026</span>
-                <span>foto pendiente</span>
+                <span>monigote · provisional</span>
               </div>
             </div>
           </div>
@@ -591,116 +460,134 @@ export default function SobreNosotrosPage() {
             <div>
               <div className="eyebrow">Trayectoria · 02</div>
               <h2>
-                de <em>Bilbao</em> a una consulta propia
+                de <em>Bilbao</em> a un cuaderno propio
               </h2>
             </div>
             <p className="side">
-              Ocho años caminando entre la academia, la consulta y la escritura.
-              Cada parada me dejó una pregunta nueva — y una manera distinta de
-              escuchar.
+              Doce años caminando entre la academia, el hospital y los
+              procesos largos. Cada parada me dejó una pregunta nueva — y
+              una manera distinta de escuchar.
             </p>
           </div>
 
           <div className="timeline">
             <div className="tl-item">
               <div>
-                <div className="tl-year">2018</div>
+                <div className="tl-year">2014</div>
                 <div className="tl-where">UPV/EHU · Leioa</div>
               </div>
               <div>
-                <div className="tl-title">Licenciatura en Psicología</div>
+                <div className="tl-title">Grado en Psicología</div>
                 <div className="tl-where" style={{ marginTop: 4 }}>
-                  Universidad del País Vasco
+                  Premio extraordinario fin de carrera
                 </div>
               </div>
               <p className="tl-body">
                 Empecé creyendo que la psicología era un mapa. Salí entendiendo
-                que es, sobre todo, un idioma — y que cada persona tiene el suyo.
+                que es, sobre todo, un idioma — y que cada persona tiene el
+                suyo.
               </p>
             </div>
 
             <div className="tl-item">
               <div>
-                <div className="tl-year">2020</div>
-                <div className="tl-where">Formación · Madrid</div>
+                <div className="tl-year">2016</div>
+                <div className="tl-where">Universidad Complutense · Madrid</div>
               </div>
               <div>
                 <div className="tl-title">
-                  Máster en Terapia <em>Cognitivo-Conductual</em>
+                  Máster en Psicología General Sanitaria
                 </div>
                 <div className="tl-where" style={{ marginTop: 4 }}>
                   Especialización clínica
                 </div>
               </div>
               <p className="tl-body">
-                Dos años para aprender que la técnica no sirve si no entiendes a
-                quién tienes delante. La cabeza explica; la persona, no siempre.
+                Dos años de prácticas con población adulta. Mi primer paciente:
+                alguien que llevaba diez años sin dormir bien y nadie le había
+                preguntado por qué.
               </p>
             </div>
 
             <div className="tl-item">
               <div>
-                <div className="tl-year">2021</div>
-                <div className="tl-where">Bilbao · consulta propia</div>
+                <div className="tl-year">2017</div>
+                <div className="tl-where">Hospital de Cruces · Barakaldo</div>
               </div>
               <div>
-                <div className="tl-title">
-                  Inicio <em>práctica clínica</em> en Bilbao
-                </div>
+                <div className="tl-title">Unidad de salud mental adulta</div>
                 <div className="tl-where" style={{ marginTop: 4 }}>
-                  Presencial + online
+                  3 años · contrato público
                 </div>
               </div>
               <p className="tl-body">
-                Una sala con luz buena, una butaca cómoda y suficiente silencio
-                para que uno se oiga a sí mismo. Eso era lo que quería ofrecer.
+                Aprendí que <em>el tiempo</em> es la herramienta más cara y más
+                necesaria. Y que la mayoría de los servicios públicos no la
+                pueden permitir.
               </p>
             </div>
 
             <div className="tl-item">
               <div>
-                <div className="tl-year">2024</div>
-                <div className="tl-where">Instagram · TikTok</div>
+                <div className="tl-year">2020</div>
+                <div className="tl-where">Formación · Madrid · Berlín</div>
               </div>
               <div>
-                <div className="tl-title">
-                  Lanzamiento de <em>@egoera.psikologia</em>
-                </div>
+                <div className="tl-title">Trauma temprano · apego · IFS</div>
                 <div className="tl-where" style={{ marginTop: 4 }}>
-                  Contenido semanal · líneas Reflexiona, Aprende, Práctica
+                  Terapia somática + sistémica
                 </div>
               </div>
               <p className="tl-body">
-                Lo que cuento en consulta no debería costar 50 € por entender.
-                Empecé a publicar en redes sin imperativos ni listicles.
+                Mientras el mundo paraba, yo me formé en lo que más me faltaba:
+                cómo el cuerpo guarda lo que la mente no puede sostener.
               </p>
             </div>
 
             <div className="tl-item">
               <div>
-                <div className="tl-year">2026</div>
+                <div className="tl-year">2022</div>
+                <div className="tl-where">Bilbao · cuaderno editorial</div>
+              </div>
+              <div>
+                <div className="tl-title">Abro Egoera · escritura propia</div>
+                <div className="tl-where" style={{ marginTop: 4 }}>
+                  Online · castellano + euskara
+                </div>
+              </div>
+              <p className="tl-body">
+                Decidí poner la psicología que practico en una pantalla,
+                pero despacio: cartas semanales, lecturas largas y un
+                diario emocional. Para que la gente tenga un sitio adonde
+                volver entre sesión y sesión, o cuando ni siquiera hay
+                sesión.
+              </p>
+            </div>
+
+            <div className="tl-item">
+              <div>
+                <div className="tl-year">2025</div>
                 <div className="tl-where">egoera.es</div>
               </div>
               <div>
                 <div className="tl-title">
-                  Egoera.es: vlog editorial + diario emocional como app
+                  Nace <em>Egoera</em>
                 </div>
                 <div className="tl-where" style={{ marginTop: 4 }}>
-                  Biblioteca abierta · web + PWA
+                  Vlog + biblioteca abierta
                 </div>
               </div>
               <p className="tl-body">
-                La casa propia. Domingos para escribir despacio, una app para
-                anotar lo que uno siente entre semana. Lo demás, ya iremos
-                viendo.
+                Porque lo que cuento en consulta no debería costar 50 € por
+                entender. Empecé a escribir los domingos, y no he parado.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* MANIFIESTO RESUMIDO (sobre cream) */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      {/* MANIFIESTO (sobre cobalto alt) */}
+      <section className="section alt">
         <div className="wrap">
           <div className="head">
             <div>
@@ -710,200 +597,145 @@ export default function SobreNosotrosPage() {
               </h2>
             </div>
             <p className="side">
-              Cuatro principios. Si alguno te chirría, mejor saberlo antes que
+              Tres principios. Si alguno te chirría, mejor saberlo antes que
               después.
             </p>
           </div>
 
-          <div className="manifest-tiles">
-            <div className="m-tile">
+          <div className="tiles">
+            <div className="tile">
               <span className="num">
                 01<em>.</em>
               </span>
-              <h4>nada de imperativos</h4>
+              <h4>nada de píldoras rápidas</h4>
               <p>
-                No te voy a decir qué tienes que hacer. Vamos a mirar juntos qué
-                te está pasando, y desde ahí decides tú.
+                Ningún ejercicio sirve si no lo entiendes. Antes de practicar,
+                hablamos de para qué. La técnica viene después de la pregunta.
               </p>
             </div>
-            <div className="m-tile">
+            <div className="tile">
               <span className="num">
                 02<em>.</em>
               </span>
-              <h4>despacio</h4>
+              <h4>el cuerpo manda</h4>
               <p>
-                Lo importante rara vez se entiende deprisa. Trabajo a la
-                velocidad de quien tengo delante, no a la del manual.
+                La cabeza explica lo que ya sabe. El cuerpo guarda lo que aún no
+                entendemos. Trabajo con los dos, sin opa entre ellos.
               </p>
             </div>
-            <div className="m-tile">
+            <div className="tile">
               <span className="num">
                 03<em>.</em>
               </span>
-              <h4>sin listicles</h4>
+              <h4>termina cuando termina</h4>
               <p>
-                Ni «5 claves para», ni «10 hábitos que». La psicología no cabe
-                en una infografía. Aquí se escribe en párrafos.
+                No firmamos compromiso de continuidad. Si sientes que ya no me
+                necesitas, te ayudo a cerrar bien. Volver siempre se puede.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* LECTURAS QUE ME HAN FORMADO (alt cobalto) */}
-      <section className="section alt">
-        <div className="wrap">
-          <div className="head">
-            <div>
-              <div className="eyebrow">Biblioteca · 04</div>
-              <h2>
-                lecturas que me han <em>formado</em>
-              </h2>
-            </div>
-            <p className="side">
-              Cuatro nombres a los que vuelvo cuando me pierdo. No son los
-              únicos; son los que más me han cambiado la escucha.
-            </p>
-          </div>
-
-          <div className="reads">
-            <div className="reads-row">
-              <div className="reads-name">
-                <em>Viktor</em> Frankl
-                <span className="where">El hombre en busca de sentido</span>
-              </div>
-              <div className="reads-body">
-                Que el sufrimiento, cuando encuentra un porqué, deja de ser solo
-                sufrimiento. La logoterapia como recordatorio de que el sentido
-                no se encuentra: se construye.
-              </div>
-            </div>
-            <div className="reads-row">
-              <div className="reads-name">
-                <em>Irvin</em> Yalom
-                <span className="where">El don de la terapia · Psicoterapia existencial</span>
-              </div>
-              <div className="reads-body">
-                Que la relación terapéutica es el verdadero trabajo. Lo demás
-                son herramientas. Yalom me enseñó a no esconderme detrás del
-                rol.
-              </div>
-            </div>
-            <div className="reads-row">
-              <div className="reads-name">
-                Fernando <em>Pessoa</em>
-                <span className="where">Libro del desasosiego</span>
-              </div>
-              <div className="reads-body">
-                Que dentro de uno caben muchos. La identidad como conversación
-                entre voces, no como monólogo. La literatura es también
-                psicología, sólo que mejor escrita.
-              </div>
-            </div>
-            <div className="reads-row">
-              <div className="reads-name">
-                John <em>Bowlby</em>
-                <span className="where">Trilogía del apego</span>
-              </div>
-              <div className="reads-body">
-                Que cómo nos cuidaron de pequeños sigue eligiendo a quién amamos
-                de mayores. El apego como mapa silencioso de casi todo lo que
-                nos pasa con los demás.
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* HABLAMOS · CIERRE */}
+      {/* FAQ + CIERRE */}
       <section className="section">
         <div className="wrap">
           <div className="head">
             <div>
-              <div className="eyebrow">Hablamos · 05</div>
+              <div className="eyebrow">Lo que más me preguntan · 04</div>
               <h2>
-                nos <em>vemos</em> cuando quieras
+                antes de <em>escribirme</em>
               </h2>
             </div>
             <p className="side">
-              Si has llegado hasta aquí, ya sabes algo de cómo trabajo. La
-              primera sesión es una conversación sin compromiso para vernos las
-              caras antes de decidir nada.
+              Cinco dudas comunes. Si la tuya no está, escríbeme — me leo todo
+              lo que llega.
             </p>
+          </div>
+
+          <div className="qa">
+            <div className="qa-row">
+              <div className="qa-q">
+                ¿en qué <em>encajo</em> mejor?
+              </div>
+              <div className="qa-a">
+                Adultos con ansiedad, dificultades de apego, duelo, agotamiento
+                crónico, o quienes vienen de procesos terapéuticos previos que
+                se quedaron a medias. Si llegas con una crisis aguda o necesidad
+                de medicación, te puedo orientar pero te derivo.
+              </div>
+            </div>
+            <div className="qa-row">
+              <div className="qa-q">
+                ¿cuánto <em>dura</em> un proceso?
+              </div>
+              <div className="qa-a">
+                Depende. Procesos breves de 8–12 sesiones para un tema concreto.
+                Procesos largos cuando el patrón es antiguo. Lo decidimos juntos
+                en sesión 3, no en sesión 1.
+              </div>
+            </div>
+            <div className="qa-row">
+              <div className="qa-q">
+                ¿es <em>online</em> tan eficaz?
+              </div>
+              <div className="qa-a">
+                Para la mayoría de demandas, sí. Para trabajo somático profundo
+                o cuando hay disociación importante, prefiero presencial al
+                menos en las primeras sesiones.
+              </div>
+            </div>
+            <div className="qa-row">
+              <div className="qa-q">
+                ¿guardas <em>secreto</em>?
+              </div>
+              <div className="qa-a">
+                Confidencialidad total, salvo riesgo grave para ti o terceros
+                (lo marca la ley). No comparto datos con seguros, familiares ni
+                nadie. Si quieres informe, te lo escribo a ti.
+              </div>
+            </div>
+            <div className="qa-row">
+              <div className="qa-q">
+                ¿qué pasa si <em>no</em> encajamos?
+              </div>
+              <div className="qa-a">
+                Te lo digo pronto y te recomiendo a alguien que pueda encajar
+                mejor. No es un fracaso — es la primera información útil del
+                proceso.
+              </div>
+            </div>
           </div>
 
           <div className="closer">
             <div>
               <h3>
-                empezamos por <em>una conversación</em>
+                empieza por <em>donde te apetezca</em>
               </h3>
               <p>
-                Sin formularios largos ni cuestionarios clínicos. Me escribes,
-                acordamos un día, y vemos si encajamos. Si no encajamos, te
-                recomiendo a alguien que sí.
+                Si has llegado hasta aquí, ya sabes algo de cómo escribo.
+                Todo lo público de Egoera está abierto: cuaderno, brújula,
+                diario emocional, boletín. Sin email obligatorio.
               </p>
             </div>
             <div className="closer-actions">
-              <Link href="/contacto" className="eg-btn eg-btn-blue">
-                Reservar primera sesión →
+              <Link href="/blog" className="eg-btn eg-btn-blue">
+                Empezar por el cuaderno →
               </Link>
-              <Link href="/contacto" className="eg-btn eg-btn-outline">
-                Escribir un email
-              </Link>
+              <a
+                href="https://diario.egoera.es"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="eg-btn eg-btn-outline"
+              >
+                Abrir el diario
+              </a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FOOTER (inline; sustituir por <EgoeraFooter /> cuando exista) */}
-      <footer className="eg-foot">
-        <div className="wrap">
-          <div className="eg-foot-grid">
-            <div>
-              <div className="eg-badge">
-                <svg
-                  className="star"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  aria-hidden="true"
-                >
-                  <path d="M12 3 L13.5 10.5 L21 12 L13.5 13.5 L12 21 L10.5 13.5 L3 12 L10.5 10.5 Z" />
-                </svg>
-                egoera
-              </div>
-              <p className="eg-foot-tag">
-                un sitio para <em>sentir despacio</em>
-              </p>
-            </div>
-            <div className="eg-foot-col">
-              <h5>Vlog</h5>
-              <Link href="/blog">Últimas entradas</Link>
-              <Link href="/sentimiento">Por sentimiento</Link>
-              <Link href="/blog">Archivo</Link>
-            </div>
-            <div className="eg-foot-col">
-              <h5>Egoera</h5>
-              <Link href="/sobre-nosotros">Sobre Ander</Link>
-              <Link href="/servicios">Consulta</Link>
-              <Link href="/contacto">Contacto</Link>
-            </div>
-            <div className="eg-foot-col">
-              <h5>Legal</h5>
-              <Link href="/aviso-legal">Aviso legal</Link>
-              <Link href="/privacidad">Privacidad</Link>
-              <span style={{ display: "block", fontFamily: "var(--font-serif)", fontSize: 16, lineHeight: 1.7, color: "var(--ink-soft)" }}>
-                Colegio · BI-04567
-              </span>
-            </div>
-          </div>
-          <div className="eg-foot-bot">
-            <span>© 2026 · egoera · ander bilbao castejón</span>
-            <span>diseñado en Bilbao · publicado los domingos</span>
-          </div>
-        </div>
-      </footer>
+      <EgoeraFooter />
     </div>
   );
 }

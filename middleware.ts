@@ -3,19 +3,23 @@
  * --------------------------------------------------------------------------
  * Middleware de detección de locale para egoera.es.
  *
- * Estrategia (cookie-based, sin cambio de URL):
- *   1. Si la request trae cookie `NEXT_LOCALE` válida → la respeta.
- *      Inyecta header `x-egoera-locale` para que el server pueda leerlo.
- *   2. Si no, negocia con `Accept-Language`:
- *        - busca el primer match contra `locales` ("es" | "eu" | "en")
- *        - usa `defaultLocale` si nada coincide.
- *      El locale negociado se inyecta como header (no se persiste cookie
- *      sin acción explícita del usuario, para no contaminar caches CDN).
+ * Estrategia (híbrida: cookie-based con SEO-friendly URL prefixes):
  *
- * IMPORTANTE: este middleware NO redirige ni reescribe rutas. Sólo expone
- * el locale negociado al server vía header. Si en el futuro se promociona
- * el sitio a sub-path routing (`/es/...`, `/eu/...`, `/en/...`), aquí es
- * donde irían los `NextResponse.rewrite()` correspondientes.
+ *   A) Si el path empieza por `/es/`, `/eu/` o `/en/` (URLs declaradas en el
+ *      sitemap para que Google indexe cada idioma por separado):
+ *        - Reescribimos internamente al path sin prefijo (`rewrite`, sin
+ *          redirect, la URL pública conserva el prefijo).
+ *        - Forzamos el locale vía header `x-egoera-locale-forced` para que
+ *          `getCurrentLocale()` lo lea por encima de la cookie.
+ *      Esto permite que Googlebot vea `/es/blog/X` y `/eu/blog/X` como dos
+ *      páginas distintas con contenido distinto, sin migrar a sub-path
+ *      routing real.
+ *
+ *   B) Si NO hay prefijo, se sigue la lógica cookie-based original:
+ *        1. Cookie `NEXT_LOCALE` válida → la respeta.
+ *        2. Negociación con `Accept-Language`.
+ *        3. Fallback a `defaultLocale`.
+ *      El locale negociado se expone vía header `x-egoera-locale`.
  *
  * Excluimos rutas técnicas (api, _next, archivos estáticos) del matcher.
  * --------------------------------------------------------------------------
@@ -28,10 +32,12 @@ import {
   isLocale,
   locales,
   NEXT_LOCALE_COOKIE,
+  parseLocaleFromPath,
   type Locale,
 } from "@/i18n/locales";
 
 const LOCALE_HEADER = "x-egoera-locale";
+const LOCALE_FORCED_HEADER = "x-egoera-locale-forced";
 
 /**
  * Parser ligero de Accept-Language. Devuelve el primer locale soportado o
@@ -69,6 +75,26 @@ function negotiateFromAcceptLanguage(header: string | null): Locale {
 }
 
 export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // A) Path con prefijo de locale → rewrite + locale forzado.
+  const { locale: prefixLocale, rest } = parseLocaleFromPath(pathname);
+  if (prefixLocale) {
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set(LOCALE_HEADER, prefixLocale);
+    requestHeaders.set(LOCALE_FORCED_HEADER, prefixLocale);
+
+    const rewriteUrl = request.nextUrl.clone();
+    rewriteUrl.pathname = rest;
+
+    const response = NextResponse.rewrite(rewriteUrl, {
+      request: { headers: requestHeaders },
+    });
+    response.headers.set("Vary", "Accept-Language, Cookie");
+    return response;
+  }
+
+  // B) Lógica cookie-based clásica.
   const cookieValue = request.cookies.get(NEXT_LOCALE_COOKIE)?.value;
 
   let locale: Locale;

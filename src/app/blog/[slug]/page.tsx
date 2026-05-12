@@ -6,6 +6,15 @@ import {
   getPostsByCategory,
 } from "@/lib/blog";
 import { V5ArticleShell } from "@/components/article";
+import { getArticleSeo } from "@/lib/seo/article-keywords";
+import {
+  articleSchema,
+  breadcrumbSchema,
+  personSchema,
+  organizationSchema,
+} from "@/lib/seo/schemas";
+import { buildBreadcrumbs } from "@/lib/seo/breadcrumbs";
+import { getCurrentLocale } from "@/i18n/getCurrentLocale";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -20,40 +29,107 @@ export async function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }));
 }
 
+/**
+ * generateMetadata · página de artículo.
+ *
+ * Estrategia SEO por artículo:
+ *  1. Título optimizado ≤ 60 caracteres, palabra clave principal al inicio.
+ *  2. Description ≤ 158 caracteres con keyword + propuesta de valor.
+ *  3. `keywords` array 8-15 términos (head + torso + long-tail) curado en
+ *     `@/lib/seo/article-keywords.ts`. Si el slug aún no está curado, se
+ *     genera un fallback razonable basado en categoría + título.
+ *  4. OpenGraph artículo completo: title, description, type=article,
+ *     publishedTime, modifiedTime, authors, tags, image cover.
+ *  5. Twitter card summary_large_image.
+ *  6. Canonical absoluta + alternates hreflang (es / eu / en / x-default).
+ *
+ * El JSON-LD (Article, Person, Organization, Breadcrumb, FAQ) se sigue
+ * inyectando dentro de `<V5ArticleShell>` vía `V5Schema`, pero el page
+ * también emite un BlogPosting enriquecido con los keywords curados.
+ */
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return {};
-  const url = `${SITE_URL}/blog/${post.slug}`;
-  return {
+
+  const seo = getArticleSeo({
+    slug: post.slug,
     title: post.title,
-    description: post.excerpt,
+    excerpt: post.excerpt,
+    category: post.category,
+  });
+
+  const url = `${SITE_URL}/blog/${post.slug}`;
+  const ogImage = post.coverImage ?? `${SITE_URL}/icons/logo-brain-tree-512.png`;
+
+  return {
+    title: seo.seoTitle,
+    description: seo.seoDescription,
+    keywords: seo.keywords,
+    authors: [{ name: post.author || "Ander Bilbao Castejón" }],
+    creator: post.author || "Ander Bilbao Castejón",
+    publisher: "Egoera",
     alternates: {
       canonical: url,
+      languages: {
+        // Stubs hreflang — el agente i18n los reescribe cuando exista la
+        // traducción real. Hoy los 3 idiomas apuntan al mismo es para no
+        // perder el grafo en Search Console.
+        es: url,
+        eu: `${SITE_URL}/eu/blog/${post.slug}`,
+        en: `${SITE_URL}/en/blog/${post.slug}`,
+        "x-default": url,
+      },
     },
     openGraph: {
-      title: post.title,
-      description: post.excerpt,
+      title: seo.seoTitle,
+      description: seo.seoDescription,
       type: "article",
       url,
+      siteName: "Egoera",
+      locale: "es_ES",
       publishedTime: post.dateISO,
+      modifiedTime: post.dateISO,
       authors: [post.author || "Ander Bilbao Castejón"],
       section: post.category,
-      tags: post.tags,
-      images: post.coverImage ? [{ url: post.coverImage }] : undefined,
+      // OG `tags` = la lista de keywords. Facebook/LinkedIn/X las leen
+      // como `article:tag` para mejorar la recomendación social.
+      tags: seo.keywords,
+      images: [
+        {
+          url: ogImage,
+          alt: post.coverAlt || seo.seoTitle,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
-      title: post.title,
-      description: post.excerpt,
-      images: post.coverImage ? [post.coverImage] : undefined,
+      site: "@egoerapsikolog",
+      creator: "@egoerapsikolog",
+      title: seo.seoTitle,
+      description: seo.seoDescription,
+      images: [ogImage],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
     },
   };
 }
 
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const [post, locale] = await Promise.all([
+    getPostBySlug(slug),
+    getCurrentLocale(),
+  ]);
   if (!post) notFound();
 
   // 1. Limpiar overlays V3 y V4 inyectados en el HTML del WP.
@@ -75,12 +151,14 @@ export default async function PostPage({ params }: Props) {
     .filter(Boolean).length;
 
   // 5. Posts relacionados (mismo categorySlug, sin el actual).
+  //    Pasamos 3 al shell (internal linking SEO) — el componente decide
+  //    si renderiza 2 o 3 según template.
   const allRelated = post.categorySlug
     ? await getPostsByCategory(post.categorySlug)
     : [];
   const related = allRelated
     .filter((p) => p.slug !== post.slug)
-    .slice(0, 2)
+    .slice(0, 3)
     .map((p) => ({
       slug: p.slug,
       title: p.title,
@@ -90,15 +168,68 @@ export default async function PostPage({ params }: Props) {
       date: p.date,
     }));
 
+  // 6. SEO curado para el JSON-LD enriquecido.
+  const seo = getArticleSeo({
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    category: post.category,
+  });
+
+  // 7. JSON-LD BlogPosting + Person + Organization + Breadcrumb.
+  //    Lo emitimos desde la página (server) en lugar de en V5Schema
+  //    para usar los keywords curados y la categoría legible. V5Schema
+  //    se mantiene como fallback histórico — Google deduplica nodos
+  //    iguales por @id, así que ambos pueden coexistir sin riesgo.
+  const breadcrumbs = buildBreadcrumbs(`/blog/${post.slug}`, { post });
+  const breadcrumbJsonLd = breadcrumbSchema(breadcrumbs);
+  const articleJsonLd = articleSchema({
+    title: seo.seoTitle,
+    description: seo.seoDescription,
+    slug: post.slug,
+    author: post.author,
+    datePublished: post.dateISO,
+    dateModified: post.dateISO,
+    image: post.coverImage ?? undefined,
+    category: post.category,
+    wordCount,
+    keywords: seo.keywords,
+  });
+  const personJsonLd = personSchema();
+  const orgJsonLd = organizationSchema();
+
   return (
-    <V5ArticleShell
-      post={post}
-      related={related}
-      bodyHtml={bodyHtml}
-      faqs={faqs}
-      toc={toc}
-      wordCount={wordCount}
-    />
+    <>
+      {/* JSON-LD enriquecido emitido server-side. El @id de cada nodo
+          deduplica con los que emite V5Schema (Article y Breadcrumb
+          coinciden por url; Person/Organization por @id global). */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+      />
+
+      <V5ArticleShell
+        post={post}
+        related={related}
+        bodyHtml={bodyHtml}
+        faqs={faqs}
+        toc={toc}
+        wordCount={wordCount}
+        locale={locale}
+      />
+    </>
   );
 }
 

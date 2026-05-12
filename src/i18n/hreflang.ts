@@ -72,16 +72,30 @@ export function buildHreflangMap(pathname: string): Record<Locale, string> {
 
 /**
  * Versión adaptada a la API `Metadata.alternates` de Next.js (App Router).
- * Pone también `x-default` apuntando al locale por defecto y un `canonical`
- * con la URL "limpia" (sin prefijo de locale) — esto evita que Google
- * indexe duplicados durante la fase B (cookie-based).
+ *
+ * Estrategia post-mayo-2026 (indexación separada por idioma):
+ *  - Cada idioma vive en su sub-path (`/es/...`, `/eu/...`, `/en/...`).
+ *  - El `canonical` apunta a la variante del **locale activo** si se
+ *    pasa como argumento; si no, al `defaultLocale` (castellano). Así
+ *    cuando Googlebot llega a `/eu/cursos`, el canonical es `/eu/cursos`
+ *    y no se consolida contra `/es/cursos`.
+ *  - `x-default` siempre apunta al `defaultLocale` (castellano), que es
+ *    la versión más completa del sitio.
+ *
+ * Si el helper se invoca sin `locale` desde un Server Component que aún
+ * no lee el locale activo, se asume `defaultLocale` — comportamiento
+ * razonable porque las páginas protegidas por la pre-mayo-2026 sólo
+ * existen en castellano todavía.
  */
-export function buildHreflangAlternates(pathname: string): {
+export function buildHreflangAlternates(
+  pathname: string,
+  locale: Locale = defaultLocale,
+): {
   canonical: string;
   languages: Record<string, string>;
 } {
   const path = normalizePath(pathname);
-  const canonical = `${SITE_ORIGIN}${path}`;
+  const canonical = buildLocaleUrl(path, locale);
 
   const languages: Record<string, string> = {};
   for (const l of locales) {
@@ -101,9 +115,12 @@ export function buildHreflangAlternates(pathname: string): {
  * llamar a `buildHreflangAlternates(`/blog/${slug}`)` y emitir el
  * resultado en la metadata o como `<link rel="alternate">` en el head.
  */
-export function buildArticleHreflang(slug: string): {
+export function buildArticleHreflang(
+  slug: string,
+  locale: Locale = defaultLocale,
+): {
   canonical: string;
   languages: Record<string, string>;
 } {
-  return buildHreflangAlternates(`/blog/${slug}`);
+  return buildHreflangAlternates(`/blog/${slug}`, locale);
 }

@@ -231,9 +231,14 @@ export default function BoletinPage() {
             </Link>
           ))}
         </div>
-        <Link href="/contacto" className={styles.navCta}>
-          Reservar consulta
-        </Link>
+        <a
+          href="https://diario.egoera.es"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.navCta}
+        >
+          Abrir diario
+        </a>
       </nav>
 
       {/* ===== HERO ===== */}

@@ -297,9 +297,9 @@
   position: relative;
   z-index: 4;
   margin: 32px auto -2px;
-  width: clamp(180px, 22vw, 320px);
+  width: clamp(220px, 26vw, 360px);
   max-width: 100%;
-  aspect-ratio: 400 / 560;
+  aspect-ratio: 400 / 600;
   opacity: 0;
   animation: cR 1.4s 0.6s ease-out forwards;
 }
@@ -309,13 +309,74 @@
   height: 100%;
 }
 
+/* Halo cálido detrás de la cabeza, evoca la fuente de luz/ideas. */
 .cosmicMascot::before {
   content: "";
   position: absolute;
-  inset: -10% -10% -20%;
-  background: radial-gradient(ellipse at 50% 60%, rgba(214, 189, 127, 0.25), transparent 65%);
-  filter: blur(20px);
+  inset: -28% -20% 40%;
+  background:
+    radial-gradient(ellipse at 50% 22%, rgba(247, 201, 74, 0.35), transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(214, 189, 127, 0.22), transparent 65%);
+  filter: blur(28px);
   z-index: -1;
+  pointer-events: none;
+}
+
+/* Brillo extra justo arriba de la cabeza, donde brotan las chispas. */
+.cosmicMascot::after {
+  content: "";
+  position: absolute;
+  top: -16%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 36%;
+  background:
+    radial-gradient(ellipse at 50% 70%, rgba(247, 201, 74, 0.55), transparent 60%);
+  filter: blur(18px);
+  z-index: -1;
+  pointer-events: none;
+  animation: sparkGlow 4s ease-in-out infinite;
+}
+
+/* Animaciones de las chispas que brotan de la coronilla. */
+.spark {
+  transform-origin: 200px 78px;
+  animation: sparkRays 5s ease-in-out infinite;
+}
+.sparkDot1 { animation: sparkRise 3.2s ease-in-out infinite; }
+.sparkDot2 { animation: sparkRise 3.6s ease-in-out 0.3s infinite; }
+.sparkDot3 { animation: sparkRise 3.0s ease-in-out 0.7s infinite; }
+.sparkDot4 { animation: sparkRise 4.0s ease-in-out 0.5s infinite; }
+.sparkDot5 { animation: sparkRise 3.4s ease-in-out 0.9s infinite; }
+.sparkDot6 { animation: sparkRise 2.8s ease-in-out 0.2s infinite; }
+
+@keyframes sparkRays {
+  0%, 100% { opacity: 0.55; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+
+@keyframes sparkRise {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.85; }
+  50% { transform: translateY(-8px) scale(1.1); opacity: 0.4; }
+}
+
+@keyframes sparkGlow {
+  0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spark,
+  .sparkDot1,
+  .sparkDot2,
+  .sparkDot3,
+  .sparkDot4,
+  .sparkDot5,
+  .sparkDot6,
+  .cosmicMascot::after {
+    animation: none;
+  }
 }
 
 .cosmicScroll {
@@ -735,8 +796,17 @@
   .latestIllu .num { font-size: 200px; }
   .latestIllu .meta strong { font-size: 24px; }
   .latestBody .ex { font-size: 17px; margin-top: 18px; }
-  .latestMeta { gap: 18px; padding: 14px 0; font-size: 10px; }
+  /* En móvil estrecho, los 3 metadatos se apilan en columna para que
+     cada uno se lea entero sin saltos de palabra raros. */
+  .latestMeta {
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 0;
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+  }
   .latestActions { gap: 10px; }
+  .latestActions a { width: 100%; justify-content: center; text-align: center; }
 }
 
 /* ============ DIARIO PREVIEW ============ */
@@ -810,6 +880,37 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 32px;
   padding: 0 0 80px;
+}
+
+/* En mobile las 3 fichas no caben dignamente en una fila: las convertimos
+   en carrusel horizontal con scroll-snap, así cada teléfono es legible
+   y el usuario barre con el dedo entre los 3 mockups. */
+@media (max-width: 760px) {
+  .phones {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 78%;
+    gap: 18px;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 0 36px;
+    /* Indicación visual de que hay más cartas a la derecha */
+    scroll-padding-left: 4%;
+  }
+  .phones > .phone {
+    scroll-snap-align: start;
+    aspect-ratio: 9 / 17;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .phones {
+    grid-auto-columns: 86%;
+    gap: 14px;
+  }
 }
 
 .phone {
@@ -1384,4 +1485,363 @@
   .frente:hover .fArr {
     transform: none;
   }
+}
+
+/* ============================================================
+   BRÚJULA EMOCIONAL — banda CTA tras el hero, antes de frentes
+   ============================================================ */
+.brujula {
+  position: relative;
+  background: var(--blue);
+  color: var(--cream);
+  overflow: hidden;
+  border-bottom: 1.5px solid var(--blue-deep, #0f1baa);
+}
+
+.brujula::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 80% 30%, rgba(241, 234, 216, 0.18), transparent 55%),
+    radial-gradient(ellipse at 15% 80%, rgba(241, 234, 216, 0.08), transparent 60%);
+  pointer-events: none;
+}
+
+.brujulaWrap {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 80px;
+  padding: 100px 0;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .brujulaWrap {
+    grid-template-columns: 1fr;
+    gap: 48px;
+    padding: 72px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .brujulaWrap {
+    gap: 36px;
+    padding: 56px 0;
+  }
+  .brujulaH {
+    font-size: clamp(40px, 11vw, 60px);
+    line-height: 0.96;
+    text-wrap: balance;
+  }
+  .brujulaLead {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .brujulaCtas {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .brujulaPrimary {
+    justify-content: center;
+    padding: 16px 22px;
+    font-size: 13px;
+  }
+  .brujulaSecondary {
+    text-align: center;
+    align-self: center;
+  }
+  /* Streak chip más compacto en mobile pequeño */
+  .streakChip {
+    font-size: 10px;
+    gap: 8px;
+    padding: 8px 14px;
+  }
+  .streakChipNum { font-size: 16px; }
+}
+
+.brujulaEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--cream);
+  opacity: 0.78;
+  margin-bottom: 24px;
+}
+
+.brujulaEyebrow::before {
+  content: "";
+  width: 38px;
+  height: 1.5px;
+  background: currentColor;
+}
+
+.brujulaH {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(48px, 7.2vw, 110px);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  margin: 0 0 28px;
+  color: var(--cream);
+  text-wrap: balance;
+}
+
+.brujulaH em {
+  font-style: italic;
+  color: #f3a8c4;
+}
+
+.brujulaLead {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.5;
+  color: rgba(241, 234, 216, 0.86);
+  max-width: 56ch;
+  margin: 0 0 36px;
+  text-wrap: pretty;
+}
+
+.brujulaCtas {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.brujulaPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--cream);
+  color: var(--blue);
+  padding: 18px 28px;
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.brujulaPrimary:hover {
+  background: var(--cream-2);
+  transform: translateY(-1px);
+}
+
+.brujulaPrimary:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 4px;
+}
+
+.brujulaPrimary span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--blue);
+  color: var(--cream);
+  font-size: 13px;
+}
+
+.brujulaSecondary {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cream);
+  opacity: 0.8;
+  text-decoration: none;
+  padding: 16px 4px;
+  border-bottom: 1px dashed rgba(241, 234, 216, 0.4);
+}
+
+.brujulaSecondary:hover {
+  opacity: 1;
+  border-color: var(--cream);
+}
+
+/* Mini-deck previsualización (cartas apiladas, decorativas) */
+.brujulaDeck {
+  position: relative;
+  height: 320px;
+}
+
+.brujulaCard {
+  position: absolute;
+  width: 78%;
+  max-width: 340px;
+  height: 240px;
+  border-radius: 16px;
+  background: var(--cream);
+  color: var(--blue-deep, #0f1baa);
+  box-shadow:
+    0 30px 60px -20px rgba(0, 0, 0, 0.45),
+    0 8px 18px -8px rgba(0, 0, 0, 0.3);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.brujulaCard1 {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-6deg);
+  z-index: 1;
+}
+
+.brujulaCard2 {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(2deg) translateX(20px);
+  z-index: 2;
+}
+
+.brujulaCard3 {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-1deg) translateX(-10px) translateY(-12px);
+  z-index: 3;
+}
+
+.brujulaCardCorner {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(15, 27, 170, 0.55);
+}
+
+.brujulaCardGlyph {
+  font-family: var(--serif);
+  font-size: 56px;
+  line-height: 1;
+  font-weight: 300;
+  color: var(--blue);
+}
+
+.brujulaCardPrompt {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--blue-deep, #0f1baa);
+  margin: 0;
+}
+
+.brujulaCardFoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(15, 27, 170, 0.5);
+}
+
+@media (max-width: 900px) {
+  .brujulaDeck {
+    height: 280px;
+    order: -1;
+  }
+  .brujulaCard {
+    width: min(86%, 320px);
+    height: 220px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brujulaCard {
+    transition: none;
+  }
+}
+
+/* Streak chip dentro del BrujulaSection (visible solo si hay sesiones) */
+.streakChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  margin: 0 0 28px;
+  background: rgba(241, 234, 216, 0.12);
+  border: 1px solid rgba(241, 234, 216, 0.3);
+  border-radius: 999px;
+  color: var(--cream);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.streakChipFlame {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f3a8c4, #f7c94a);
+  color: var(--blue);
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0;
+}
+
+.streakChipNum {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 18px;
+  color: var(--cream);
+  letter-spacing: -0.01em;
+  text-transform: none;
+}
+
+.streakChipLabel {
+  color: rgba(241, 234, 216, 0.78);
+}
+
+.streakChipDot {
+  opacity: 0.4;
+}
+
+.streakChipLevel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--serif);
+  font-style: italic;
+  text-transform: lowercase;
+  font-size: 14px;
+  color: var(--cream);
+  letter-spacing: 0;
+}
+
+.streakChipLevel em {
+  font-style: normal;
+  font-size: 14px;
+  color: #f3a8c4;
+}
+
+.streakChipPts {
+  color: rgba(241, 234, 216, 0.7);
 }

@@ -1,71 +1,173 @@
 /* =====================================================================
-   LangSwitcher · selector ES / EU / EN dentro de EgoeraNav
+   LangSwitcher · disclosure menu compacto (estilo bidaiatzen.com)
    ---------------------------------------------------------------------
-   Tres botones tipográficos (mono uppercase, como el "·psicología" del
-   badge) sobre el cobalto del nav. El locale activo destaca con la
-   misma "underline cream" que ya usan los enlaces .active.
+   Un solo botón con el código del idioma activo y un caret. Al activar
+   se despliega un panel cremoso con las opciones, evitando que tres
+   botones siempre visibles colapsen el nav en mobile.
    ===================================================================== */
 
 .wrap {
-  display: inline-flex;
-  align-items: center;
-  gap: 0;
-  padding: 2px;
-  border-radius: 999px;
-  border: 1px solid var(--rule-cream, rgba(241, 234, 216, 0.32));
-  background: rgba(241, 234, 216, 0.06);
-
+  position: relative;
+  display: inline-block;
   font-family: var(--mono, "JetBrains Mono", monospace);
 }
 
-.btn {
+/* ─── Trigger ─────────────────────────────────────────────────── */
+.trigger {
   appearance: none;
-  border: 0;
-  background: transparent;
-
-  padding: 5px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(241, 234, 216, 0.08);
+  border: 1px solid var(--rule-cream, rgba(241, 234, 216, 0.32));
+  color: var(--cream, #f1ead8);
+  padding: 6px 11px 6px 13px;
   border-radius: 999px;
-
   font-family: inherit;
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-
-  color: var(--cream, #f1ead8);
-  opacity: 0.66;
+  line-height: 1;
   cursor: pointer;
-  transition: opacity 0.15s, background 0.15s;
-
-  /* Romper el botón en una sola línea */
-  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.btn:hover:not(.active) {
-  opacity: 0.95;
+.trigger:hover {
+  background: rgba(241, 234, 216, 0.15);
 }
 
-.btn:focus-visible {
+.trigger:focus-visible {
   outline: 2px solid var(--cream, #f1ead8);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
-.btn.active {
-  opacity: 1;
+.trigger:disabled {
+  opacity: 0.55;
+  cursor: progress;
+}
+
+.code {
+  display: inline-block;
+  min-width: 16px;
+  text-align: center;
+}
+
+.caret {
+  color: currentColor;
+  opacity: 0.8;
+  transition: transform 0.2s ease;
+}
+
+.caretOpen {
+  transform: rotate(180deg);
+}
+
+/* ─── Menu desplegable ────────────────────────────────────────── */
+.menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 80;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  min-width: 200px;
   background: var(--cream, #f1ead8);
+  border: 1px solid rgba(15, 27, 170, 0.18);
+  border-radius: 12px;
+  box-shadow:
+    0 18px 36px -16px rgba(15, 27, 170, 0.35),
+    0 6px 12px -8px rgba(15, 27, 170, 0.25);
+  animation: lsFadeIn 0.16s ease-out;
+}
+
+@keyframes lsFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu { animation: none; }
+  .caret { transition: none; }
+}
+
+/* ─── Opciones ────────────────────────────────────────────────── */
+.option {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  padding: 9px 10px;
+  border-radius: 8px;
+  cursor: pointer;
   color: var(--blue, #1d2bdb);
+  transition: background 0.12s ease;
 }
 
-/* Una pequeña tira separadora visual entre botones cuando ninguno está
-   activo (para que no parezcan una sola palabra). Se anula vía .active. */
-.btn + .btn {
-  position: relative;
+.option:hover {
+  background: rgba(15, 27, 170, 0.08);
 }
 
-@media (max-width: 700px) {
-  .btn {
-    padding: 4px 8px;
-    font-size: 9.5px;
-    letter-spacing: 0.16em;
+.option:focus-visible {
+  outline: 2px solid var(--blue, #1d2bdb);
+  outline-offset: -2px;
+  background: rgba(15, 27, 170, 0.08);
+}
+
+.optionActive {
+  background: rgba(15, 27, 170, 0.06);
+}
+
+.optionCode {
+  font-family: var(--mono, "JetBrains Mono", monospace);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--blue, #1d2bdb);
+  padding: 4px 8px;
+  border: 1px solid rgba(15, 27, 170, 0.2);
+  border-radius: 4px;
+  text-align: center;
+  line-height: 1;
+}
+
+.optionActive .optionCode {
+  background: var(--blue, #1d2bdb);
+  color: var(--cream, #f1ead8);
+  border-color: var(--blue, #1d2bdb);
+}
+
+.optionName {
+  font-family: var(--serif, "Fraunces", Georgia, serif);
+  font-style: italic;
+  font-size: 14.5px;
+  color: var(--blue, #1d2bdb);
+  line-height: 1.1;
+}
+
+.optionCheck {
+  font-family: var(--mono, "JetBrains Mono", monospace);
+  font-size: 12px;
+  color: var(--blue, #1d2bdb);
+  opacity: 0.7;
+}
+
+@media (max-width: 480px) {
+  .menu {
+    right: -4px;
+    min-width: 188px;
   }
 }
