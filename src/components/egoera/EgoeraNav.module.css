@@ -205,14 +205,23 @@
 
 @media (max-width: 900px) {
   .mobile {
-    display: inline-flex;
+    display: flex !important;
     align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
+    gap: 10px 14px;
+    flex-wrap: wrap !important;
     width: 100%;
+    max-width: 100%;
     margin-top: 4px;
     padding-top: 10px;
     border-top: 1px dashed var(--rule-cream);
+    /* Defensiva contra cache iOS Safari con CSS viejo donde nowrap
+       no estaba sobrescrito y los items se cortaban a la derecha */
+    overflow: visible;
+    min-width: 0;
+  }
+  .mobile a {
+    flex: 0 0 auto;
+    min-width: 0;
   }
   .mobile a {
     font-family: var(--mono);

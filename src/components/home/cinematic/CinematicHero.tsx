@@ -481,10 +481,97 @@ export function CinematicHero() {
           border-color: #fefaeb;
         }
 
+        /* ════════════════════════════════════════════════════════
+         * MOBILE FIX — la chica del .webm no cabe bien en 9:16 con
+         * object-position: 50% 80% (anclado al pie). En móvil se
+         * recorta la cabeza. Cambiamos a 50% 35% para subir el foco,
+         * usamos 100dvh para evitar saltos por la URL bar de iOS,
+         * y bajamos el padding-top del contenido para que el texto
+         * no tape la figura.
+         * ════════════════════════════════════════════════════════ */
+        @media (max-width: 760px) {
+          .ch-hero {
+            min-height: 100dvh;
+            height: 100dvh;
+          }
+          .ch-hero-img {
+            /* recentrar a la chica · ligeramente a la izquierda del
+               centro horizontal y más arriba vertical para que su
+               cabeza no salga del frame */
+            object-position: 46% 38%;
+          }
+          /* atenuar las capas decorativas para que la chica sea la
+             protagonista, no la niebla */
+          .ch-fog { opacity: 0.42; }
+          .ch-grain { opacity: 0.10; }
+          .ch-scanlines { opacity: 0.5; }
+          /* overlay un poco más fuerte en la parte superior para
+             dar legibilidad al h1 sin oscurecer la figura */
+          .ch-overlay {
+            background:
+              radial-gradient(
+                ellipse 60% 50% at 50% 70%,
+                rgba(255, 220, 180, 0.16) 0%,
+                rgba(255, 220, 180, 0) 70%
+              ),
+              linear-gradient(
+                180deg,
+                rgba(10, 14, 46, 0.55) 0%,
+                rgba(10, 14, 46, 0.18) 24%,
+                rgba(10, 14, 46, 0) 45%,
+                rgba(10, 14, 46, 0) 65%,
+                rgba(10, 14, 46, 0.32) 100%
+              );
+          }
+        }
+
         @media (max-width: 540px) {
-          .ch-content { padding-top: 110px; }
-          .ch-h1 { line-height: 1; }
-          .ch-kicker { font-size: 10px; letter-spacing: 0.22em; }
+          /* Mobile: kicker + h1 ARRIBA (sobre el cielo), CTA ABAJO
+             (sobre el campo). La chica queda en el centro vertical
+             como protagonista visual sin texto encima. */
+          .ch-content {
+            padding: 52px 22px 28px;
+            justify-content: flex-start;
+          }
+          /* Empujar el CTA y el skip al fondo del hero */
+          .ch-content .ch-cta { margin-top: auto !important; }
+          .ch-h1 {
+            line-height: 1;
+            font-size: clamp(40px, 11vw, 56px);
+          }
+          .ch-kicker {
+            font-size: 9.5px;
+            letter-spacing: 0.18em;
+            margin-bottom: 16px;
+          }
+          /* Ocultar lead en mobile pequeño — la chica + h1 ya
+             comunican lo suficiente; el sub satura. Se puede leer
+             tras hacer scroll. */
+          .ch-lead {
+            display: none;
+          }
+          .ch-cta {
+            margin-top: 0;
+            padding: 14px 26px;
+            font-size: 13px;
+            background: rgba(254, 250, 235, 0.18);
+            border-color: rgba(254, 250, 235, 0.7);
+          }
+          .ch-skip {
+            margin-top: 14px;
+            font-size: 9.5px;
+          }
+          .ch-hero-img {
+            /* móvil estrecho: subir el foco a la cabeza/torso */
+            object-position: 50% 28%;
+          }
+        }
+
+        @media (max-width: 380px) {
+          /* iPhone SE — viewport más pequeño aún */
+          .ch-hero-img { object-position: 50% 24%; }
+          .ch-content { padding: 44px 18px 24px; }
+          .ch-h1 { font-size: 38px; }
         }
       `}</style>
 
@@ -507,12 +594,20 @@ export function CinematicHero() {
         muted
         loop
         playsInline
+        webkit-playsinline="true"
         preload="auto"
         poster="/cinematic/hero-velorah-v4.jpg"
         aria-hidden
+        controls={false}
+        disablePictureInPicture
+        disableRemotePlayback
       >
-        <source src="/cinematic/hero-velorah.webm" type="video/webm" />
+        {/* IMPORTANTE: mp4 PRIMERO. iOS Safari no decodifica webm —
+            si pones webm antes, se queda colgado y no cae al mp4.
+            Chrome/Firefox saltan el mp4 si webm matchea, así que
+            tampoco hay penalidad de ancho de banda en Android. */}
         <source src="/cinematic/hero-velorah.mp4" type="video/mp4" />
+        <source src="/cinematic/hero-velorah.webm" type="video/webm" />
       </video>
 
       {/* ── 2. Overlay gradient para contraste del texto ── */}
