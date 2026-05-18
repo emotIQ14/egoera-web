@@ -135,8 +135,11 @@
 
 @media (max-width: 900px) {
   .links {
-    display: none;
+    display: none !important;
   }
+}
+@media (max-width: 768px) {
+  .links { display: none !important; }
 }
 
 /* ─── tools (lang switcher + CTA) ─────────────────────────── */
