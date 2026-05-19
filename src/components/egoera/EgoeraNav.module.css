@@ -2,7 +2,8 @@
    EgoeraNav · barra superior compartida (cobalto + crema)
    ---------------------------------------------------------------------
    Tokens redefinidos en .nav para no contaminar el resto del sitio
-   (que usa el dark mode bosque). Replica eg-nav del mockup.
+   (que usa el dark mode bosque). Una sola fila siempre: en desktop
+   incluye los links del menú; en mobile colapsan al EgoeraMenu drawer.
    ===================================================================== */
 
 .nav {
@@ -24,7 +25,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 
   background: rgba(15, 27, 170, 0.92);
   border-bottom: 1.5px solid var(--cream);
@@ -34,6 +35,7 @@
 
   padding: 14px 32px;
   font-family: var(--sans);
+  min-width: 0;
 }
 
 @media (max-width: 768px) {
@@ -55,6 +57,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 
   font-family: var(--display);
   font-style: italic;
@@ -66,6 +69,7 @@
   color: var(--cream);
   text-decoration: none;
   border-radius: 4px;
+  white-space: nowrap;
 }
 
 .badge:focus-visible {
@@ -77,6 +81,10 @@
   .badge { font-size: 22px; gap: 6px; }
   .badge em { font-size: 10px; letter-spacing: 0.18em; }
   .star { width: 18px; height: 18px; }
+}
+
+@media (max-width: 380px) {
+  .badge em { display: none; }
 }
 
 .badge em {
@@ -94,9 +102,10 @@
   width: 22px;
   height: 22px;
   color: var(--cream);
+  flex: 0 0 auto;
 }
 
-/* ─── links ────────────────────────────────────────────────── */
+/* ─── links (desktop only) ─────────────────────────────────── */
 .links {
   display: flex;
   align-items: center;
@@ -138,16 +147,14 @@
     display: none !important;
   }
 }
-@media (max-width: 768px) {
-  .links { display: none !important; }
-}
 
-/* ─── tools (lang switcher + CTA) ─────────────────────────── */
+/* ─── tools (lang switcher + CTA + hamburger) ─────────────── */
 .tools {
   display: inline-flex;
   align-items: center;
   gap: 14px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  flex: 0 0 auto;
 }
 
 @media (max-width: 768px) {
@@ -186,79 +193,10 @@
   outline-offset: 3px;
 }
 
-@media (max-width: 768px) {
-  .cta {
-    padding: 8px 14px;
-    font-size: 11px;
-  }
-}
-
-@media (max-width: 480px) {
-  .cta {
-    padding: 8px 12px;
-    font-size: 10.5px;
-    letter-spacing: 0.02em;
-  }
-}
-
-/* ─── menú móvil minimalista ──────────────────────────────── */
-.mobile {
-  display: none;
-}
-
+/* En mobile el CTA se oculta — su acción está dentro del drawer
+   del EgoeraMenu para no colapsar la barra superior. */
 @media (max-width: 900px) {
-  .mobile {
-    display: flex !important;
-    align-items: center;
-    gap: 10px 14px;
-    flex-wrap: wrap !important;
-    width: 100%;
-    max-width: 100%;
-    margin-top: 4px;
-    padding-top: 10px;
-    border-top: 1px dashed var(--rule-cream);
-    /* Defensiva contra cache iOS Safari con CSS viejo donde nowrap
-       no estaba sobrescrito y los items se cortaban a la derecha */
-    overflow: visible;
-    min-width: 0;
-  }
-  .mobile a {
-    flex: 0 0 auto;
-    min-width: 0;
-  }
-  .mobile a {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--cream);
-    text-decoration: none;
-    opacity: 0.78;
-    /* tap target ≥ 44px tall */
-    padding: 8px 4px;
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
-    border-radius: 4px;
-  }
-  .mobile a:focus-visible {
-    outline: 2px solid var(--cream);
-    outline-offset: 2px;
-    opacity: 1;
-  }
-  .mobile a.active {
-    opacity: 1;
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
-}
-
-@media (max-width: 480px) {
-  .mobile {
-    gap: 10px 16px;
-  }
-  .mobile a {
-    font-size: 10.5px;
-    letter-spacing: 0.16em;
+  .cta {
+    display: none;
   }
 }

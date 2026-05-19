@@ -76,20 +76,52 @@ export function CinematicHero() {
   useEffect(() => setMounted(true), []);
 
   // Algunos navegadores (Chromium headless, Safari móvil estricto)
-  // ignoran el atributo autoPlay aun con muted. Forzamos play() al
-  // montar; si el navegador lo rechaza, el poster (imagen estática)
-  // queda como fondo aceptable.
+  // ignoran el atributo autoPlay aun con muted, sobre todo si la
+  // propiedad muted no estaba seteada en JS antes del primer play().
+  // Forzamos muted + load() + play() en orden y reintentamos al evento
+  // canplay para cubrir conexiones lentas (5G celular, datos móviles).
+  // Si todo falla, el poster estático queda como fondo aceptable.
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    const tryPlay = async () => {
-      try {
-        await v.play();
-      } catch {
-        /* fallback: el poster se mantiene */
+
+    v.muted = true;
+    v.defaultMuted = true;
+    v.playsInline = true;
+
+    let cancelled = false;
+    const tryPlay = () => {
+      if (cancelled) return;
+      const p = v.play();
+      if (p && typeof p.catch === "function") {
+        p.catch(() => {
+          /* poster mantiene la imagen estática */
+        });
       }
     };
+
+    // Lanza al montar; si el navegador aún no tiene buffer suficiente,
+    // canplay disparará el segundo intento cuando esté listo.
     tryPlay();
+    v.addEventListener("canplay", tryPlay);
+    v.addEventListener("loadeddata", tryPlay);
+
+    // Algunos iOS bloquean autoplay hasta el primer touch — engancha
+    // un listener efímero que dispara play() y se desinstala solo.
+    const onFirstTouch = () => {
+      tryPlay();
+    };
+    window.addEventListener("touchstart", onFirstTouch, {
+      once: true,
+      passive: true,
+    });
+
+    return () => {
+      cancelled = true;
+      v.removeEventListener("canplay", tryPlay);
+      v.removeEventListener("loadeddata", tryPlay);
+      window.removeEventListener("touchstart", onFirstTouch);
+    };
   }, []);
 
   return (

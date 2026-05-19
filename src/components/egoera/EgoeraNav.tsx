@@ -4,6 +4,7 @@ import { getCurrentLocale } from "@/i18n/getCurrentLocale";
 import { getDictionary } from "@/i18n/getDictionary";
 
 import { LangSwitcher } from "./LangSwitcher";
+import { EgoeraMenu } from "./EgoeraMenu";
 import styles from "./EgoeraNav.module.css";
 
 export type EgoeraNavActive =
@@ -20,22 +21,40 @@ interface Props {
 
 /**
  * EgoeraNav — barra superior compartida del rediseño editorial.
- * Cobalto sobre cobalto deep, crema en texto. Aparece en todas las
- * páginas del nuevo diseño (home, cuaderno, sobre, boletin, manifiesto).
+ *
+ * En desktop muestra la barra de links horizontal con LangSwitcher + CTA.
+ * En mobile colapsa a una sola fila (logo + lang + hamburguesa) y delega
+ * la navegación al `<EgoeraMenu />`, un drawer pantalla-completa con la
+ * lista numerada al estilo del mockup.
  *
  * Server Component: lee el locale activo del request (cookie / header
  * inyectado por middleware) y carga las etiquetas del diccionario.
- * El <LangSwitcher /> es client-only y recibe el locale como prop —
- * así evitamos hidratar mismatches.
+ * El switcher de idioma y el menú móvil son client-only y reciben los
+ * datos como props — así evitamos hidratar mismatches.
  */
 export async function EgoeraNav({ active }: Props) {
   const locale = await getCurrentLocale();
   const dict = await getDictionary(locale);
 
-  const NAV_LINKS: { href: string; label: string; key: EgoeraNavActive }[] = [
+  const NAV_LINKS: {
+    href: string;
+    label: string;
+    key: EgoeraNavActive;
+    eyebrow?: string;
+  }[] = [
     { href: "/", label: dict.nav.home, key: "home" },
-    { href: "/blog", label: dict.nav.cuaderno, key: "cuaderno" },
-    { href: "/sentir", label: dict.nav.sentir, key: "sentir" },
+    {
+      href: "/blog",
+      label: dict.nav.cuaderno,
+      key: "cuaderno",
+      eyebrow: "cuaderno",
+    },
+    {
+      href: "/sentir",
+      label: dict.nav.sentir,
+      key: "sentir",
+      eyebrow: "brújula",
+    },
     { href: "/sobre-nosotros", label: dict.nav.sobre, key: "sobre" },
     { href: "/boletin", label: dict.nav.boletin, key: "boletin" },
     { href: "/manifiesto", label: dict.nav.manifiesto, key: "manifiesto" },
@@ -85,20 +104,15 @@ export async function EgoeraNav({ active }: Props) {
         >
           {dict.nav.consulta}
         </a>
-      </div>
-
-      {/* Variante compacta para móvil — los links principales del header
-          desaparecen, mostramos un strip horizontal scrollable con todo. */}
-      <div className={styles.mobile} aria-hidden="false">
-        {NAV_LINKS.map((link) => (
-          <Link
-            key={`m-${link.key}`}
-            href={link.href}
-            className={active === link.key ? styles.active : undefined}
-          >
-            {link.label}
-          </Link>
-        ))}
+        <EgoeraMenu
+          links={NAV_LINKS}
+          active={active}
+          ctaLabel={dict.nav.consulta}
+          ctaHref="https://diario.egoera.es"
+          ctaTarget="_blank"
+          locale={locale}
+          langAriaLabel={dict.nav.ariaIdiomas}
+        />
       </div>
     </nav>
   );
