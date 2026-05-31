@@ -91,6 +91,9 @@ export function middleware(request: NextRequest) {
       request: { headers: requestHeaders },
     });
     response.headers.set("Vary", "Accept-Language, Cookie");
+    if ((request.headers.get("host") ?? "").endsWith(".vercel.app")) {
+      response.headers.set("X-Robots-Tag", "noindex, nofollow");
+    }
     return response;
   }
 
@@ -116,6 +119,12 @@ export function middleware(request: NextRequest) {
   // Vary por Accept-Language y Cookie para que la CDN no sirva el mismo
   // HTML a usuarios con preferencias distintas.
   response.headers.set("Vary", "Accept-Language, Cookie");
+
+  // Egoera 5.0 — Fase 0: el deploy *.vercel.app no debe indexarse (el dominio
+  // de marca será egoera.es). Evita duplicar todo el sitio en Google.
+  if ((request.headers.get("host") ?? "").endsWith(".vercel.app")) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  }
 
   return response;
 }
