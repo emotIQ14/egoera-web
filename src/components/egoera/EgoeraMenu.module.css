@@ -1,0 +1,239 @@
+/* =====================================================================
+   EgoeraMenu · trigger hamburguesa circular + drawer fullscreen.
+   Cobalto deep + crema, tipografía editorial. Replica del mockup.
+   ===================================================================== */
+
+.trigger {
+  --cream: #f1ead8;
+  --rule-cream: rgba(241, 234, 216, 0.5);
+  display: none;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1.5px solid var(--rule-cream);
+  border-radius: 50%;
+  color: var(--cream);
+  cursor: pointer;
+  padding: 0;
+  flex: 0 0 auto;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.trigger:hover {
+  background: rgba(241, 234, 216, 0.08);
+  border-color: var(--cream);
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 3px;
+}
+
+.bars {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 16px;
+}
+
+.bars span {
+  display: block;
+  width: 100%;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+@media (max-width: 900px) {
+  .trigger {
+    display: inline-flex;
+  }
+}
+
+/* ─── Drawer fullscreen ────────────────────────────────────── */
+.drawer {
+  --blue: #1d2bdb;
+  --blue-deep: #0f1baa;
+  --cream: #f1ead8;
+  --rule-cream: rgba(241, 234, 216, 0.28);
+  --serif: var(--font-serif), "Fraunces", Georgia, serif;
+  --display: var(--font-display), "Caveat", cursive;
+  --sans: var(--font-sans), "Inter", system-ui, sans-serif;
+  --mono: var(--font-mono), "JetBrains Mono", monospace;
+
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--blue-deep);
+  color: var(--cream);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  animation: drawerIn 0.22s ease-out;
+}
+
+@keyframes drawerIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer { animation: none; }
+}
+
+.drawerInner {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 28px 32px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+  .drawerInner { padding: 18px 22px 26px; }
+}
+
+/* ─── Close button (top-right, circular like trigger) ─────── */
+.close {
+  align-self: flex-end;
+  width: 44px;
+  height: 44px;
+  border: 1.5px solid rgba(241, 234, 216, 0.55);
+  background: transparent;
+  border-radius: 50%;
+  color: var(--cream);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.close:hover {
+  background: rgba(241, 234, 216, 0.08);
+  border-color: var(--cream);
+}
+
+.close:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 3px;
+}
+
+/* ─── Lista numerada ──────────────────────────────────────── */
+.list {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  border-bottom: 1px dashed var(--rule-cream);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.itemLink {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 0 20px;
+  text-decoration: none;
+  color: var(--cream);
+  border-radius: 4px;
+}
+
+.itemLink:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 4px;
+}
+
+.itemMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(241, 234, 216, 0.62);
+}
+
+.itemNum {
+  letter-spacing: 0.22em;
+}
+
+.itemEye {
+  letter-spacing: 0.22em;
+}
+
+.itemH {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(34px, 9vw, 44px);
+  line-height: 1.05;
+  letter-spacing: -0.005em;
+  color: var(--cream);
+}
+
+.itemActive .itemH {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1px;
+}
+
+/* ─── Tools (lang + CTA) ──────────────────────────────────── */
+.tools {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--rule-cream);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--blue);
+  text-decoration: none;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.cta:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 3px;
+}
+
+/* ─── Footer editorial ────────────────────────────────────── */
+.foot {
+  margin-top: auto;
+  padding-top: 22px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(241, 234, 216, 0.62);
+  text-align: center;
+}
